@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "nguoi_dung")
 @Entity
@@ -50,4 +52,9 @@ public class NguoiDung extends BaseEntity{
 
     @Column(name = "xoa")
     private Boolean xoa;
+
+    @ManyToMany
+    @JoinTable(name = "nguoi_dung_vai_tro", joinColumns = @JoinColumn(name = "ma_nguoi_dung"),
+            inverseJoinColumns = @JoinColumn(name = "ma_vai_tro"))
+    private Set<VaiTro> roles = new HashSet<>();
 }
