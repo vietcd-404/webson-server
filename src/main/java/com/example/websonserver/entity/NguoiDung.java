@@ -2,6 +2,7 @@ package com.example.websonserver.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 @Table(name = "nguoi_dung")
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class NguoiDung extends BaseEntity{
@@ -37,6 +39,9 @@ public class NguoiDung extends BaseEntity{
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "sdt")
+    private String sdt;
 
     @Column(name = "ho")
     private String ho;

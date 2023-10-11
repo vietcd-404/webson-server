@@ -1,7 +1,9 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.LoaiResquest;
+import com.example.websonserver.dto.request.MauSacRequest;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
+import com.example.websonserver.service.serviceIpml.MauSacServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -11,35 +13,35 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/loai")
-public class LoaiApi {
+@RequestMapping("/api/mau-sac")
+public class MauSacApi {
     @Autowired
-    private LoaiServiceIpml loaiServiceIpml;
+    private MauSacServiceImpl mauSacServiceImpl;
 
     @GetMapping
     public ResponseEntity<?> getAll(Pageable pageable) {
-        return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
+        return ResponseEntity.ok(mauSacServiceImpl.getAll(pageable).getContent());
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> saveLoai(@Valid @RequestBody LoaiResquest loai, BindingResult result) {
+    public ResponseEntity<?> saveMauSac(@Valid @RequestBody MauSacRequest mauSac, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(loaiServiceIpml.create(loai));
+        return ResponseEntity.ok(mauSacServiceImpl.create(mauSac));
     }
 
     @PutMapping("/update/{ma}")
-    public ResponseEntity<?> update(@Valid @RequestBody LoaiResquest loai, @PathVariable Long ma, BindingResult result) {
+    public ResponseEntity<?> update(@Valid @RequestBody MauSacRequest mauSac, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
+        return ResponseEntity.ok(mauSacServiceImpl.update(mauSac, ma));
     }
 
     @DeleteMapping("/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
-        loaiServiceIpml.delete(ma);
+        mauSacServiceImpl.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 }
