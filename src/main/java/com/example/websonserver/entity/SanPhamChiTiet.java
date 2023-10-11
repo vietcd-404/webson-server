@@ -1,11 +1,13 @@
 package com.example.websonserver.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 @Table(name = "san_pham_chi_tiet")
@@ -20,10 +22,10 @@ public class SanPhamChiTiet extends BaseEntity {
     private Long maSanPhamCT;
 
     @Column(name = "gia_ban")
-    private DecimalFormat tenSanPham;
+    private BigDecimal giaBan;
 
     @Column(name = "gia_nhap")
-    private DecimalFormat doBong;
+    private BigDecimal giaNhap;
 
     @Column(name = "so_luong_ton")
     private Integer soLuongTon;
