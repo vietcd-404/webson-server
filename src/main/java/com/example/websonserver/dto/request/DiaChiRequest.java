@@ -26,7 +26,7 @@ public class DiaChiRequest {
 
     public DiaChi map(DiaChi dc){
         dc.setDiaChi(this.getDiaChi());
-        dc.setLoai_dia_chi(this.getLoaiDiaChi());
+        dc.setLoaiDiaChi(this.getLoaiDiaChi());
         dc.setNguoiDung(NguoiDung.builder().maNguoiDung(Long.parseLong(this.getMaNguoiDung())).build());
         dc.setTrangThai(this.getTrangThai());
         dc.setXoa(this.getXoa());
