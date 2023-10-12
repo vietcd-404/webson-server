@@ -27,7 +27,7 @@ public class DiaChiServiceImpl implements DiaChiService {
         Optional<DiaChi> optional = diaChiRepository.findById(id);
         return optional.map(o->{
             o.setDiaChi(request.getDiaChi());
-            o.setLoai_dia_chi(request.getLoaiDiaChi());
+            o.setLoaiDiaChi(request.getLoaiDiaChi());
             o.setNguoiDung(NguoiDung.builder().maNguoiDung(Long.parseLong(request.getMaNguoiDung())).build());
             o.setTrangThai(request.getTrangThai());
             o.setXoa(request.getXoa());
