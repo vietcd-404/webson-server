@@ -1,7 +1,6 @@
 package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.LoaiResquest;
-import com.example.websonserver.dto.response.LoaiResponse;
 import com.example.websonserver.entity.Loai;
 import com.example.websonserver.repository.LoaiRepository;
 import com.example.websonserver.service.LoaiService;

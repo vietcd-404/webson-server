@@ -1,7 +1,7 @@
 package com.example.websonserver.api;
 
-import com.example.websonserver.dto.request.LoaiResquest;
-import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
+import com.example.websonserver.dto.request.AnhSanPhamRequest;
+import com.example.websonserver.service.serviceIpml.AnhSanPhamServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -11,35 +11,37 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/admin/loai")
-public class LoaiApi {
+@RequestMapping("/api/anhSanPham")
+public class AnhSanPhamApi {
     @Autowired
-    private LoaiServiceIpml loaiServiceIpml;
-
+    private AnhSanPhamServiceImpl anhSanPhamService;
     @GetMapping
     public ResponseEntity<?> getAll(Pageable pageable) {
-        return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
+        return ResponseEntity.ok(anhSanPhamService.getAll(pageable).getContent());
     }
-
+    @GetMapping("/{ma}")
+    public ResponseEntity<?> getById(@PathVariable String ma) {
+        return ResponseEntity.ok(anhSanPhamService.findById(ma));
+    }
     @PostMapping("/add")
-    public ResponseEntity<?> saveLoai(@Valid @RequestBody LoaiResquest loai, BindingResult result) {
+    public ResponseEntity<?> save(@Valid @RequestBody AnhSanPhamRequest anhSP, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(loaiServiceIpml.create(loai));
+        return ResponseEntity.ok(anhSanPhamService.create(anhSP));
     }
 
     @PutMapping("/update/{ma}")
-    public ResponseEntity<?> update(@Valid @RequestBody LoaiResquest loai, @PathVariable Long ma, BindingResult result) {
+    public ResponseEntity<?> update(@Valid @RequestBody AnhSanPhamRequest anhSP, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
+        return ResponseEntity.ok(anhSanPhamService.update(anhSP, ma));
     }
 
     @DeleteMapping("/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
-        loaiServiceIpml.delete(ma);
+        anhSanPhamService.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 }

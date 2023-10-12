@@ -20,7 +20,7 @@ public class DiaChi extends BaseEntity{
     private String diaChi;
 
     @Column(name = "loai_dia_chi")
-    private String loai_dia_chi;
+    private String loaiDiaChi;
 
     @ManyToOne
     @JoinColumn(name = "ma_nguoi_dung")
