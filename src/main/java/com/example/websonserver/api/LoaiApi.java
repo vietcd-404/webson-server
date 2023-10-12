@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/loai")
+@RequestMapping("/api/admin/loai")
 public class LoaiApi {
     @Autowired
     private LoaiServiceIpml loaiServiceIpml;

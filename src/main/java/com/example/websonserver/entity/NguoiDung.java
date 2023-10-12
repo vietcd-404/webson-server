@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ public class NguoiDung extends BaseEntity{
     private String anh;
 
     @Column(name = "ngay_sinh")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date ngaySinh;
 
     @Column(name = "username")
