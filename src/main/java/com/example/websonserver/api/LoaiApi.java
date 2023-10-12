@@ -18,7 +18,7 @@ public class LoaiApi {
 
     @GetMapping
     public ResponseEntity<?> getAll(Pageable pageable) {
-        return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
+            return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
     }
 
     @PostMapping("/add")

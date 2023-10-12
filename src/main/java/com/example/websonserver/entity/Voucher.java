@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
@@ -13,14 +15,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Voucher extends BaseEntity{
+public class Voucher extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_voucher")
-    private Long ma;
+    private Long maVoucher;
 
     @Column(name = "giam_toi_da")
-    private DecimalFormat giamToiDa;
+    private BigDecimal giamToiDa;
 
     @Column(name = "voucher")
     private String tenVoucher;
