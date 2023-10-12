@@ -1,12 +1,18 @@
 package com.example.websonserver.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.CustomLog;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.text.DecimalFormat;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Table(name = "khuyen_mai")
@@ -14,34 +20,43 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class KhuyenMai extends BaseEntity {
+public class KhuyenMai extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_khuyen_mai")
     private Long maKhuyenMai;
 
     @Column(name = "dieu_kien")
-    private DecimalFormat dieuKien;
+    private BigDecimal dieuKien;
 
     @Column(name = "gia_tri_giam")
-    private DecimalFormat giaTriGiam;
+    private BigDecimal giaTriGiam;
 
     @Column(name = "giam_toi_da")
-    private DecimalFormat giamToiDa;
+    private BigDecimal giamToiDa;
 
     @Column(name = "kieu_giam_gia")
-    private DecimalFormat kieuGiamGia;
+    private String kieuGiamGia;
 
-    @Column(name = "mo_ta")
+    @Column(name = "mo_ta", length = 10000)
     private String moTa;
 
     @Column(name = "so_luong")
     private Integer soLuong;
 
+    @Column(name = "khuyen_mai")
+    private String khuyenMai;
+
+
     @Column(name = "thoi_gian_bat_dau")
+    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime thoiGianBatDau;
 
+
     @Column(name = "thoi_gian_ket_thuc")
+    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime thoiGianKetThuc;
 
     @Column(name = "trang_thai")
@@ -49,4 +64,5 @@ public class KhuyenMai extends BaseEntity {
 
     @Column(name = "xoa")
     private Boolean xoa;
+
 }
