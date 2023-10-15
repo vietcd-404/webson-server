@@ -24,8 +24,8 @@ public class SanPhamChiTiet extends BaseEntity {
     @Column(name = "gia_ban")
     private BigDecimal giaBan;
 
-    @Column(name = "gia_nhap")
-    private BigDecimal giaNhap;
+    @Column(name = "phan_tram_giam")
+    private Integer phanTramGiam;
 
     @Column(name = "so_luong_ton")
     private Integer soLuongTon;
@@ -45,10 +45,6 @@ public class SanPhamChiTiet extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "ma_mau")
     private MauSac mauSac;
-
-    @ManyToOne
-    @JoinColumn(name = "ma_anh")
-    private AnhSanPham anhSanPham;
 
     @Column(name = "trang_thai")
     private Integer trangThai;

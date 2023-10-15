@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/san-pham")
+@RequestMapping("/api/admin/san-pham")
 public class SanPhamApi {
     @Autowired
     private SanPhamServiceImpl sanPhamServiceImpl;

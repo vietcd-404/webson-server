@@ -25,12 +25,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(id);
         return optional.map(o->{
             o.setGiaBan(request.getGiaBan());
-            o.setGiaNhap(request.getGiaNhap());
+//            o.setGiaNhap(request.getGiaNhap());
             o.setSoLuongTon((request.getSoLuongTon()));
             o.setSanPham(SanPham.builder().maSanPham(Long.parseLong(request.getMaSP())).build());
             o.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(request.getMaThuongHieu())).build());
             o.setMauSac(MauSac.builder().maMau(Long.parseLong(request.getMaMau())).build());
-            o.setAnhSanPham(AnhSanPham.builder().maAnh(Long.parseLong(request.getMaAnh())).build());
             o.setTrangThai(request.getTrangThai());
             o.setXoa(request.getXoa());
             return sanPhamChiTietRepository.save(o);

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/thuong-hieu")
+@RequestMapping("/api/admin/thuong-hieu")
 public class ThuongHieuApi {
     @Autowired
     private ThuongHieuServiceImpl thuongHieuServiceImpl;

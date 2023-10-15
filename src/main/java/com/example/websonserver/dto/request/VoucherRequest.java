@@ -1,13 +1,8 @@
 package com.example.websonserver.dto.request;
 
-import com.example.websonserver.entity.KhuyenMai;
 import com.example.websonserver.entity.Voucher;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

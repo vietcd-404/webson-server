@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/mau-sac")
+@RequestMapping("/api/admin/mau-sac")
 public class MauSacApi {
     @Autowired
     private MauSacServiceImpl mauSacServiceImpl;

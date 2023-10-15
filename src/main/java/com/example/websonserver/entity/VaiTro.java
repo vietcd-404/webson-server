@@ -16,9 +16,9 @@ public class VaiTro extends BaseEntity{
     @Column(name = "ma_vai_tro")
     private Long maVaiTro;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(name = "ten_vai_tro")
-    private VaiTroNguoiDung tenVaiTro; ;
+    private String tenVaiTro; ;
 
     @Column(name = "trang_thai")
     private int trangThai;

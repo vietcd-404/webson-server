@@ -49,12 +49,12 @@ public class SanPhamChiTietRequest {
 
     public SanPhamChiTiet map(SanPhamChiTiet sanPhamChiTiet){
         sanPhamChiTiet.setGiaBan(this.getGiaBan());
-        sanPhamChiTiet.setGiaNhap(this.getGiaNhap());
+//        sanPhamChiTiet.setGiaNhap(this.getGiaNhap());
         sanPhamChiTiet.setSoLuongTon(this.getSoLuongTon());
         sanPhamChiTiet.setSanPham(SanPham.builder().maSanPham(Long.parseLong(this.getMaSP())).build());
         sanPhamChiTiet.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(this.getMaThuongHieu())).build());
         sanPhamChiTiet.setMauSac(MauSac.builder().maMau(Long.parseLong(this.getMaMau())).build());
-        sanPhamChiTiet.setAnhSanPham(AnhSanPham.builder().maAnh(Long.parseLong(this.getMaAnh())).build());
+//        sanPhamChiTiet.setAnhSanPham(AnhSanPham.builder().maAnh(Long.parseLong(this.getMaAnh())).build());
         sanPhamChiTiet.setXoa(this.getXoa());
         sanPhamChiTiet.setTrangThai(this.getTrangThai());
         return sanPhamChiTiet;

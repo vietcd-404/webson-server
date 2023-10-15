@@ -27,4 +27,8 @@ public class AnhSanPham extends BaseEntity{
 
     @Column(name = "xoa")
     private Boolean xoa;
+
+    @ManyToOne
+    @JoinColumn(name = "ma_san_pham_chi_tiet")
+    private SanPhamChiTiet sanPhamChiTiet;
 }
