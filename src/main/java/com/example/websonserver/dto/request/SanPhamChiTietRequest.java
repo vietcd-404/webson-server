@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import java.math.BigDecimal;
+import java.util.List;
+
 @Builder
 @Data
 public class SanPhamChiTietRequest {
@@ -15,9 +17,9 @@ public class SanPhamChiTietRequest {
     @Min(value = 1, message = "Giá bán phải lớn hơn 0")
     private BigDecimal giaBan;
 
-    @NotNull(message = "Không bỏ trống giá nhập")
-    @Min(value = 1 ,message = "Giá nhập phải lớn hơn 0")
-    private BigDecimal giaNhap;
+    @NotNull(message = "Không bỏ phần trăm giảm")
+    @Min(value = 1 ,message = "Phần trăm giảm phải lớn hơn 0")
+    private Integer phanTramGiam;
 
     @NotNull(message = "Không bỏ trống giá bán")
     @Min(value = 1 ,message = "Số lượng tồn phải lớn hơn 0")
@@ -41,7 +43,7 @@ public class SanPhamChiTietRequest {
 
     @NotBlank(message = "Không bỏ trống mã ảnh")
     @NotNull
-    private String maAnh;
+    private List<AnhSanPham> anhSanPhamList;
 
     private Boolean xoa = false;
 
@@ -49,12 +51,12 @@ public class SanPhamChiTietRequest {
 
     public SanPhamChiTiet map(SanPhamChiTiet sanPhamChiTiet){
         sanPhamChiTiet.setGiaBan(this.getGiaBan());
-//        sanPhamChiTiet.setGiaNhap(this.getGiaNhap());
+        sanPhamChiTiet.setPhanTramGiam(this.getPhanTramGiam());
         sanPhamChiTiet.setSoLuongTon(this.getSoLuongTon());
         sanPhamChiTiet.setSanPham(SanPham.builder().maSanPham(Long.parseLong(this.getMaSP())).build());
         sanPhamChiTiet.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(this.getMaThuongHieu())).build());
         sanPhamChiTiet.setMauSac(MauSac.builder().maMau(Long.parseLong(this.getMaMau())).build());
-//        sanPhamChiTiet.setAnhSanPham(AnhSanPham.builder().maAnh(Long.parseLong(this.getMaAnh())).build());
+        sanPhamChiTiet.setAnhSanPhamList(this.getAnhSanPhamList());
         sanPhamChiTiet.setXoa(this.getXoa());
         sanPhamChiTiet.setTrangThai(this.getTrangThai());
         return sanPhamChiTiet;

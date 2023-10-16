@@ -1,6 +1,7 @@
 package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.*;
 import com.example.websonserver.repository.SanPhamChiTietRepository;
 import com.example.websonserver.service.SanPhamChiTietService;
@@ -25,11 +26,12 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(id);
         return optional.map(o->{
             o.setGiaBan(request.getGiaBan());
-//            o.setGiaNhap(request.getGiaNhap());
+            o.setPhanTramGiam(request.getPhanTramGiam());
             o.setSoLuongTon((request.getSoLuongTon()));
             o.setSanPham(SanPham.builder().maSanPham(Long.parseLong(request.getMaSP())).build());
             o.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(request.getMaThuongHieu())).build());
             o.setMauSac(MauSac.builder().maMau(Long.parseLong(request.getMaMau())).build());
+            o.setAnhSanPhamList(request.getAnhSanPhamList());
             o.setTrangThai(request.getTrangThai());
             o.setXoa(request.getXoa());
             return sanPhamChiTietRepository.save(o);
@@ -37,9 +39,9 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     }
 
     @Override
-    public Page<SanPhamChiTiet> getAll(Pageable pageable) {
-        return sanPhamChiTietRepository.findAllByXoaFalse(pageable);
-    }
+    public Page<SanPhamChiTietResponse> getAll(Pageable pageable) {
+        return sanPhamChiTietRepository.getAllCT(pageable);
+     }
 
     @Override
     public void delete(Long id) {

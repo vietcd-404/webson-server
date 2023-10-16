@@ -1,14 +1,12 @@
 package com.example.websonserver.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.util.List;
 
 @Table(name = "san_pham_chi_tiet")
 @Entity
@@ -45,6 +43,9 @@ public class SanPhamChiTiet extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "ma_mau")
     private MauSac mauSac;
+
+    @OneToMany(mappedBy = "sanPhamChiTiet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnhSanPham> anhSanPhamList;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
