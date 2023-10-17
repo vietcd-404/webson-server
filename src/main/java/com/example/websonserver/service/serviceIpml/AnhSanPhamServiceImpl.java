@@ -10,7 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AnhSanPhamServiceImpl implements AnhSanPhamService {
@@ -49,6 +51,13 @@ public class AnhSanPhamServiceImpl implements AnhSanPhamService {
         AnhSanPham anhSanPham = anhsp.orElse(null);
         return anhSanPham;
     }
+
+    @Override
+    public List<String> getImagesBySanPhamChiTiet(Long maSanPhamCT) {
+        List<String> imageUrls = anhSanPhamRepository.findImageUrlsBySanPhamChiTietId(maSanPhamCT);
+        return imageUrls;
+    }
+
 
 
 }

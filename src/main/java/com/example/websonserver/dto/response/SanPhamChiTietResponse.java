@@ -8,32 +8,72 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class SanPhamChiTietResponse {
-    private Long maSanPhamCT;
+     Long maSanPhamCT;
 
-    private BigDecimal giaBan;
+     BigDecimal giaBan;
 
-    private Integer phanTramGiam;
+     Integer phanTramGiam;
 
-    private Integer soLuongTon;
+     Integer soLuongTon;
 
-    private String tenSanPham;
+     String tenSanPham;
 
-    private String tenLoai;
+     String tenLoai;
 
-    private String tenThuongHieu;
+     String tenThuongHieu;
 
-    private String tenMau;
+     String tenMau;
 
-    private List<AnhSanPham> danhSachAnh;
+     List<String> danhSachAnh;
 
-    private Integer trangThai;
+     Integer trangThai;
 
-//    private Boolean xoa;
-}
+//    public SanPhamChiTietResponse map(SanPhamChiTiet sanPhamChiTiet) {
+//        SanPhamChiTietResponse response = new SanPhamChiTietResponse();
+//        response.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+//        response.setTenSanPham(sanPhamChiTiet.getSanPham().getTenSanPham());
+//        response.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+//        response.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+//        response.setGiaBan(sanPhamChiTiet.getGiaBan());
+//        response.setTenLoai(sanPhamChiTiet.getLoai().getTenLoai());
+//        response.setTenThuongHieu(sanPhamChiTiet.getThuongHieu().getTenThuongHieu());
+//        response.setTenMau(sanPhamChiTiet.getMauSac().getTenMau());
+//
+//        List<String> anhSanPhamList = new ArrayList<>();
+//        for (AnhSanPham anhSanPham : sanPhamChiTiet.getAnhSanPhamList()) {
+//            anhSanPhamList.add(anhSanPham.getAnh());
+//        }
+//        response.setDanhSachAnh(anhSanPhamList);
+//
+//        response.setTrangThai(sanPhamChiTiet.getTrangThai());
+//
+//
+//        return response;
+//    }
+
+    public SanPhamChiTietResponse mapToResponse(SanPhamChiTiet sanPhamChiTiet) {
+//        SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
+//        dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+//        dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+//        dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+//        dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+//        dto.setTenSanPham(sanPhamChiTiet.getSanPham().getTenSanPham()); // Lấy tên sản phẩm
+//        dto.setTenLoai(sanPhamChiTiet.getLoai().getTenLoai()); // Lấy tên loại
+//        dto.setTenThuongHieu(sanPhamChiTiet.getThuongHieu().getTenThuongHieu()); // Lấy tên thương hiệu
+//        dto.setTenMau(sanPhamChiTiet.getMauSac().getTenMau()); // Lấy tên màu sắc
+//        List<String> imageUrls = anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT());
+//        dto.setImageUrls(imageUrls);
+//        sanPhamChiTietDtos.add(dto);
+
+        return null;
+    }
+ }

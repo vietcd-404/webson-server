@@ -1,6 +1,7 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.AnhSanPhamRequest;
+import com.example.websonserver.entity.AnhSanPham;
 import com.example.websonserver.service.serviceIpml.AnhSanPhamServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -43,5 +46,10 @@ public class AnhSanPhamApi {
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         anhSanPhamService.delete(ma);
         return ResponseEntity.ok("oke nha");
+    }
+
+    @GetMapping("/sanPham")
+    public ResponseEntity<?> getImageByProductID(@RequestParam("maSanPham") Long id) {
+        return ResponseEntity.ok(anhSanPhamService.getImagesBySanPhamChiTiet(id));
     }
 }

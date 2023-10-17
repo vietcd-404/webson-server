@@ -1,5 +1,6 @@
 package com.example.websonserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,7 +45,8 @@ public class SanPhamChiTiet extends BaseEntity {
     @JoinColumn(name = "ma_mau")
     private MauSac mauSac;
 
-    @OneToMany(mappedBy = "sanPhamChiTiet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sanPhamChiTiet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<AnhSanPham> anhSanPhamList;
 
     @Column(name = "trang_thai")
