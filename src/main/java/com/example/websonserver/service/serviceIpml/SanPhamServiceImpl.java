@@ -44,4 +44,9 @@ public class SanPhamServiceImpl implements SanPhamService {
     public void delete(Long id) {
         sanPhamRepository.delete(id);
     }
+
+    @Override
+    public SanPham findByTen(String tenSP) {
+        return sanPhamRepository.findByTen(tenSP);
+    }
 }

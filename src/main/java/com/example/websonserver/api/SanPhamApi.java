@@ -44,5 +44,9 @@ public class SanPhamApi {
         sanPhamServiceImpl.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
+    @GetMapping("/get-one/{tenSP}")
+    public ResponseEntity<?> getOne(@PathVariable String tenSP) {
+        return ResponseEntity.ok(sanPhamServiceImpl.findByTen(tenSP));
+    }
 }
 

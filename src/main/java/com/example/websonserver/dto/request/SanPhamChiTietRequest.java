@@ -25,40 +25,40 @@ public class SanPhamChiTietRequest {
     @Min(value = 1 ,message = "Số lượng tồn phải lớn hơn 0")
     private Integer soLuongTon;
 
-    @NotBlank(message = "Không bỏ trống mã sản phẩm")
+    @NotBlank(message = "Không bỏ trống tên sản phẩm")
     @NotNull
-    private String maSP;
+    private String tenSanPham;
 
-    @NotBlank(message = "Không bỏ trống mã loại")
+    @NotBlank(message = "Không bỏ trống tên loại")
     @NotNull
-    private String maLoai;
+    private String tenLoai;
 
-    @NotBlank(message = "Không bỏ trống mã thương hiệu")
+    @NotBlank(message = "Không bỏ trống tên thương hiệu")
     @NotNull
-    private String maThuongHieu;
+    private String tenThuongHieu;
 
-    @NotBlank(message = "Không bỏ trống mã màu")
+    @NotBlank(message = "Không bỏ trống tên màu")
     @NotNull
-    private String maMau;
+    private String tenMau;
 
-    @NotBlank(message = "Không bỏ trống mã ảnh")
-    @NotNull
-    private List<AnhSanPham> anhSanPhamList;
+//    @NotBlank(message = "Không bỏ trống mã ảnh")
+//    @NotNull
+//    private List<AnhSanPham> anhSanPhamList;
 
     private Boolean xoa = false;
 
     private Integer trangThai=0;
 
-    public SanPhamChiTiet map(SanPhamChiTiet sanPhamChiTiet){
-        sanPhamChiTiet.setGiaBan(this.getGiaBan());
-        sanPhamChiTiet.setPhanTramGiam(this.getPhanTramGiam());
-        sanPhamChiTiet.setSoLuongTon(this.getSoLuongTon());
-        sanPhamChiTiet.setSanPham(SanPham.builder().maSanPham(Long.parseLong(this.getMaSP())).build());
-        sanPhamChiTiet.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(this.getMaThuongHieu())).build());
-        sanPhamChiTiet.setMauSac(MauSac.builder().maMau(Long.parseLong(this.getMaMau())).build());
-        sanPhamChiTiet.setAnhSanPhamList(this.getAnhSanPhamList());
-        sanPhamChiTiet.setXoa(this.getXoa());
-        sanPhamChiTiet.setTrangThai(this.getTrangThai());
-        return sanPhamChiTiet;
-    }
+//    public SanPhamChiTiet map(SanPhamChiTiet sanPhamChiTiet){
+//        sanPhamChiTiet.setGiaBan(this.getGiaBan());
+//        sanPhamChiTiet.setPhanTramGiam(this.getPhanTramGiam());
+//        sanPhamChiTiet.setSoLuongTon(this.getSoLuongTon());
+//        sanPhamChiTiet.setSanPham(SanPham.builder().maSanPham(Long.parseLong(this.getMaSP())).build());
+//        sanPhamChiTiet.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(this.getMaThuongHieu())).build());
+//        sanPhamChiTiet.setMauSac(MauSac.builder().maMau(Long.parseLong(this.getMaMau())).build());
+//        sanPhamChiTiet.setAnhSanPhamList(this.getAnhSanPhamList());
+//        sanPhamChiTiet.setXoa(this.getXoa());
+//        sanPhamChiTiet.setTrangThai(this.getTrangThai());
+//        return sanPhamChiTiet;
+//    }
 }

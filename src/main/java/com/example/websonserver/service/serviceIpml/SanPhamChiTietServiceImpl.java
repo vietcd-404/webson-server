@@ -4,19 +4,15 @@ import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.*;
 import com.example.websonserver.repository.SanPhamChiTietRepository;
-import com.example.websonserver.service.AnhSanPhamService;
-import com.example.websonserver.service.SanPhamChiTietService;
+import com.example.websonserver.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 @Service
 public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     @Autowired
@@ -25,10 +21,59 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     @Autowired
     private AnhSanPhamService anhSanPhamService;
 
+    @Autowired
+    private SanPhamService sanPhamService;
+
+    @Autowired
+    private LoaiService loaiService;
+
+    @Autowired
+    private ThuongHieuService thuongHieuService;
+
+    @Autowired
+    private MauSacService mauSacService;
     @Override
-    public SanPhamChiTiet create(SanPhamChiTietRequest request) {
-        SanPhamChiTiet spct = request.map(new SanPhamChiTiet());
+    public SanPhamChiTiet createOne(SanPhamChiTietRequest request) {
+        SanPham getSPByTenSP = sanPhamService.findByTen(request.getTenSanPham());
+        SanPhamChiTiet spct = null;
+             spct = SanPhamChiTiet.builder()
+                    .giaBan(request.getGiaBan())
+                    .phanTramGiam(request.getPhanTramGiam())
+                    .soLuongTon(request.getSoLuongTon())
+                    .sanPham(getSPByTenSP)
+                    .loai(loaiService.findByTen(request.getTenLoai()))
+                    .thuongHieu(thuongHieuService.findByTen(request.getTenThuongHieu()))
+                    .mauSac(mauSacService.findByTen(request.getTenMau()))
+//                    .anhSanPhamList(request.getAnhSanPhamList())
+                    .trangThai(request.getTrangThai())
+                    .xoa(request.getXoa())
+                    .build();
         return sanPhamChiTietRepository.save(spct);
+    }
+
+    @Override
+    public List<SanPhamChiTiet> createList(List<SanPhamChiTietRequest> listRequest) {
+        List<SanPhamChiTiet> spctList = new ArrayList<>();
+        for (SanPhamChiTietRequest x:listRequest) {
+            SanPham getSPByTenSP = sanPhamService.findByTen(x.getTenSanPham());
+            SanPhamChiTiet spct = null;
+            if (getSPByTenSP !=null){
+                spct = SanPhamChiTiet.builder()
+                        .giaBan(x.getGiaBan())
+                        .phanTramGiam(x.getPhanTramGiam())
+                        .soLuongTon(x.getSoLuongTon())
+                        .sanPham(getSPByTenSP)
+                        .loai(loaiService.findByTen(x.getTenLoai()))
+                        .thuongHieu(thuongHieuService.findByTen(x.getTenThuongHieu()))
+                        .mauSac(mauSacService.findByTen(x.getTenMau()))
+//                    .anhSanPhamList(request.getAnhSanPhamList())
+                        .trangThai(x.getTrangThai())
+                        .xoa(x.getXoa())
+                        .build();
+            }
+            spctList.add(spct);
+        }
+        return sanPhamChiTietRepository.saveAll(spctList);
     }
 
 
@@ -39,10 +84,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             o.setGiaBan(request.getGiaBan());
             o.setPhanTramGiam(request.getPhanTramGiam());
             o.setSoLuongTon((request.getSoLuongTon()));
-            o.setSanPham(SanPham.builder().maSanPham(Long.parseLong(request.getMaSP())).build());
-            o.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(request.getMaThuongHieu())).build());
-            o.setMauSac(MauSac.builder().maMau(Long.parseLong(request.getMaMau())).build());
-            o.setAnhSanPhamList(request.getAnhSanPhamList());
+            o.setSanPham(sanPhamService.findByTen(request.getTenSanPham()));
+            o.setLoai(loaiService.findByTen(request.getTenLoai()));
+            o.setThuongHieu(thuongHieuService.findByTen(request.getTenThuongHieu()));
+            o.setMauSac(mauSacService.findByTen(request.getTenMau()));
+//            o.setAnhSanPhamList(request.getAnhSanPhamList());
             o.setTrangThai(request.getTrangThai());
             o.setXoa(request.getXoa());
             return sanPhamChiTietRepository.save(o);

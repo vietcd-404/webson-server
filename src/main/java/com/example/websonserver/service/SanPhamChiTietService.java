@@ -10,7 +10,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface SanPhamChiTietService {
-    public SanPhamChiTiet create(SanPhamChiTietRequest request);
+    public SanPhamChiTiet createOne(SanPhamChiTietRequest request);
+    public List<SanPhamChiTiet> createList(List<SanPhamChiTietRequest> listRequest);
     public SanPhamChiTiet update(SanPhamChiTietRequest request,Long id);
     public Page<SanPhamChiTiet> getAll(Pageable pageable);
     List<SanPhamChiTietResponse> getAllCT();

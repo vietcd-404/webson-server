@@ -46,4 +46,16 @@ public class MauSacServiceImpl implements MauSacService {
     public void delete(Long id) {
         mauSacRepository.delete(id);
     }
+
+    @Override
+    public MauSac findByMa(String ma) {
+        Optional<MauSac> mauSacOptional = mauSacRepository.findById(Long.valueOf(ma));
+        MauSac mauSac = mauSacOptional.orElse(null);
+        return mauSac;
+    }
+
+    @Override
+    public MauSac findByTen(String ten) {
+        return mauSacRepository.findByTen(ten);
+    }
 }

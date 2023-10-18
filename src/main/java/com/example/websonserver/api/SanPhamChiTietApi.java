@@ -47,7 +47,15 @@ public class SanPhamChiTietApi {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(sanPhamChiTietService.create(request));
+        return ResponseEntity.ok(sanPhamChiTietService.createOne(request));
+    }
+
+    @PostMapping("/add-all")
+    public ResponseEntity<?> saveAll(@Valid @RequestBody List<SanPhamChiTietRequest> listRequest, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(sanPhamChiTietService.createList(listRequest));
     }
 
     @PutMapping("/update/{ma}")

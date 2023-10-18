@@ -18,4 +18,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
     @Query("UPDATE SanPham a " +
             "SET a.xoa = true WHERE a.maSanPham = ?1")
     void delete(Long maSanPham);
+
+    @Query("SELECT sp FROM SanPham sp WHERE sp.tenSanPham = ?1")
+    SanPham findByTen(String tenSanPham);
 }

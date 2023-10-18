@@ -46,4 +46,16 @@ public class ThuongHieuServiceImpl implements ThuongHieuService {
     public void delete(Long id) {
         thuongHieuRepository.delete(id);
     }
+
+    @Override
+    public ThuongHieu findByMa(String ma) {
+        Optional<ThuongHieu> thuongHieuOptional =thuongHieuRepository.findById(Long.valueOf(ma));
+        ThuongHieu thuongHieu = thuongHieuOptional.orElse(null);
+        return thuongHieu;
+    }
+
+    @Override
+    public ThuongHieu findByTen(String ten) {
+        return thuongHieuRepository.findByTen(ten);
+    }
 }
