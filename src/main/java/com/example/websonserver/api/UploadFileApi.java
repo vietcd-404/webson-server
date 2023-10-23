@@ -1,5 +1,7 @@
 package com.example.websonserver.api;
 
+import com.example.websonserver.dto.request.AnhSanPhamRequest;
+import com.example.websonserver.service.serviceIpml.AnhSanPhamServiceImpl;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +24,12 @@ import java.nio.file.Paths;
 public class UploadFileApi {
     @Autowired
     ServletContext app;
-    private final  String uploadRootPath = "C:\\Users\\Public\\upload";
+    @Autowired
+    private AnhSanPhamServiceImpl anhSanPhamService;
+
+    private final  String uploadRootPath = "D:\\DuAn\\webson-ui\\src\\assets\\image";
+
+
     @PostMapping("/upload/save")
     public String save ( @RequestParam MultipartFile file){
 
@@ -36,10 +43,15 @@ public class UploadFileApi {
             BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
             stream.write(file.getBytes());
             stream.close();
+            AnhSanPhamRequest anhSanPhamRequest = new AnhSanPhamRequest();
+            anhSanPhamRequest.setAnh(fileName);
+//            anhSanPhamService.create(anhSanPhamRequest);
+            return "Tải lên và lưu thành công";
         }catch (Exception e){
             e.printStackTrace();
+            return "Lỗi khi tải lên và lưu tệp ảnh";
         }
-        return "Dứt";
+
     }
 
     @GetMapping("/file/{fileName}")

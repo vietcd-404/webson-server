@@ -2,6 +2,7 @@ package com.example.websonserver.dto.request;
 
 
 import com.example.websonserver.entity.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -41,24 +42,11 @@ public class SanPhamChiTietRequest {
     @NotNull
     private String tenMau;
 
-//    @NotBlank(message = "Không bỏ trống mã ảnh")
-//    @NotNull
-//    private List<AnhSanPham> anhSanPhamList;
+
+    private List<Long> danhSachAnh;
 
     private Boolean xoa = false;
 
     private Integer trangThai=0;
 
-//    public SanPhamChiTiet map(SanPhamChiTiet sanPhamChiTiet){
-//        sanPhamChiTiet.setGiaBan(this.getGiaBan());
-//        sanPhamChiTiet.setPhanTramGiam(this.getPhanTramGiam());
-//        sanPhamChiTiet.setSoLuongTon(this.getSoLuongTon());
-//        sanPhamChiTiet.setSanPham(SanPham.builder().maSanPham(Long.parseLong(this.getMaSP())).build());
-//        sanPhamChiTiet.setThuongHieu(ThuongHieu.builder().maThuongHieu(Long.parseLong(this.getMaThuongHieu())).build());
-//        sanPhamChiTiet.setMauSac(MauSac.builder().maMau(Long.parseLong(this.getMaMau())).build());
-//        sanPhamChiTiet.setAnhSanPhamList(this.getAnhSanPhamList());
-//        sanPhamChiTiet.setXoa(this.getXoa());
-//        sanPhamChiTiet.setTrangThai(this.getTrangThai());
-//        return sanPhamChiTiet;
-//    }
 }
