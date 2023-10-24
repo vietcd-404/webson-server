@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/san-pham")
+@RequestMapping("/api/admin/san-pham")
 public class SanPhamApi {
     @Autowired
     private SanPhamServiceImpl sanPhamServiceImpl;
@@ -43,6 +43,10 @@ public class SanPhamApi {
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         sanPhamServiceImpl.delete(ma);
         return ResponseEntity.ok("oke nha");
+    }
+    @GetMapping("/get-one/{tenSP}")
+    public ResponseEntity<?> getOne(@PathVariable String tenSP) {
+        return ResponseEntity.ok(sanPhamServiceImpl.findByTen(tenSP));
     }
 }
 

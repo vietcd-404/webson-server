@@ -1,18 +1,19 @@
 package com.example.websonserver.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.util.List;
 
 @Table(name = "san_pham_chi_tiet")
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SanPhamChiTiet extends BaseEntity {
@@ -24,8 +25,8 @@ public class SanPhamChiTiet extends BaseEntity {
     @Column(name = "gia_ban")
     private BigDecimal giaBan;
 
-    @Column(name = "gia_nhap")
-    private BigDecimal giaNhap;
+    @Column(name = "phan_tram_giam")
+    private Integer phanTramGiam;
 
     @Column(name = "so_luong_ton")
     private Integer soLuongTon;
@@ -46,9 +47,9 @@ public class SanPhamChiTiet extends BaseEntity {
     @JoinColumn(name = "ma_mau")
     private MauSac mauSac;
 
-    @ManyToOne
-    @JoinColumn(name = "ma_anh")
-    private AnhSanPham anhSanPham;
+    @OneToMany(mappedBy = "sanPhamChiTiet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<AnhSanPham> anhSanPhamList;
 
     @Column(name = "trang_thai")
     private Integer trangThai;

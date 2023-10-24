@@ -12,4 +12,5 @@ public interface SanPhamService {
     public SanPham  update(SanPhamRequest sanPham,Long id);
     public Page<SanPham > getAll(Pageable pageable);
     public void delete(Long id);
+    public SanPham findByTen(String tenSP);
 }

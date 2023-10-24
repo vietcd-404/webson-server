@@ -11,4 +11,6 @@ public interface LoaiService {
     public Loai update(LoaiResquest loai,Long id);
     public Page<Loai> getAll(Pageable pageable);
     public void delete(Long id);
+    public Loai findByMa(String ma);
+    public Loai findByTen(String ten);
 }

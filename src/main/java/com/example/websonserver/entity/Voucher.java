@@ -21,8 +21,17 @@ public class Voucher extends BaseEntity implements Serializable {
     @Column(name = "ma_voucher")
     private Long maVoucher;
 
+    @Column(name = "dieu_kien")
+    private BigDecimal dieuKien;
+
+    @Column(name = "gia_tri_giam")
+    private BigDecimal giaTriGiam;
+
     @Column(name = "giam_toi_da")
     private BigDecimal giamToiDa;
+
+    @Column(name = "kieu_giam_gia")
+    private String kieuGiamGia;
 
     @Column(name = "voucher")
     private String tenVoucher;

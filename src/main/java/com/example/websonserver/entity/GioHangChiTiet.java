@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-@Table(name = "gio_hang")
+@Table(name = "gio_hang_chi_tiet")
 @Entity
 @Data
 @AllArgsConstructor
@@ -16,16 +17,16 @@ public class GioHangChiTiet extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_gio_hang_chi_tiet")
-    private Long ma;
+    private Long maGHCT;
 
     @Column(name = "don_gia")
-    private DecimalFormat donGia;
+    private BigDecimal donGia;
 
     @Column(name = "so_luong")
     private Integer soLuong;
 
     @ManyToOne
-    @JoinColumn(name = "gio_hang")
+    @JoinColumn(name = "ma_gio_hang")
     private GioHang gioHang;
 
     @ManyToOne

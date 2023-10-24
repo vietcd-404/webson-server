@@ -1,6 +1,7 @@
 package com.example.websonserver.repository;
 
 import com.example.websonserver.entity.Loai;
+import com.example.websonserver.entity.SanPham;
 import com.example.websonserver.entity.ThuongHieu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,7 @@ public interface ThuongHieuRepository extends JpaRepository<ThuongHieu, Long> {
     @Query("UPDATE ThuongHieu a " +
             "SET a.xoa = true WHERE a.maThuongHieu = ?1")
     void delete(Long maThuongHieu);
+
+    @Query("SELECT sp FROM ThuongHieu sp WHERE sp.tenThuongHieu = ?1")
+    ThuongHieu findByTen(String tenThuongHieu);
 }

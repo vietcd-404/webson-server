@@ -5,29 +5,30 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-@Table(name = "khuyen_mai_spct")
+@Table(name = "voucher_chi_tiet")
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class KhuyenMaiChiTiet extends BaseEntity{
+public class VoucherChiTiet extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma")
-    private Long  ma;
+    @Column(name = "ma_voucher_chi_tiet")
+    private Long  maVoucherCT;
 
     @Column(name = "so_tien_con_lai")
-    private DecimalFormat soTienConLai;
+    private BigDecimal soTienConLai;
 
     @ManyToOne
-    @JoinColumn(name = "ma_khuyen_mai")
-    private KhuyenMai khuyenMai;
+    @JoinColumn(name = "ma_voucher")
+    private Voucher voucher;
 
     @ManyToOne
-    @JoinColumn(name = "ma_san_pham_chi_tiet")
-    private SanPhamChiTiet sanPhamChiTiet;
+    @JoinColumn(name = "ma_hoa_don")
+    private HoaDon hoaDon;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
