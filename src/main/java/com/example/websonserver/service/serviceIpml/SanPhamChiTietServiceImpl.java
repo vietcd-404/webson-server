@@ -100,9 +100,6 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             o.setLoai(loaiService.findByTen(request.getTenLoai()));
             o.setThuongHieu(thuongHieuService.findByTen(request.getTenThuongHieu()));
             o.setMauSac(mauSacService.findByTen(request.getTenMau()));
-//            o.setAnhSanPhamList(request.getAnhSanPhamList());
-            o.setTrangThai(request.getTrangThai());
-            o.setXoa(request.getXoa());
             return sanPhamChiTietRepository.save(o);
         }).orElse(null);
     }
