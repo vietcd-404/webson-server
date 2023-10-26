@@ -16,12 +16,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Repository
 public interface NguoiDungRepository extends JpaRepository<NguoiDung,Long> {
     public Page<NguoiDung> findAllByXoaFalse(Pageable pageable);
+
+    NguoiDung findByUsername(String username);
+    NguoiDung findByEmail(String email);
+    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
+    List<NguoiDung> findByTrangThaiAndAndNgayTaoBefore(int trangThai, LocalDateTime cutoffTime);
 
     @Transactional
     @Modifying
