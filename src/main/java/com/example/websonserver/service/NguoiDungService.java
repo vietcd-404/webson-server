@@ -19,6 +19,10 @@ public interface NguoiDungService {
     public void delete(Long id);
     public NguoiDung findById(String id);
     public List<NguoiDung> searchByKeyword(String keyword);
+    NguoiDung findByUsername(String username);
+    Boolean  existByUsername(String username);
+    Boolean  existByEmail(String email);
+    NguoiDung saveOrUpdate(NguoiDung nguoiDung);
 }
 
 

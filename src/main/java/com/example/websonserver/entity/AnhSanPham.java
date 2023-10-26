@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @Table(name = "anh_san_pham_chi_tiet")
 @Entity
@@ -19,7 +20,8 @@ public class AnhSanPham extends BaseEntity{
     @Column(name = "ma_anh")
     private Long maAnh;
 
-    @Column(name = "anh")
+    @Lob
+    @Column(name = "anh",length = 5000)
     private String anh;
 
     @Column(name = "trang_thai")

@@ -33,7 +33,7 @@ public class SanPhamChiTietResponse {
 
      String tenMau;
 
-     List<String> danhSachAnh;
+     List<AnhSanPham> danhSachAnh;  
 
      Integer trangThai;
 

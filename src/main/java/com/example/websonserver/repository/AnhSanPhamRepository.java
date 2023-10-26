@@ -16,14 +16,25 @@ import java.util.List;
 public interface AnhSanPhamRepository extends JpaRepository<AnhSanPham,Long> {
     public Page<AnhSanPham> findAllByXoaFalse(Pageable pageable);
 
-    public List<AnhSanPham> findAllByXoaFalse();
 
-    @Query("SELECT a.anh FROM AnhSanPham a WHERE a.sanPhamChiTiet.maSanPhamCT = :maSanPhamCT")
-    List<String> findImageUrlsBySanPhamChiTietId(@Param("maSanPhamCT") Long maSanPhamCT);
+
+    @Query("SELECT a FROM AnhSanPham a WHERE a.xoa = false AND a.trangThai = 0")
+    public Page<AnhSanPham> getAll(Pageable pageable);
+
+
+
+    @Query("SELECT a FROM AnhSanPham a WHERE a.sanPhamChiTiet.maSanPhamCT = :maSanPhamCT AND a.trangThai = 1")
+    List<AnhSanPham> findImageUrlsBySanPhamChiTietId(@Param("maSanPhamCT") Long maSanPhamCT);
 
     @Transactional
     @Modifying
     @Query("UPDATE AnhSanPham a " +
             "SET a.xoa = true WHERE a.maAnh = ?1")
     void delete(Long maAnh);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE AnhSanPham a " +
+            "SET a.trangThai = 0 WHERE a.maAnh = ?1")
+    void deleteAnh(Long maAnh);
 }

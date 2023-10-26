@@ -18,7 +18,7 @@ public class AnhSanPhamRequest {
     private Integer trangThai=0;
 
     public AnhSanPham map(AnhSanPham anhSanPham){
-        anhSanPham.setAnh(this.getAnh());
+//        anhSanPham.setAnh(this.getAnh());
         anhSanPham.setTrangThai(this.getTrangThai());
         anhSanPham.setXoa(this.getXoa());
         return anhSanPham;
