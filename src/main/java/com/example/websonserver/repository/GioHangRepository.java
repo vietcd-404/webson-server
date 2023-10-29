@@ -25,6 +25,9 @@ public interface GioHangRepository extends JpaRepository<GioHang,Long> {
     @Query("SELECT gh FROM GioHang gh WHERE gh.nguoiDung.email = ?1 AND gh.maGioHang = ?2")
     GioHang findCartByEmailAndCartId(String email, Long ma);
 
+    @Query("SELECT gh FROM GioHang gh WHERE gh.nguoiDung.maNguoiDung = ?1")
+    GioHang findByMaNguoiDung(Long maNguoiDung);
+
 //    @Query("SELECT gh FROM GioHang gh JOIN FETCH c.cartItems ci JOIN FETCH ci.product p WHERE p.id = ?1")
 //    List<GioHang> findCartsByProductId(Long productId);
 }

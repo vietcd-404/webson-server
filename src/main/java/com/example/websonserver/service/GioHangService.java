@@ -11,4 +11,5 @@ public interface GioHangService {
     public Page<GioHang> getAll(Pageable pageable);
     public void delete(Long id);
     GioHang findGioHangByMa(String id);
+    GioHang findByMaNguoiDung(Long maND);
 }

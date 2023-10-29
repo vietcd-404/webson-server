@@ -1,22 +1,25 @@
 package com.example.websonserver.service.serviceIpml;
 
-import com.example.websonserver.dto.response.GioHangChiTietResponse;
-import com.example.websonserver.dto.response.SanPhamChiTietResponse;
+import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.entity.GioHang;
 import com.example.websonserver.entity.GioHangChiTiet;
+import com.example.websonserver.entity.NguoiDung;
 import com.example.websonserver.entity.SanPhamChiTiet;
 import com.example.websonserver.repository.GioHangChiTietRepository;
+import com.example.websonserver.repository.GioHangRepository;
+import com.example.websonserver.repository.NguoiDungRepository;
 import com.example.websonserver.repository.SanPhamChiTietRepository;
 import com.example.websonserver.service.GioHangChiTietService;
 import com.example.websonserver.service.GioHangService;
 import com.example.websonserver.service.SanPhamChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GioHangChiTietServiceImpl implements GioHangChiTietService {
@@ -28,23 +31,43 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     SanPhamChiTietRepository sanPhamChiTietRepository;
     @Autowired
     GioHangChiTietRepository gioHangChiTietRepository;
+    @Autowired
+    NguoiDungRepository nguoiDungRepository;
+    @Autowired
+    GioHangRepository gioHangRepository;
+
     @Override
-    public GioHangChiTiet addProductToCart(String gioHangId, String SPCTId, String soLuong) {
+    public GioHangChiTiet addProductToCart(String SPCTId, String soLuong) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
         int quantity = Integer.parseInt(soLuong);
-        GioHang gioHang = gioHangService.findGioHangByMa(gioHangId);
+        GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
+        if (gioHang == null){
+            gioHang = new GioHang();
+            gioHang.setNguoiDung(nguoiDung);
+            gioHang.setTrangThai(0);
+            gioHang.setXoa(Boolean.FALSE);
+            gioHangRepository.save(gioHang);
+        }
         SanPhamChiTiet spct = sanPhamChiTietService.findById(SPCTId);
-        GioHangChiTiet ghct = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(Long.parseLong(gioHangId),Long.parseLong(SPCTId));
+        GioHangChiTiet ghctWithIdSPCT = null;
+        try{
+            ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(),Long.parseLong(SPCTId));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         if (spct == null){
             String errorMessage = "Không tìm thấy sản phẩm chi tiết.";
             throw new RuntimeException(errorMessage);
         }
-        if (ghct != null){
+        if (ghctWithIdSPCT != null){
             if (quantity > 0 && quantity<= spct.getSoLuongTon()){
-                ghct.setSoLuong(ghct.getSoLuong()+quantity);
+                ghctWithIdSPCT.setSoLuong(ghctWithIdSPCT.getSoLuong()+quantity);
                 spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
 
                 // Cập nhật thông tin vào cơ sở dữ liệu
-                gioHangChiTietRepository.save(ghct);
+                gioHangChiTietRepository.save(ghctWithIdSPCT);
                 sanPhamChiTietRepository.save(spct);
             }else {
                 String errorMessage = "Số lượng không hợp lệ.";
@@ -56,27 +79,21 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                     .donGia(spct.getGiaBan())
                     .gioHang(gioHang)
                     .sanPhamChiTiet(spct)
-                    .trangThai(1)
+                    .trangThai(0)
                     .xoa(Boolean.FALSE)
                     .build();
-            gioHangChiTietRepository.save(newGHCT);
             gioHangChiTietRepository.save(newGHCT);
             // Đảm bảo cập nhật số lượng tồn kho
             spct.setSoLuongTon(spct.getSoLuongTon() - quantity);
             sanPhamChiTietRepository.save(spct);
-            ghct = newGHCT;
+            ghctWithIdSPCT = newGHCT;
         }
-        return ghct;
+        return ghctWithIdSPCT;
     }
 
     @Override
-    public List<GioHangChiTiet> getAllCarts() {
-        List<GioHangChiTiet> listGHCT = gioHangChiTietRepository.findAll();
-        if (listGHCT.size() == 0){
-            String errorMessage = "Không có giỏ hàng chi tiết nào.";
-            throw new RuntimeException(errorMessage);
-        }
-        return listGHCT;
+    public Page<GioHangChiTiet> getAllCarts(Pageable pageable) {
+        return gioHangChiTietRepository.findAllByXoaFalse(pageable);
     }
 
     @Override
@@ -85,41 +102,55 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     }
 
     @Override
-    public GioHangChiTiet updateProductQuantityInCart(String gioHangId, String SPCTId, String soLuong) {
+    public GioHangChiTiet updateProductQuantityInCart(String SPCTId, String soLuong) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
         int quantity = Integer.parseInt(soLuong);
-        GioHang gioHang = gioHangService.findGioHangByMa(gioHangId);
+        GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
         SanPhamChiTiet spct = sanPhamChiTietService.findById(SPCTId);
-        GioHangChiTiet ghct = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(Long.parseLong(gioHangId),Long.parseLong(SPCTId));
+        GioHangChiTiet ghctWithIdSPCT = null;
+        try{
+            ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(),Long.parseLong(SPCTId));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         if (spct == null){
             String errorMessage = "Không tìm thấy sản phẩm chi tiết.";
             throw new RuntimeException(errorMessage);
         }
-        if (ghct != null){
-            spct.setSoLuongTon(spct.getSoLuongTon()+ ghct.getSoLuong());
+        if (ghctWithIdSPCT != null){
+            spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
             // Cập nhật thông tin vào cơ sở dữ liệu
             sanPhamChiTietRepository.save(spct);
             if (quantity > 0 && quantity<= spct.getSoLuongTon()){
-                ghct.setSoLuong(quantity);
+                ghctWithIdSPCT.setSoLuong(quantity);
                 spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
                 // Cập nhật thông tin vào cơ sở dữ liệu
-                gioHangChiTietRepository.save(ghct);
+                gioHangChiTietRepository.save(ghctWithIdSPCT);
                 sanPhamChiTietRepository.save(spct);
             }else {
                 String errorMessage = "Số lượng không hợp lệ.";
                 throw new RuntimeException(errorMessage);
             }
+        }else {
+            String errorMessage = "Không tìm thấy giỏ hàng trong giỏ hàng.";
+            throw new RuntimeException(errorMessage);
         }
-
-        return ghct;
+        return ghctWithIdSPCT;
     }
 
     @Override
-    public void updateProductInCarts(Long cartId, Long productId) {
-
+    public void updateProductInCarts(SanPhamChiTietRequest request, Long maSPCT) {
+        sanPhamChiTietService.update(request,maSPCT);
     }
 
     @Override
-    public String deleteProductFromCart(Long cartId, Long productId) {
-        return null;
+    public void deleteProductFromCart(Long maSPCT) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
+        GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
+        gioHangChiTietRepository.delete(gioHang.getMaGioHang(),maSPCT);
     }
 }

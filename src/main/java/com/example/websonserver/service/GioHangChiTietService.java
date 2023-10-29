@@ -1,20 +1,22 @@
 package com.example.websonserver.service;
 
-import com.example.websonserver.dto.response.GioHangChiTietResponse;
+import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.entity.GioHangChiTiet;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface GioHangChiTietService {
-    GioHangChiTiet addProductToCart(String gioHangId, String SPCTId, String soLuong);
+    GioHangChiTiet addProductToCart(String SPCTId, String soLuong);
 
-    List<GioHangChiTiet> getAllCarts();
+    Page<GioHangChiTiet> getAllCarts(Pageable pageable);
 
     GioHangChiTiet getCart(String emailId, Long cartId);
 
-    GioHangChiTiet updateProductQuantityInCart(String gioHangId, String SPCTId, String soLuong);
+    GioHangChiTiet updateProductQuantityInCart(String SPCTId, String soLuong);
 
-    void updateProductInCarts(Long cartId, Long productId);
+    void updateProductInCarts(SanPhamChiTietRequest request, Long maSPCT);
 
-    String deleteProductFromCart(Long cartId, Long productId);
+    void deleteProductFromCart(Long maSPCT);
 }

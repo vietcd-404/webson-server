@@ -52,4 +52,9 @@ public class GioHangServiceImpl implements GioHangService {
         GioHang gioHang = gioHangOptional.orElse(null);
         return gioHang;
     }
+
+    @Override
+    public GioHang findByMaNguoiDung(Long maND) {
+        return gioHangRepository.findByMaNguoiDung(maND);
+    }
 }
