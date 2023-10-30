@@ -62,7 +62,7 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .exceptionHandling()
-                .authenticationEntryPoint(authEntryPoint)
+//                .authenticationEntryPoint(authEntryPoint)
                 .accessDeniedHandler(accessDenied);
         http.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
