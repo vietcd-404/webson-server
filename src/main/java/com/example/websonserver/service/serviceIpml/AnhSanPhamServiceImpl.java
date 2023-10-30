@@ -75,8 +75,13 @@ public class AnhSanPhamServiceImpl implements AnhSanPhamService {
 
 
     @Override
-    public List<AnhSanPham> getImagesBySanPhamChiTiet(Long maSanPhamCT) {
-        List<AnhSanPham> imageUrls = anhSanPhamRepository.findImageUrlsBySanPhamChiTietId(maSanPhamCT);
+    public List<String> getImagesBySanPhamChiTiet(Long maSanPhamCT) {
+        List<String> imageUrls = anhSanPhamRepository.findImageUrlsBySanPhamChiTietId(maSanPhamCT);
+        return imageUrls;
+    }
+
+    public List<AnhSanPham> getImage(Long maSanPhamCT) {
+        List<AnhSanPham> imageUrls = anhSanPhamRepository.findImage(maSanPhamCT);
         return imageUrls;
     }
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
@@ -29,10 +30,10 @@ public class HoaDon extends BaseEntity{
     private String tenNguoiNhan;
 
     @Column(name = "tien_sau_khi_giam_gia")
-    private DecimalFormat tienGiam;
+    private BigDecimal tienGiam;
 
     @Column(name = "tong_tien")
-    private DecimalFormat tongTien;
+    private BigDecimal tongTien;
 
     @Column(name = "dia_chi")
     private String DiaChi;

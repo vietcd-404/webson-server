@@ -58,6 +58,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/staff/**").hasAnyAuthority(VaiTroNguoiDung.ROLE_STAFF.name(),VaiTroNguoiDung.ROLE_ADMIN.name())
                 .requestMatchers("/api/auth/**").permitAll() //cho phép vào không cần đăng nhập
                 .requestMatchers("/api/account/**").permitAll()
+//                .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .exceptionHandling()
