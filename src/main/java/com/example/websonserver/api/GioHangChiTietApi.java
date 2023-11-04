@@ -47,6 +47,7 @@ public class GioHangChiTietApi {
     public ResponseEntity<?> getAll(Pageable pageable){
         return ResponseEntity.ok(gioHangChiTietService.getAllCarts(pageable).getContent());
     }
+
     @DeleteMapping("/delete")
     public ResponseEntity<?> delete(@RequestParam("SPCTId") String SPCTId) {
         gioHangChiTietService.deleteProductFromCart(Long.valueOf(SPCTId));

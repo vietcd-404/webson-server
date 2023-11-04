@@ -8,9 +8,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
 @Repository
 public interface PhuongThucThanhToanRepository extends JpaRepository<PhuongThucThanhToan,Long> {
     public Page<PhuongThucThanhToan> findAllByXoaFalse(Pageable pageable);
+    public PhuongThucThanhToan findByTenPhuongThuc(String tenPhuongThuc);
+
 
     @Transactional
     @Modifying

@@ -149,6 +149,7 @@ public class AuthApi {
                        " OTP đã hết hạn. Vui lòng yêu cầu OTP mới."));
             }
         }
+
         NguoiDung nguoiDung = nguoiDungService.findByEmail(email);
         if (nguoiDung == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email không tồn tại"));
@@ -160,5 +161,10 @@ public class AuthApi {
         otpMap.put(email, newOtp);
         emailService.send(email, newOtp);
         return ResponseEntity.ok(new MessageResponse("Đã gửi lại thành công"));
+    }
+
+    @GetMapping("/ok")
+    public ResponseEntity<?> ok(){
+        return ResponseEntity.ok("Ok nha");
     }
 }
