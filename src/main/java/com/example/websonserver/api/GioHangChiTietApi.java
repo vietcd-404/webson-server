@@ -1,9 +1,11 @@
 package com.example.websonserver.api;
 
+import com.example.websonserver.dto.response.GioHangChiTietResponse;
 import com.example.websonserver.entity.GioHangChiTiet;
 import com.example.websonserver.service.GioHangChiTietService;
 import com.example.websonserver.service.UserDetailService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,7 @@ public class GioHangChiTietApi {
             @RequestParam("SPCTId") String SPCTId,
             @RequestParam("soLuong") String soLuong) {
         try {
-            GioHangChiTiet ghct = gioHangChiTietService.addProductToCart(SPCTId, soLuong);
+            GioHangChiTietResponse ghct = gioHangChiTietService.addProductToCart(SPCTId, soLuong);
             return ResponseEntity.ok(ghct);
         } catch (Exception e) {
             String errorMessage = e.getMessage();
@@ -36,7 +38,7 @@ public class GioHangChiTietApi {
             @RequestParam("SPCTId") String SPCTId,
             @RequestParam("soLuong") String soLuong) {
         try {
-            GioHangChiTiet ghct = gioHangChiTietService.updateProductQuantityInCart(SPCTId, soLuong);
+            GioHangChiTietResponse ghct = gioHangChiTietService.updateProductQuantityInCart(SPCTId, soLuong);
             return ResponseEntity.ok(ghct);
         } catch (Exception e) {
             String errorMessage = e.getMessage();
@@ -45,7 +47,11 @@ public class GioHangChiTietApi {
     }
     @GetMapping("/getAll")
     public ResponseEntity<?> getAll(Pageable pageable){
-        return ResponseEntity.ok(gioHangChiTietService.getAllCarts(pageable).getContent());
+        return ResponseEntity.ok(gioHangChiTietService.getAllCarts(pageable));
+    }
+    @GetMapping("/getOne")
+    public ResponseEntity<?> getByNGuoiDung(Pageable pageable,HttpSession session){
+        return ResponseEntity.ok(gioHangChiTietService.getCart(pageable,session));
     }
 
     @DeleteMapping("/delete")

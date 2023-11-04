@@ -1,12 +1,25 @@
 package com.example.websonserver.dto.response;
 
+import com.example.websonserver.entity.SanPhamChiTiet;
+import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+
 @Data
+@Builder
 public class GioHangChiTietResponse {
-    private Long maGHCT;
-    private double tongTien;
-    private List<SanPhamReponse> listSanPhamResponse = new ArrayList<>();
+    private BigDecimal donGia;
+
+    private Integer soLuong;
+
+    private Integer phanTramGiam;
+
+    private String tenSanPham;
+
+    private String tenLoai;
+
+    private String tenThuongHieu;
+
+    private String tenMauSac;
 }
