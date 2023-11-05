@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface MauSacRepository extends JpaRepository<MauSac,Long> {
-    public Page<MauSac> findAllByXoaFalse(Pageable pageable);
+    public Page<MauSac> findAllByXoaFalseOrderByMaMauDesc(Pageable pageable);
+
 
     @Transactional
     @Modifying

@@ -36,7 +36,7 @@ public class LoaiServiceIpml implements LoaiService {
 
     @Override
     public Page<Loai> getAll(Pageable pageable) {
-        return loaiRepository.findAllByXoaFalse(pageable);
+        return loaiRepository.findAllByXoaFalseOrderByMaLoaiDesc(pageable);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class MauSacServiceImpl implements MauSacService {
 
     @Override
     public Page<MauSac> getAll(Pageable pageable) {
-        return mauSacRepository.findAllByXoaFalse(pageable);
+        return mauSacRepository.findAllByXoaFalseOrderByMaMauDesc(pageable);
     }
 
     @Override

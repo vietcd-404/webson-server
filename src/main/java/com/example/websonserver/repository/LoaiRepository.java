@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface LoaiRepository extends JpaRepository<Loai,Long> {
 
-    public Page<Loai> findAllByXoaFalse(Pageable pageable);
+    public Page<Loai> findAllByXoaFalseOrderByMaLoaiDesc(Pageable pageable);
 
     @Transactional
     @Modifying

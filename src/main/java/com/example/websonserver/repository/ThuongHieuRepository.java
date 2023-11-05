@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ThuongHieuRepository extends JpaRepository<ThuongHieu, Long> {
-    public Page<ThuongHieu> findAllByXoaFalse(Pageable pageable);
+    public Page<ThuongHieu> findAllByXoaFalseOrderByMaThuongHieuDesc(Pageable pageable);
 
     @Transactional
     @Modifying

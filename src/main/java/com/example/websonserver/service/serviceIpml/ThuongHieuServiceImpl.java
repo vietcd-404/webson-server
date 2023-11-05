@@ -38,7 +38,7 @@ public class ThuongHieuServiceImpl implements ThuongHieuService {
 
     @Override
     public Page<ThuongHieu> getAll(Pageable pageable) {
-        return thuongHieuRepository.findAllByXoaFalse(pageable);
+        return thuongHieuRepository.findAllByXoaFalseOrderByMaThuongHieuDesc(pageable);
     }
 
     @Override
