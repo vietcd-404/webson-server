@@ -38,7 +38,7 @@ public class SanPhamServiceImpl implements SanPhamService {
 
     @Override
     public Page<SanPham> getAll(Pageable pageable) {
-        return sanPhamRepository.findAllByXoaFalse(pageable);
+        return sanPhamRepository.findAllByXoaFalseOrderByMaSanPhamDesc(pageable);
     }
 
     @Override

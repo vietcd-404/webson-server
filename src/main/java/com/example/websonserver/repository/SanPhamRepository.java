@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
-    public Page<SanPham> findAllByXoaFalse(Pageable pageable);
+    public Page<SanPham> findAllByXoaFalseOrderByMaSanPhamDesc(Pageable pageable);
 
     @Transactional
     @Modifying
