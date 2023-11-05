@@ -1,8 +1,10 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.response.GioHangChiTietResponse;
+import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.service.GioHangCTSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +27,15 @@ public class GioHangChiTietSessionApi {
     }
 
     @GetMapping("/cart")
-    public List<GioHangChiTietResponse> viewCart(Model model, HttpSession session) {
+    public ResponseEntity<?> viewCart(Model model, HttpSession session) {
+        Map<String, Integer> map = (Map<String, Integer>) session.getAttribute("sessionCart");
+        if (map == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Giỏ hàng trống"));
+        }
         Map<String, Integer> sessionCart = gioHangCTSessionService.getSessionCart(session);
         model.addAttribute("sessionCart", sessionCart);
         List<GioHangChiTietResponse> sessionCartDTO= gioHangCTSessionService.getSessionCartDTO(session);
-        return sessionCartDTO;
+        return ResponseEntity.ok(sessionCartDTO);
     }
 
     @PostMapping("/addToCart")
@@ -54,9 +60,9 @@ public class GioHangChiTietSessionApi {
         return "redirect:/cart";
     }
 
-//    @PostMapping("/clearCart")
-//    public String clearCart(HttpSession session) {
-//        gioHangCTSessionService.clearSessionCart(session);
-//        return "redirect:/cart";
-//    }
+    @PostMapping("/clearCart")
+    public String clearCart(HttpSession session) {
+        gioHangCTSessionService.clearSessionCart(session);
+        return "redirect:/cart";
+    }
 }
