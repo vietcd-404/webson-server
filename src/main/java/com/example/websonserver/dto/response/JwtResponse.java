@@ -11,12 +11,14 @@ public class JwtResponse {
     private String vaiTro;
 
 
+
     public JwtResponse(String token, String username, String email, String sdt, String vaiTro) {
         this.token = token;
         this.username = username;
         this.email = email;
         this.sdt = sdt;
         this.vaiTro = vaiTro;
+
     }
 
     public String getType() {
