@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 @Table(name = "hoa_don_chi_tiet")
@@ -19,7 +20,7 @@ public class HoaDonChiTiet extends BaseEntity{
     private Long maHDCT;
 
     @Column(name = "don_gia")
-    private DecimalFormat donGia;
+    private BigDecimal donGia;
 
     @Column(name = "so_luong")
     private Integer soLuong;

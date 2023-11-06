@@ -1,7 +1,6 @@
 package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.LoaiResquest;
-import com.example.websonserver.dto.response.LoaiResponse;
 import com.example.websonserver.entity.Loai;
 import com.example.websonserver.repository.LoaiRepository;
 import com.example.websonserver.service.LoaiService;
@@ -44,5 +43,17 @@ public class LoaiServiceIpml implements LoaiService {
     @Transient
     public void delete(Long id) {
          loaiRepository.delete(id);
+    }
+
+    @Override
+    public Loai findByMa(String ma) {
+        Optional<Loai> loaiOptional =loaiRepository.findById(Long.valueOf(ma));
+        Loai loai = loaiOptional.orElse(null);
+        return loai;
+    }
+
+    @Override
+    public Loai findByTen(String ten) {
+        return loaiRepository.findByTen(ten);
     }
 }

@@ -1,12 +1,16 @@
 package com.example.websonserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "hoa_don")
 @Entity
@@ -29,24 +33,39 @@ public class HoaDon extends BaseEntity{
     private String tenNguoiNhan;
 
     @Column(name = "tien_sau_khi_giam_gia")
-    private DecimalFormat tienGiam;
+    private BigDecimal tienGiam;
 
     @Column(name = "tong_tien")
-    private DecimalFormat tongTien;
+    private BigDecimal tongTien;
 
     @Column(name = "dia_chi")
-    private String DiaChi;
+    private String diaChi;
+
+    @Column(name = "sdt")
+    private String sdt;
 
     @ManyToOne
     @JoinColumn(name = "ma_phuong_thuc_thanh_toan")
+    @JsonIgnore
     private PhuongThucThanhToan phuongThucThanhToan;
 
     @ManyToOne
     @JoinColumn(name = "ma_nguoi_dung")
     private NguoiDung nguoiDung;
 
+    @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<HoaDonChiTiet> invoiceDetails = new ArrayList<>();
+
+    @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<VoucherChiTiet> voucherChiTiets = new ArrayList<>();
+
     @Column(name = "trang_thai")
-    private Integer trangThai;
+    private Integer trangThai; //Trạng thái giao hàng
+
+    @Column(name = "thanh_toan")
+    private Integer thanhToan; //Trạng thái thanh toán
 
     @Column(name = "xoa")
     private Boolean xoa;

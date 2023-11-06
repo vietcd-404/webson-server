@@ -2,19 +2,21 @@ package com.example.websonserver.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Table(name = "nguoi_dung")
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NguoiDung extends BaseEntity{
+public class NguoiDung extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_nguoi_dung")
@@ -30,6 +32,7 @@ public class NguoiDung extends BaseEntity{
     private String anh;
 
     @Column(name = "ngay_sinh")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date ngaySinh;
 
     @Column(name = "username")
@@ -37,6 +40,9 @@ public class NguoiDung extends BaseEntity{
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "sdt")
+    private String sdt;
 
     @Column(name = "ho")
     private String ho;
@@ -53,8 +59,7 @@ public class NguoiDung extends BaseEntity{
     @Column(name = "xoa")
     private Boolean xoa;
 
-    @ManyToMany
-    @JoinTable(name = "nguoi_dung_vai_tro", joinColumns = @JoinColumn(name = "ma_nguoi_dung"),
-            inverseJoinColumns = @JoinColumn(name = "ma_vai_tro"))
-    private Set<VaiTro> roles = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "ma_vai_tro")
+    private VaiTro vaiTro;
 }

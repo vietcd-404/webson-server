@@ -1,0 +1,276 @@
+package com.example.websonserver.service.serviceIpml;
+
+import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.ThuocTinhRequest;
+import com.example.websonserver.dto.response.SanPhamChiTietRes;
+import com.example.websonserver.dto.response.SanPhamChiTietResponse;
+import com.example.websonserver.entity.*;
+import com.example.websonserver.repository.AnhSanPhamRepository;
+import com.example.websonserver.repository.SanPhamChiTietRepository;
+import com.example.websonserver.repository.SanPhamRepository;
+import com.example.websonserver.service.*;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+import java.util.*;
+
+@Service
+public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
+    @Autowired
+    private SanPhamChiTietRepository sanPhamChiTietRepository;
+
+    @Autowired
+    private AnhSanPhamRepository anhSanPhamRepository;
+
+    @Autowired
+    private AnhSanPhamServiceImpl anhSanPhamService;
+
+    @Autowired
+    private SanPhamService sanPhamService;
+
+    @Autowired
+    private SanPhamRepository sanPhamRepository;
+
+    @Autowired
+    private LoaiService loaiService;
+
+    @Autowired
+    private ThuongHieuService thuongHieuService;
+
+    @Autowired
+    private MauSacService mauSacService;
+
+    @Override
+    public SanPhamChiTiet createOne(SanPhamChiTietRequest request) {
+        SanPham getSPByTenSP = sanPhamService.findByTen(request.getTenSanPham());
+        SanPhamChiTiet spct = new SanPhamChiTiet();
+
+        spct.setGiaBan(request.getGiaBan());
+        spct.setPhanTramGiam(request.getPhanTramGiam());
+        spct.setSoLuongTon(request.getSoLuongTon());
+        spct.setSanPham(getSPByTenSP);
+        spct.setLoai(loaiService.findByTen(request.getTenLoai()));
+        spct.setThuongHieu(thuongHieuService.findByTen(request.getTenThuongHieu()));
+        spct.setMauSac(mauSacService.findByTen(request.getTenMau()));
+        spct.setTrangThai(request.getTrangThai());
+        spct.setXoa(request.getXoa());
+
+        List<AnhSanPham> danhSachAnh = new ArrayList<>();
+        List<Long> danhSachAnhIds = request.getDanhSachAnh();
+        if (danhSachAnhIds != null && !danhSachAnhIds.isEmpty()) {
+            danhSachAnh = anhSanPhamRepository.findAllById(danhSachAnhIds);
+        }
+        spct.setAnhSanPhamList(danhSachAnh);
+        return sanPhamChiTietRepository.save(spct);
+    }
+
+    @Override
+    public List<SanPhamChiTiet> createList(List<SanPhamChiTietRequest> listRequest) {
+        List<SanPhamChiTiet> spctList = new ArrayList<>();
+        for (SanPhamChiTietRequest x : listRequest) {
+            SanPham getSPByTenSP = sanPhamService.findByTen(x.getTenSanPham());
+            SanPhamChiTiet spct = null;
+            if (getSPByTenSP != null) {
+                spct = SanPhamChiTiet.builder()
+                        .giaBan(x.getGiaBan())
+                        .phanTramGiam(x.getPhanTramGiam())
+                        .soLuongTon(x.getSoLuongTon())
+                        .sanPham(getSPByTenSP)
+                        .loai(loaiService.findByTen(x.getTenLoai()))
+                        .thuongHieu(thuongHieuService.findByTen(x.getTenThuongHieu()))
+                        .mauSac(mauSacService.findByTen(x.getTenMau()))
+//                    .anhSanPhamList(request.getAnhSanPhamList())
+                        .trangThai(x.getTrangThai())
+                        .xoa(x.getXoa())
+                        .build();
+            }
+            spctList.add(spct);
+        }
+        return sanPhamChiTietRepository.saveAll(spctList);
+    }
+
+
+    @Override
+    public SanPhamChiTiet update(SanPhamChiTietRequest request, Long id) {
+        Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(id);
+        return optional.map(o -> {
+            o.setGiaBan(request.getGiaBan());
+            o.setPhanTramGiam(request.getPhanTramGiam());
+            o.setSoLuongTon((request.getSoLuongTon()));
+            o.setSanPham(sanPhamService.findByTen(request.getTenSanPham()));
+            o.setLoai(loaiService.findByTen(request.getTenLoai()));
+            o.setThuongHieu(thuongHieuService.findByTen(request.getTenThuongHieu()));
+            o.setMauSac(mauSacService.findByTen(request.getTenMau()));
+            return sanPhamChiTietRepository.save(o);
+        }).orElse(null);
+    }
+
+    @Override
+    public Page<SanPhamChiTiet> getAll(Pageable pageable) {
+        return sanPhamChiTietRepository.findAllByXoaFalse(pageable);
+    }
+
+    @Override
+    public List<SanPhamChiTietResponse> getAllCT() {
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalse();
+        List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            List<AnhSanPham> imageUrls = anhSanPhamService.getImage(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setDanhSachAnh(imageUrls);
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
+    }
+
+    @Override
+    public void delete(Long id) {
+        sanPhamChiTietRepository.delete(id);
+    }
+
+    @Override
+    public SanPhamChiTiet findById(String id) {
+        Optional<SanPhamChiTiet> anhsp = sanPhamChiTietRepository.findById(Long.parseLong(id));
+        SanPhamChiTiet spct = anhsp.orElse(null);
+        return spct;
+    }
+
+    @Override
+    public Page<SanPhamChiTietRes> getAllSanPham(Long maSanPham, Long maLoai, Long maThuongHieu, Long maMau, int page, int size, BigDecimal giaThap, BigDecimal giaCao, String sortBy, String sortDirection) {
+        return null;
+    }
+
+
+    public Page<SanPhamChiTietRes> getAllSanPhamUser(ThuocTinhRequest request,
+                                                     int page, int size) {
+        Long maLoai = request.getMaLoai();
+        Long maSanPham = request.getMaSanPham();
+        Long maMau = request.getMaMau();
+        Long maThuongHieu = request.getMaThuongHieu();
+        Integer trangThai = request.getTrangThai();
+        BigDecimal giaCao = request.getGiaCao();
+        BigDecimal giaThap = request.getGiaThap();
+        Boolean giaTangDan = request.getGiaTangDan();
+        Boolean giaGiamDan = request.getGiaGiamDan();
+        String tenSanPham = request.getTenSanPham();
+
+
+        Specification<SanPhamChiTiet> receptionistSpecification = (root, cq, cb) -> {
+            Predicate predicate = cb.conjunction();
+
+            if (tenSanPham != null && !tenSanPham.isEmpty()) {
+                predicate = cb.and(predicate, cb.like(root.get("sanPham").get("tenSanPham"), "%" + tenSanPham + "%"));
+            }
+            if (maLoai != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("loai").get("maLoai"), maLoai));
+            }
+            if (maSanPham != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("sanPham").get("maSanPham"), maSanPham));
+            }
+            if (maMau != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("mauSac").get("maMau"), maMau));
+            }
+            if (maThuongHieu != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("thuongHieu").get("maThuongHieu"), maThuongHieu));
+            }
+            if (giaThap != null && giaCao != null) {
+                predicate = cb.and(predicate, cb.between(root.get("giaBan"), giaThap, giaCao));
+            }
+            predicate = cb.and(predicate, cb.equal(root.get("xoa"), false));
+            return predicate;
+        };
+
+        Sort sort = null;
+         sort = Sort.by(Sort.Direction.DESC, "ngayTao");
+        if (giaGiamDan != null && giaGiamDan) {
+            sort = Sort.by(Sort.Direction.DESC, "giaBan");
+        } else if (giaTangDan != null && giaTangDan) {
+            sort = Sort.by(Sort.Direction.ASC, "giaBan");
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, size,sort);
+        Page<SanPhamChiTietRes> sanPhamChiTietPage = sanPhamChiTietRepository
+                .findAll(receptionistSpecification, pageable)
+                .map(sanPhamChiTiets -> new SanPhamChiTietRes(
+                                        sanPhamChiTiets.getMaSanPhamCT(),
+                                        sanPhamChiTiets.getGiaBan(),
+                                        sanPhamChiTiets.getPhanTramGiam(),
+                                        sanPhamChiTiets.getSoLuongTon(),
+                                        sanPhamChiTiets.getSanPham().getTenSanPham(),
+                                        sanPhamChiTiets.getLoai().getTenLoai(),
+                                        sanPhamChiTiets.getThuongHieu().getTenThuongHieu(),
+                                        sanPhamChiTiets.getMauSac().getTenMau(),
+                                        sanPhamChiTiets.getTrangThai(),
+                                        anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiets.getMaSanPhamCT())
+                                ));
+
+        return sanPhamChiTietPage;
+    }
+
+    public void addImagesToProductChiTiet(Long productId, List<Long> imageIds) {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy sản phẩm chi tiết với mã: " + productId));
+
+        List<AnhSanPham> images = anhSanPhamRepository.findAllById(imageIds);
+
+        // Liên kết các ảnh với sản phẩm chi tiết
+        for (AnhSanPham image : images) {
+            image.setSanPhamChiTiet(sanPhamChiTiet);
+            image.setTrangThai(1);
+        }
+
+        // Lưu danh sách ảnh vào cơ sở dữ liệu
+        anhSanPhamRepository.saveAll(images);
+    }
+
+    public void themNhieuAnhChoSanPham(Long sanPhamId, List<Long> danhSachIdAnh) {
+        SanPhamChiTiet sanPham = sanPhamChiTietRepository.findById(sanPhamId).orElse(null);
+        if (sanPham != null) {
+            for (Long anhId : danhSachIdAnh) {
+                AnhSanPham anh = anhSanPhamRepository.findById(anhId).orElse(null);
+                if (anh != null) {
+                    sanPham.getAnhSanPhamList().add(anh);
+                }
+            }
+            sanPhamChiTietRepository.save(sanPham);
+
+        } else {
+
+        }
+    }
+
+    public SanPhamChiTiet layAnh(Long anhId) {
+        return sanPhamChiTietRepository.findById(anhId).orElse(null);
+    }
+}
