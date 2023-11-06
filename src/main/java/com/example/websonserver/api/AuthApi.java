@@ -14,13 +14,18 @@ import com.example.websonserver.jwt.JwtTokenProvider;
 import com.example.websonserver.service.serviceIpml.NguoiDungServiceImpl;
 import com.example.websonserver.service.serviceIpml.VaiTroServiceImpl;
 import com.example.websonserver.util.OtpUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -53,31 +58,43 @@ public class AuthApi {
     @Autowired
     private EmailService emailService;
 
-    private static final int OTP_TTL_MINUTES = 3;
+    private static final int OTP_TTL_MINUTES = 2;
 
     private Map<String, String> otpMap = new HashMap<>();
 
     @PostMapping("/signin")
-    public ResponseEntity<?> login (@RequestBody LoginRequest loginRequest){
-        Authentication authentication =authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
-        //Sinh ra JWT trả vê client
-        String token = jwtTokenProvider.genToken(customUserDetail);
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+            if (customUserDetail.getTrangThai() == 0) {
+                // Tài khoản chưa kích hoạt, trả về phản hồi tài khoản chưa kích hoạt
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Tài khoản chưa kích hoạt"));
+            }
+            //Sinh ra JWT trả vê client
+            String token = jwtTokenProvider.genToken(customUserDetail);
 
-        //Lấy các quyền của user
-        String role = customUserDetail.getAuthorities().iterator().next().getAuthority();
-//
-        return ResponseEntity.ok(new JwtResponse(token,customUserDetail.getUsername(),customUserDetail.getSdt(),
-                customUserDetail.getEmail(),role));
+            //Lấy các quyền của user
+            String role = customUserDetail.getAuthorities().iterator().next().getAuthority();
+
+            return ResponseEntity.ok(new JwtResponse(token, customUserDetail.getUsername(), customUserDetail.getSdt(),
+                    customUserDetail.getEmail(), role));
+        } catch (AuthenticationException e) {
+            // Xử lý trường hợp sai tài khoản hoặc mật khẩu
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Sai tài khoản hoặc mật khẩu"));
+        }
 
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<?> signup(@RequestBody @Valid SignupRequest signupRequest, BindingResult result) {
 
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
         if (nguoiDungService.existByUsername(signupRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username đã tồn tại"));
         }
@@ -98,25 +115,25 @@ public class AuthApi {
         String str = signupRequest.getVaiTro();
         VaiTro vaiTro = null;
         if (str == null) {
-             vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_USER).orElseThrow(() -> new RuntimeException("Role is not found"));
+            vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_USER).orElseThrow(() -> new RuntimeException("Vai trò không tồn tại"));
         } else {
             if (signupRequest.getVaiTro().equals("admin")) {
-                 vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_ADMIN)
-                        .orElseThrow(() -> new RuntimeException("Role is not found"));
+                vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_ADMIN)
+                        .orElseThrow(() -> new RuntimeException("Vai trò không tồn tại"));
             } else if (signupRequest.getVaiTro().equals("user")) {
-                 vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_USER)
-                        .orElseThrow(() -> new RuntimeException("Role is not found"));
+                vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Vai trò không tồn tại"));
             } else if (signupRequest.getVaiTro().equals("staff")) {
-                 vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_STAFF)
-                        .orElseThrow(() -> new RuntimeException("Role is not found"));
+                vaiTro = vaiTroService.findByRoleName(VaiTroNguoiDung.ROLE_STAFF)
+                        .orElseThrow(() -> new RuntimeException("Vai trò không tồn tại"));
             }
         }
         users.setVaiTro(vaiTro);
         nguoiDungService.saveOrUpdate(users);
-        return ResponseEntity.badRequest().body(new MessageResponse("Thêm thành công"));
+        return ResponseEntity.ok(new MessageResponse("Đăng kí thành công"));
     }
 
-    @PostMapping ("/active")
+    @PostMapping("/active")
     public ResponseEntity<?> active(@RequestParam("email") String email, @RequestParam("otp") String otp) {
         String storedOtp = otpMap.get(email);
         System.out.println("Stored OTP: " + storedOtp);
@@ -125,7 +142,7 @@ public class AuthApi {
         if (nguoiDung == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email không tồn tại"));
         }
-        if (nguoiDung.getTrangThai()==1){
+        if (nguoiDung.getTrangThai() == 1) {
             return ResponseEntity.badRequest().body(new MessageResponse("Đã kích hoạt"));
         }
         if (storedOtp == null || !storedOtp.equals(otp)) {
@@ -144,9 +161,9 @@ public class AuthApi {
             LocalDateTime currentTime = LocalDateTime.now();
             if (currentTime.isBefore(otpExpirationTime)) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Mã OTP đã được gửi đi và vẫn còn hiệu lực."));
-            }else if (currentTime.isAfter(otpExpirationTime)) {
+            } else if (currentTime.isAfter(otpExpirationTime)) {
                 return ResponseEntity.badRequest().body(new MessageResponse(
-                       " OTP đã hết hạn. Vui lòng yêu cầu OTP mới."));
+                        " OTP đã hết hạn. Vui lòng yêu cầu OTP mới."));
             }
         }
 
@@ -154,7 +171,7 @@ public class AuthApi {
         if (nguoiDung == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email không tồn tại"));
         }
-        if (nguoiDung.getTrangThai()==1){
+        if (nguoiDung.getTrangThai() == 1) {
             return ResponseEntity.badRequest().body(new MessageResponse("Đã kích hoạt"));
         }
         String newOtp = otpUtil.generateOtp();
@@ -164,7 +181,7 @@ public class AuthApi {
     }
 
     @GetMapping("/ok")
-    public ResponseEntity<?> ok(){
+    public ResponseEntity<?> ok() {
         return ResponseEntity.ok("Ok nha");
     }
 }

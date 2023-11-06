@@ -24,9 +24,9 @@ public class UserDetailService implements UserDetailsService {
        if (users==null){
            throw new UsernameNotFoundException("User not found");
        }
-        if (users.getTrangThai()==0) {
-            throw new DisabledException("Tài khoản chưa kích hoạt");
-        }
+//        if (users.getTrangThai()==0) {
+//            throw new DisabledException("Tài khoản chưa kích hoạt");
+//        }
        return CustomUserDetail.mapUserDetail(users);
     }
 }

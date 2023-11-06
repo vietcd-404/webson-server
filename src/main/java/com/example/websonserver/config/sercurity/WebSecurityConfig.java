@@ -61,10 +61,10 @@ public class WebSecurityConfig {
 //                .requestMatchers("/api/vnpay/**").permitAll()
                 .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http
-                .exceptionHandling()
+//        http
+//                .exceptionHandling()
 //                .authenticationEntryPoint(authEntryPoint)
-                .accessDeniedHandler(accessDenied);
+//                .accessDeniedHandler(accessDenied);
         http.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
