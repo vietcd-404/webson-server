@@ -23,8 +23,11 @@ public interface AnhSanPhamRepository extends JpaRepository<AnhSanPham,Long> {
 
 
 
+    @Query("SELECT a.anh FROM AnhSanPham a WHERE a.sanPhamChiTiet.maSanPhamCT = :maSanPhamCT AND a.trangThai = 1")
+    List<String> findImageUrlsBySanPhamChiTietId(@Param("maSanPhamCT") Long maSanPhamCT);
+
     @Query("SELECT a FROM AnhSanPham a WHERE a.sanPhamChiTiet.maSanPhamCT = :maSanPhamCT AND a.trangThai = 1")
-    List<AnhSanPham> findImageUrlsBySanPhamChiTietId(@Param("maSanPhamCT") Long maSanPhamCT);
+    List<AnhSanPham> findImage(@Param("maSanPhamCT") Long maSanPhamCT);
 
     @Transactional
     @Modifying

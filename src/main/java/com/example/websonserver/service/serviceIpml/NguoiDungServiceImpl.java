@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,5 +71,39 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Override
     public List<NguoiDung> searchByKeyword(String keyword) {
         return nguoiDungRepository.searchByKeyword(keyword);
+    }
+
+    @Override
+    public NguoiDung findByUsername(String username) {
+        return nguoiDungRepository.findByUsername(username);
+    }
+
+    @Override
+    public Boolean existByUsername(String username) {
+        return nguoiDungRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Boolean existByEmail(String email) {
+        return nguoiDungRepository.existsByEmail(email);
+    }
+
+    @Override
+    public NguoiDung saveOrUpdate(NguoiDung nguoiDung) {
+        return nguoiDungRepository.save(nguoiDung);
+    }
+
+    public NguoiDung findByEmail(String email) {
+        return nguoiDungRepository.findByEmail(email);
+    }
+
+    public List<NguoiDung> findUnactivatedAccounts(LocalDateTime cutoffTime) {
+        int trangThai = 0;
+        return nguoiDungRepository.findByTrangThaiAndAndNgayTaoBefore(trangThai, cutoffTime);
+    }
+
+    public boolean deleteUser(Long id){
+        nguoiDungRepository.deleteById(id);
+        return true;
     }
 }

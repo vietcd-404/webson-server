@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/diaChi")
+@RequestMapping("/api/user/dia-chi")
 public class DiaChiApi {
     @Autowired
     private DiaChiServiceImpl diaChiService;

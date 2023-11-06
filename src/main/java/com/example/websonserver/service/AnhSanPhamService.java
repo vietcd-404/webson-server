@@ -14,5 +14,5 @@ public interface AnhSanPhamService {
     public Page<AnhSanPham> getAll(Pageable pageable);
     public void delete(Long id);
     public AnhSanPham findById(String id);
-    List<AnhSanPham> getImagesBySanPhamChiTiet(Long maSanPhamCT);
+    List<String> getImagesBySanPhamChiTiet(Long maSanPhamCT);
 }

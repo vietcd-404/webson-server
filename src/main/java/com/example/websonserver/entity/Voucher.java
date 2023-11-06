@@ -1,5 +1,6 @@
 package com.example.websonserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "voucher")
 @Entity
@@ -44,6 +47,10 @@ public class Voucher extends BaseEntity implements Serializable {
 
     @Column(name = "so_luong")
     private Integer soLuong;
+
+    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<VoucherChiTiet> voucherChiTiets = new ArrayList<>();
 
     @Column(name = "mo_ta")
     private String moTa;
