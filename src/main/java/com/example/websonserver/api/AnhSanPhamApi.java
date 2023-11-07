@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/admin/anh")
+@RequestMapping("/api/anh")
 public class AnhSanPhamApi {
     @Autowired
     private AnhSanPhamServiceImpl anhSanPhamService;
@@ -34,7 +34,7 @@ public class AnhSanPhamApi {
 
     @GetMapping("/tat-ca")
     public ResponseEntity<?> getAllAnh(Pageable pageable) {
-        return ResponseEntity.ok(anhSanPhamService.getAllAnh(pageable).getContent());
+        return ResponseEntity.ok(anhSanPhamService.getAllAnh(pageable));
     }
 
     @GetMapping("/{ma}")
@@ -101,8 +101,8 @@ public class AnhSanPhamApi {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
-        anhSanPhamService.uploadAnh(file);
-        return ResponseEntity.ok("Image uploaded with ID: ");
+    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
+
+        return ResponseEntity.ok(anhSanPhamService.uploadAnh(file));
     }
 }
