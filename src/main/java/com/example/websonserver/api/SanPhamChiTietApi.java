@@ -37,7 +37,7 @@ public class SanPhamChiTietApi {
     private AnhSanPhamServiceImpl anhSanPhamService;
 
 
-    @GetMapping("/user/san-pham/get-all")
+    @GetMapping("/guest/san-pham/get-all")
     public ResponseEntity<?> getAllSanPham(
             @RequestParam(value = "maLoai", required = false) Long maLoai,
             @RequestParam(value = "maSanPham", required = false) Long maSanPham,
