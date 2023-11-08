@@ -59,7 +59,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll() //cho phép vào không cần đăng nhập
                 .requestMatchers("/api/account/**").permitAll()
                 .requestMatchers("/api/vnpay/**").permitAll()
-//                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/api/anh/**").permitAll()
+                .requestMatchers("/api/guest/**").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http
 //                .exceptionHandling()

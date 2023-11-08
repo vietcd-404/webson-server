@@ -37,7 +37,7 @@ public class SanPhamChiTietApi {
     private AnhSanPhamServiceImpl anhSanPhamService;
 
 
-    @GetMapping("/user/san-pham/get-all")
+    @GetMapping("/guest/san-pham/get-all")
     public ResponseEntity<?> getAllSanPham(
             @RequestParam(value = "maLoai", required = false) Long maLoai,
             @RequestParam(value = "maSanPham", required = false) Long maSanPham,
@@ -45,7 +45,7 @@ public class SanPhamChiTietApi {
             @RequestParam(value = "maMau", required = false) Long maMau,
             @RequestParam(value = "tenSanPham", required = false) String tenSanPham,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "size", defaultValue = "9") int size,
             @RequestParam(value = "giaCao", required = false) BigDecimal giaCao,
             @RequestParam(value = "giaThap", required = false) BigDecimal giaThap,
             @RequestParam(value = "giaGiamDan", required = false) Boolean giaGiamDan,
@@ -61,7 +61,7 @@ public class SanPhamChiTietApi {
         request.setGiaGiamDan(giaGiamDan);
         request.setGiaTangDan(giaTangDan);
         request.setGiaThap(giaThap);
-        return ResponseEntity.ok(sanPhamChiTietService.getAllSanPhamUser(request,page,size).getContent());
+        return ResponseEntity.ok(sanPhamChiTietService.getAllSanPhamUser(request,page,size));
     }
 
     @GetMapping("/admin/san-pham-chi-tiet")
