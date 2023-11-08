@@ -4,21 +4,22 @@ import com.example.websonserver.dto.request.VoucherRequest;
 import com.example.websonserver.service.serviceIpml.VoucherServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/voucher")
+@RequestMapping("/api/admin/voucher")
 public class VoucherApi {
 
     @Autowired
     VoucherServiceImpl voucherService;
 
     @GetMapping
-    public ResponseEntity<?> getAllPage(){
-        return ResponseEntity.ok(voucherService.getAllVoucher());
+    public ResponseEntity<?> getAllPage(Pageable pageable){
+        return ResponseEntity.ok(voucherService.getAllVoucher(pageable).getContent());
     }
 
     @PostMapping("/add")

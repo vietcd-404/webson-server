@@ -5,6 +5,8 @@ import com.example.websonserver.entity.Voucher;
 import com.example.websonserver.repository.VoucherRepository;
 import com.example.websonserver.service.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,8 +25,8 @@ public class VoucherServiceImpl implements VoucherService {
 
 
     @Override
-    public List<Voucher> getAllVoucher() {
-        return voucherRepository.findAllByXoaFalse();
+    public Page<Voucher> getAllVoucher(Pageable pageable) {
+        return voucherRepository.findAllByXoaFalseOrderByMaVoucherDesc(pageable);
     }
 
     @Override

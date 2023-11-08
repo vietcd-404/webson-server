@@ -116,7 +116,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     @Override
     public List<SanPhamChiTietResponse> getAllCT() {
-        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalse();
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseOrderByMaSanPhamCTDesc();
         List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
         for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
             SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
