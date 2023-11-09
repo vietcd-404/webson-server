@@ -20,8 +20,8 @@ public class AnhSanPham extends BaseEntity{
     @Column(name = "ma_anh")
     private Long maAnh;
 
-    @Lob
-    @Column(name = "anh",length = 5000)
+    @Lob // Large Object
+    @Column(name = "anh")
     private String anh;
 
     @Column(name = "trang_thai")
