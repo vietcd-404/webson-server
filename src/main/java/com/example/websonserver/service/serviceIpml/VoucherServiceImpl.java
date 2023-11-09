@@ -49,6 +49,8 @@ public class VoucherServiceImpl implements VoucherService {
         return optional.map(o->{
             o.setGiamToiDa(vcr.getGiamToiDa());
             o.setTenVoucher(vcr.getTenVoucher());
+            o.setKieuGiamGia(vcr.getKieuGiamGia());
+            o.setGiaTriGiam(vcr.getGiaTriGiam());
             o.setThoiGianBatDau(vcr.getThoiGianBatDau());
             o.setThoiGianKetThuc(vcr.getThoiGianKetThuc());
             o.setSoLuong(vcr.getSoLuong());

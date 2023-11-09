@@ -1,6 +1,7 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.VoucherRequest;
+import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.service.serviceIpml.VoucherServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+
 @CrossOrigin("*")
-@RequestMapping("/api/voucher")
+@RequestMapping("/api/admin/voucher")
+@RestController
 public class VoucherApi {
 
     @Autowired
@@ -44,13 +46,11 @@ public class VoucherApi {
         }
     }
 
-    @PutMapping("/delete/{ma}")
+    @DeleteMapping("/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma){
-        if(voucherService.deleteVoucher(ma)!=0){
-            return ResponseEntity.ok("Xóa thành công");
-        }else{
-            return ResponseEntity.ok("Xóa thất bại");
-        }
+        voucherService.deleteVoucher(ma);
+            return ResponseEntity.ok(new MessageResponse("Xóa thành công"));
+
     }
 
 }

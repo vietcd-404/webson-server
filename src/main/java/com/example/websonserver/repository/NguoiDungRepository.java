@@ -1,5 +1,6 @@
 package com.example.websonserver.repository;
 
+import com.example.websonserver.dto.response.NguoiDungResponse;
 import com.example.websonserver.entity.NguoiDung;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,8 @@ import java.util.List;
 
 @Repository
 public interface NguoiDungRepository extends JpaRepository<NguoiDung,Long> {
-    public Page<NguoiDung> findAllByXoaFalse(Pageable pageable);
+    public List<NguoiDung> findAllByXoaFalse();
+    public Page<NguoiDungResponse> findAllByXoaFalse(Pageable pageable);
 
     NguoiDung findByUsername(String username);
     NguoiDung findByEmail(String email);
