@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/nguoiDung")
+@RequestMapping("/api/admin/nguoi-dung")
 public class NguoiDungApi {
     @Autowired
     private NguoiDungServiceImpl nguoiDungService;
     @GetMapping
-    public ResponseEntity<?> getAll(Pageable pageable) {
-        return ResponseEntity.ok(nguoiDungService.getAll(pageable).getContent());
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(nguoiDungService.getAll());
     }
     @GetMapping("/{ma}")
     public ResponseEntity<?> getById(@PathVariable String ma) {

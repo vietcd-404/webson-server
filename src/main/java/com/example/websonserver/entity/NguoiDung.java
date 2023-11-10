@@ -1,5 +1,6 @@
 package com.example.websonserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Table(name = "nguoi_dung")
@@ -32,7 +34,6 @@ public class NguoiDung extends BaseEntity implements Serializable {
     private String anh;
 
     @Column(name = "ngay_sinh")
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date ngaySinh;
 
     @Column(name = "username")

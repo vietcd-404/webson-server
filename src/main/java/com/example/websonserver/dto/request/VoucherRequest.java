@@ -3,6 +3,7 @@ package com.example.websonserver.dto.request;
 import com.example.websonserver.entity.Voucher;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,12 +16,16 @@ public class VoucherRequest {
     @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
     private BigDecimal giamToiDa;
 
+    private BigDecimal giaTriGiam;
+
+    private String kieuGiamGia;
+
     private String tenVoucher;
 
-
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime thoiGianBatDau;
 
-
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime thoiGianKetThuc;
 
 
@@ -37,6 +42,8 @@ public class VoucherRequest {
     public Voucher map(Voucher voucher){
         voucher.setGiamToiDa(this.getGiamToiDa());
         voucher.setTenVoucher(this.getTenVoucher());
+        voucher.setKieuGiamGia(this.getKieuGiamGia());
+        voucher.setGiaTriGiam(this.getGiaTriGiam());
         voucher.setThoiGianBatDau(this.getThoiGianBatDau());
         voucher.setThoiGianKetThuc(this.getThoiGianKetThuc());
         voucher.setSoLuong(this.getSoLuong());
