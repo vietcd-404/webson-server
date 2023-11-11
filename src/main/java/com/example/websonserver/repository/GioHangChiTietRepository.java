@@ -16,7 +16,7 @@ public interface GioHangChiTietRepository extends JpaRepository<GioHangChiTiet,L
     @Query("SELECT ghct FROM GioHangChiTiet ghct WHERE ghct.gioHang.maGioHang = ?1 AND ghct.sanPhamChiTiet.maSanPhamCT = ?2")
     GioHangChiTiet findCartItemByMaGHAndMaSPCT(Long gioHangId, Long spctId);
 
-    @Query("SELECT ghct FROM GioHangChiTiet ghct WHERE ghct.gioHang.maGioHang = ?1")
+    @Query("SELECT ghct FROM GioHangChiTiet ghct WHERE ghct.gioHang.maGioHang = ?1 AND ghct.xoa = false ")
     Page<GioHangChiTiet> findByMaGioHang(Long ma,Pageable pageable);
 
     @Transactional

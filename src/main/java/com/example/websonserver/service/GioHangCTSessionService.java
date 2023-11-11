@@ -27,10 +27,22 @@ public class GioHangCTSessionService {
         if (sessionCart.containsKey(SPCTId)) {
             int currentQuantity = sessionCart.get(SPCTId);
             int newQuantity = currentQuantity + quantity;
-            sessionCart.put(SPCTId, newQuantity);
+            SanPhamChiTiet spctCheckWithMaSPCTSession = sanPhamChiTietService.findById(SPCTId);
+            if (currentQuantity > 0 && newQuantity <= spctCheckWithMaSPCTSession.getSoLuongTon()){
+                sessionCart.put(SPCTId, newQuantity);
+            } else {
+                String errorMessage = "Số lượng không hợp lệ.";
+                throw new RuntimeException(errorMessage);
+            }
         } else {
             // Nếu sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
-            sessionCart.put(SPCTId, quantity);
+            SanPhamChiTiet spctCheckWithMaSPCTSession = sanPhamChiTietService.findById(SPCTId);
+            if (quantity > 0 && quantity <= spctCheckWithMaSPCTSession.getSoLuongTon()){
+                sessionCart.put(SPCTId, quantity);
+            } else {
+                String errorMessage = "Số lượng không hợp lệ.";
+                throw new RuntimeException(errorMessage);
+            }
         }
 
         // Lưu lại giỏ hàng vào session
@@ -40,8 +52,14 @@ public class GioHangCTSessionService {
         Map<String, Integer> sessionCart = (Map<String, Integer>) session.getAttribute("sessionCart");
 
         if (sessionCart != null && sessionCart.containsKey(SPCTId)) {
-            sessionCart.put(SPCTId, newQuantity);
-            session.setAttribute("sessionCart", sessionCart);
+            SanPhamChiTiet spctCheckWithMaSPCTSession = sanPhamChiTietService.findById(SPCTId);
+            if (newQuantity > 0 && newQuantity <= spctCheckWithMaSPCTSession.getSoLuongTon()){
+                sessionCart.put(SPCTId, newQuantity);
+                session.setAttribute("sessionCart", sessionCart);
+            } else {
+                String errorMessage = "Số lượng không hợp lệ.";
+                throw new RuntimeException(errorMessage);
+            }
         }
     }
     public void updateProductInSessionCart(HttpSession session, String oldSPCTId, String newSPCTId, int newQuantity) {
