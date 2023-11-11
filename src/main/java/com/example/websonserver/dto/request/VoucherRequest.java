@@ -13,9 +13,10 @@ import java.time.LocalDateTime;
 public class VoucherRequest {
     private Long maVoucher;
 
-    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
-    private BigDecimal giamToiDa;
+//    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
+//    private BigDecimal giamToiDa;
 
+    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
     private BigDecimal giaTriGiam;
 
     private String kieuGiamGia;
@@ -50,7 +51,6 @@ public class VoucherRequest {
         return true;
     }
     public Voucher map(Voucher voucher){
-        voucher.setGiamToiDa(this.getGiamToiDa());
         voucher.setTenVoucher(this.getTenVoucher());
         voucher.setKieuGiamGia(this.getKieuGiamGia());
         voucher.setGiaTriGiam(this.getGiaTriGiam());

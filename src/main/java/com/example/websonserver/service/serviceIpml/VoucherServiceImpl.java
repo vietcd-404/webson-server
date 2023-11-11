@@ -47,7 +47,6 @@ public class VoucherServiceImpl implements VoucherService {
     public Voucher update(Long id, VoucherRequest vcr) {
         Optional<Voucher> optional = voucherRepository.findByMaVoucher(id);
         return optional.map(o->{
-            o.setGiamToiDa(vcr.getGiamToiDa());
             o.setTenVoucher(vcr.getTenVoucher());
             o.setKieuGiamGia(vcr.getKieuGiamGia());
             o.setGiaTriGiam(vcr.getGiaTriGiam());
