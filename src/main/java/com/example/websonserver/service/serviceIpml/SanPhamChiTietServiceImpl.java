@@ -2,6 +2,7 @@ package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.dto.request.ThuocTinhRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.*;
@@ -169,6 +170,15 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     @Override
     public Page<SanPhamChiTietRes> getAllSanPham(Long maSanPham, Long maLoai, Long maThuongHieu, Long maMau, int page, int size, BigDecimal giaThap, BigDecimal giaCao, String sortBy, String sortDirection) {
         return null;
+    }
+
+    @Override
+    public SanPhamChiTiet updateStatus(UpdateTrangThai request, Long id) {
+        Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(id);
+        return optional.map(o -> {
+            o.setTrangThai(request.getTrangThai());
+            return sanPhamChiTietRepository.save(o);
+        }).orElse(null);
     }
 
 

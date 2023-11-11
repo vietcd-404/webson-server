@@ -22,7 +22,7 @@ public class DiaChiRequest {
 
     private Boolean xoa = false;
 
-    private Integer trangThai=0;
+    private Integer trangThai=1;
 
     public DiaChi map(DiaChi dc){
         dc.setDiaChi(this.getDiaChi());

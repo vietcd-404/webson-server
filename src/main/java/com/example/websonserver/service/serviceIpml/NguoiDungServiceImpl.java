@@ -1,6 +1,7 @@
 package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.NguoiDungRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.NguoiDungResponse;
 import com.example.websonserver.entity.NguoiDung;
 import com.example.websonserver.entity.VaiTro;
@@ -69,7 +70,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             o.setHo(request.getHo());
             o.setTenDem(request.getTenDem());
             o.setTen(request.getTen());
-            o.setTrangThai(request.getTrangThai());
+//            o.setTrangThai(request.getTrangThai());
             o.setXoa(request.getXoa());
             o.setVaiTro(VaiTro.builder().maVaiTro(Long.valueOf(request.getVaiTro())).build());
             return nguoiDungRepository.save(o);
@@ -78,7 +79,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
     @Override
     public List<NguoiDungResponse> getAll() {
-        List<NguoiDung> nguoiDungList = this.nguoiDungRepository.findAllByXoaFalse();
+        List<NguoiDung> nguoiDungList = this.nguoiDungRepository.findAllByXoaFalseOrderByNgayTaoDesc();
         List<NguoiDungResponse> nguoiDungResponses = new ArrayList<>();
 
         for (NguoiDung nguoiDung : nguoiDungList) {
@@ -94,11 +95,12 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             response.setTen(nguoiDung.getTen());
             response.setGioiTinh(nguoiDung.getGioiTinh());
             response.setTrangThai(nguoiDung.getTrangThai());
-            VaiTro vaiTro = nguoiDung.getVaiTro();
-            if (vaiTro != null) {
-                VaiTroNguoiDung tenVaiTro = vaiTro.getTenVaiTro();
-                response.setVaiTro(tenVaiTro.name());
-            }
+            response.setVaiTro(String.valueOf(nguoiDung.getVaiTro().getMaVaiTro()));
+//            VaiTro vaiTro = nguoiDung.getVaiTro();
+//            if (vaiTro != null) {
+//                VaiTroNguoiDung tenVaiTro = vaiTro.getTenVaiTro();
+//                response.setVaiTro(tenVaiTro.name());
+//            }
             nguoiDungResponses.add(response);
         }
         return nguoiDungResponses;
@@ -140,6 +142,15 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Override
     public NguoiDung saveOrUpdate(NguoiDung nguoiDung) {
         return nguoiDungRepository.save(nguoiDung);
+    }
+
+    @Override
+    public NguoiDung updateStatus(UpdateTrangThai updateTrangThai, Long maNguoiDung) {
+        Optional<NguoiDung> optional = nguoiDungRepository.findById(maNguoiDung);
+        return optional.map(o -> {
+      o.setTrangThai(updateTrangThai.getTrangThai());
+            return nguoiDungRepository.save(o);
+        }).orElse(null);
     }
 
     public NguoiDung findByEmail(String email) {

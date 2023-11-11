@@ -2,6 +2,7 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.MauSacRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
 import com.example.websonserver.service.serviceIpml.MauSacServiceImpl;
 import jakarta.validation.Valid;
@@ -43,5 +44,18 @@ public class MauSacApi {
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         mauSacServiceImpl.delete(ma);
         return ResponseEntity.ok("oke nha");
+    }
+
+    @PutMapping("/sua/{ma}")
+    public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(mauSacServiceImpl.updateStatus(trangThai, ma));
+    }
+
+    @GetMapping("/load-mau")
+    public ResponseEntity<?> loadMau() {
+        return ResponseEntity.ok(mauSacServiceImpl.fillComboSpctByNMau());
     }
 }

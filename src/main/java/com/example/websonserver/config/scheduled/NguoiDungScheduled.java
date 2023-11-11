@@ -19,11 +19,11 @@ public class NguoiDungScheduled {
     @Autowired
     private NguoiDungServiceImpl nguoiDungService;
 
-    @Scheduled(fixedDelay = 4 * 60 * 1000)
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void deleteUnactivatedAccounts() {
 
         log.info("Xóa người dùng :: Start");
-        LocalDateTime cutoffTime = LocalDateTime.now().minusMinutes(4);
+        LocalDateTime cutoffTime = LocalDateTime.now().minusMinutes(60);
         List<NguoiDung> xoaNguoiDungChuaKichHoat = nguoiDungService.findUnactivatedAccounts(cutoffTime);
 
         xoaNguoiDungChuaKichHoat.stream()

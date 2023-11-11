@@ -1,6 +1,7 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.LoaiResquest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class LoaiApi {
     public ResponseEntity<?> getAll(Pageable pageable) {
             return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
     }
+
+
 
     @PostMapping("/add")
     public ResponseEntity<?> saveLoai(@Valid @RequestBody LoaiResquest loai, BindingResult result) {
@@ -41,5 +44,18 @@ public class LoaiApi {
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         loaiServiceIpml.delete(ma);
         return ResponseEntity.ok("oke nha");
+    }
+
+    @PutMapping("/sua/{ma}")
+    public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(loaiServiceIpml.updateStatusLoai(trangThai, ma));
+    }
+
+    @GetMapping("/load-loai")
+    public ResponseEntity<?> loadAll() {
+        return ResponseEntity.ok(loaiServiceIpml.fillComboSpct());
     }
 }

@@ -2,6 +2,7 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.dto.request.ThuocTinhRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.AnhSanPham;
@@ -134,6 +135,14 @@ public class SanPhamChiTietApi {
     public ResponseEntity<List<AnhSanPham>> getImages(@PathVariable Long maSanPhamCT) {
         List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
         return new ResponseEntity<>(imageUrls, HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/san-pham-chi-tiet/sua/{ma}")
+    public ResponseEntity<?> update(@Valid @RequestBody UpdateTrangThai request, @PathVariable Long ma, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
     }
 
 

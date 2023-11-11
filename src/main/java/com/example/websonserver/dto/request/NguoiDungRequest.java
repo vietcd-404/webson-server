@@ -25,6 +25,9 @@ public class NguoiDungRequest {
 
     @NotBlank(message = "Không bỏ trống email")
     @NotNull
+    @NotBlank(message = "Không bỏ trống email")
+    @NotNull
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$", message = "Email không hợp lệ")
     private String email;
 
     @NotBlank(message = "Không bỏ trống giới tính")
@@ -68,7 +71,7 @@ public class NguoiDungRequest {
 
     private String vaiTro;
 
-    private Integer trangThai = 0;
+    private Integer trangThai=1;
 
 //    public NguoiDung map(NguoiDung nd) throws ParseException {
 //        nd.setEmail(this.getEmail());

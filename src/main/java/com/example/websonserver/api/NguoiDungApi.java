@@ -1,14 +1,16 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.NguoiDungRequest;
-import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
+import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.service.serviceIpml.NguoiDungServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
@@ -28,6 +30,12 @@ public class NguoiDungApi {
     public ResponseEntity<?> save(@Valid @RequestBody NguoiDungRequest request, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        if (nguoiDungService.existByUsername(request.getUsername())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Username đã tồn tại"));
+        }
+        if (nguoiDungService.existByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
         }
         return ResponseEntity.ok(nguoiDungService.create(request));
     }
@@ -50,4 +58,10 @@ public class NguoiDungApi {
     public ResponseEntity<?> searchByKeyword(@PathVariable String keyword) {
         return ResponseEntity.ok(nguoiDungService.searchByKeyword(keyword));
     }
+
+    @PutMapping("/sua/{ma}")
+    public ResponseEntity updateStatus(@RequestBody UpdateTrangThai trangThai, @PathVariable Long ma) {
+        return ResponseEntity.ok(nguoiDungService.updateStatus(trangThai, ma));
+    }
+
 }
