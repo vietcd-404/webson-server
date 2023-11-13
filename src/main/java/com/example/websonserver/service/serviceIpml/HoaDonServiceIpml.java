@@ -153,9 +153,6 @@ public class HoaDonServiceIpml implements HoaDonService {
             case Constants.STATUS_ORDER.DANG_GIAO:
                 hoaDon.setTrangThai(Constants.STATUS_ORDER.DANG_GIAO);
                 break;
-            case Constants.STATUS_ORDER.DA_GIAO:
-                hoaDon.setTrangThai(Constants.STATUS_ORDER.DA_GIAO);
-                break;
             case Constants.STATUS_ORDER.HOAN_THANH:
                 hoaDon.setTrangThai(Constants.STATUS_ORDER.HOAN_THANH);
                 break;

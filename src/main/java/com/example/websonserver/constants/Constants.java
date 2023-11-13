@@ -13,9 +13,8 @@ public class Constants {
         public static final int CHO_XAC_NHAN = 0;
         public static final int XAC_NHAN = 1;
         public static final int DANG_GIAO = 2;
-        public static final int DA_GIAO = 3;
-        public static final int HOAN_THANH = 4;
-        public static final int DA_HUY = 5;
+        public static final int HOAN_THANH = 3;
+        public static final int DA_HUY = 4;
     }
     public static class STATUS_PAYMENT{
         public static final int CHUA_THANH_TOAN = 0;
