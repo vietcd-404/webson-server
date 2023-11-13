@@ -2,6 +2,7 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.HoaDonRequest;
 import com.example.websonserver.dto.request.NguoiDungSessionRequest;
+import com.example.websonserver.dto.response.HoaDonResponse;
 import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.dto.response.ThanhToanRes;
 import com.example.websonserver.entity.GioHang;
@@ -16,6 +17,7 @@ import com.example.websonserver.repository.VoucherRepository;
 import com.example.websonserver.service.GioHangCTSessionService;
 import com.example.websonserver.service.HoaDonService;
 import com.example.websonserver.service.UserDetailService;
+import com.example.websonserver.service.serviceIpml.HoaDonServiceIpml;
 import com.example.websonserver.service.serviceIpml.VnPayServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,7 +37,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class HoaDonApi {
     @Autowired
-    private HoaDonService hoaDonService;
+    private HoaDonServiceIpml hoaDonService;
     @Autowired
     private HoaDonRepository hoaDonRepository;
 
@@ -82,6 +85,21 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.getOrdersByUser(principal, trangThai));
     }
 
+    @GetMapping("/user/order/get-hoadon/all")
+    public ResponseEntity<?> getHoaDonAll(Principal principal) {
+        return ResponseEntity.ok(hoaDonService.getOrdersAllOk(principal));
+    }
+
+    @GetMapping("/user/order/get-hoadon/detail/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonDetail(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.orderDetail(maHoaDon));
+    }
+
+    @GetMapping("/user/order/get-hoadon/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonAll(Principal principal,@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetail(principal,maHoaDon));
+    }
+
     @PutMapping("/user/order/update-quantity")
     public ResponseEntity<?> updateQuantity(
             Principal principal,
@@ -93,6 +111,7 @@ public class HoaDonApi {
         }
         return ResponseEntity.ok(hdct);
     }
+
     @PutMapping("/user/order/huy-hoa-don")
     public ResponseEntity<?> huyHoaDon(
             @RequestParam("maHD") String maHD) {

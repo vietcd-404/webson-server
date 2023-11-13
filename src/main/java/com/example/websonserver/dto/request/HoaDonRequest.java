@@ -29,6 +29,12 @@ public class HoaDonRequest {
     private BigDecimal tienGiam;
     private BigDecimal tongTien;
 
+    private String tinh;
+
+    private String huyen;
+
+    private String xa;
+
     @NotBlank(message = "Không bỏ trống địa chỉ")
     private String diaChi;
 

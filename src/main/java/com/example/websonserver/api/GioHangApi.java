@@ -10,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/gio-hang")
+@RequestMapping("/api/admin/gio-hang")
 public class GioHangApi {
     @Autowired
     private GioHangService gioHangService;
@@ -39,4 +41,6 @@ public class GioHangApi {
         gioHangService.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
+
+
 }

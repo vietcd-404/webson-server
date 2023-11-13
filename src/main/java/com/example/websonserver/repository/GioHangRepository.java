@@ -2,6 +2,7 @@ package com.example.websonserver.repository;
 
 import com.example.websonserver.entity.GioHang;
 import com.example.websonserver.entity.MauSac;
+import com.example.websonserver.entity.NguoiDung;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,9 @@ import java.util.List;
 @Repository
 public interface GioHangRepository extends JpaRepository<GioHang,Long> {
     public Page<GioHang> findAllByXoaFalse(Pageable pageable);
+    List<GioHang> findByNguoiDung (NguoiDung nguoiDung);
+
+
 
     @Transactional
     @Modifying

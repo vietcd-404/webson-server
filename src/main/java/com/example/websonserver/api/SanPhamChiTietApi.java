@@ -126,5 +126,15 @@ public class SanPhamChiTietApi {
         return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
 
+    @GetMapping("/guest/san-pham/{ma}")
+    public ResponseEntity<?> getDetailById(@PathVariable String ma) {
+        return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
+    }
+    @GetMapping("/guest/san-pham-chi-tiet/{maSanPhamCT}/images")
+    public ResponseEntity<List<AnhSanPham>> getImagesByGuest(@PathVariable Long maSanPhamCT) {
+        List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
+        return new ResponseEntity<>(imageUrls, HttpStatus.OK);
+    }
+
 
 }
