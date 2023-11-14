@@ -2,10 +2,7 @@ package com.example.websonserver.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,6 +46,7 @@ public class SanPhamChiTiet extends BaseEntity {
 
     @OneToMany(mappedBy = "sanPhamChiTiet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
+    @ToString.Exclude
     private List<AnhSanPham> anhSanPhamList;
 
     @Column(name = "trang_thai")

@@ -72,6 +72,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         hoaDon.setNguoiDung(gioHang.getNguoiDung());
         List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
         BigDecimal tongTien = BigDecimal.ZERO;
+
             for (GioHangChiTiet gioHangChiTiet : gioHang.getCartDetails()) {
                 HoaDonChiTiet chiTiet1 = new HoaDonChiTiet();
                 chiTiet1.setHoaDon(hoaDon);
@@ -82,6 +83,20 @@ public class HoaDonServiceIpml implements HoaDonService {
                 hoaDonChiTietList.add(chiTiet1);
                 tongTien = tongTien.add(gioHangChiTiet.getDonGia().multiply(BigDecimal.valueOf(chiTiet1.getSoLuong())));
             }
+        for (GioHangChiTiet gioHangChiTiet : gioHang.getCartDetails()) {
+            SanPhamChiTiet spct = sanPhamChiTietService.findById(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT().toString());
+            HoaDonChiTiet chiTiet1 = new HoaDonChiTiet();
+            chiTiet1.setHoaDon(hoaDon);
+            chiTiet1.setDonGia(gioHangChiTiet.getDonGia());
+            chiTiet1.setSanPhamChiTiet(gioHangChiTiet.getSanPhamChiTiet());
+            chiTiet1.setSoLuong(gioHangChiTiet.getSoLuong());
+            chiTiet1.setTrangThai(gioHangChiTiet.getTrangThai());
+            hoaDonChiTietList.add(chiTiet1);
+            tongTien = tongTien.add(gioHangChiTiet.getDonGia().multiply(BigDecimal.valueOf(chiTiet1.getSoLuong())));
+            //trừ số lượng tồn
+            spct.setSoLuongTon(spct.getSoLuongTon()- gioHangChiTiet.getSoLuong());
+            sanPhamChiTietRepository.save(spct);
+        }
         Voucher voucher = null;
         if (request.getMaVoucher() != null) {
             voucher = voucherRepository.findById(request.getMaVoucher()).orElse(null);
@@ -318,6 +333,9 @@ public class HoaDonServiceIpml implements HoaDonService {
             chiTiet1.setTrangThai(0);
             tongTien = tongTien.add(spct.getGiaBan().multiply(BigDecimal.valueOf(map.get(x))));
             lstHDCT.add(chiTiet1);
+            // trừ số lượng tồn
+            spct.setSoLuongTon(spct.getSoLuongTon()-map.get(x));
+                sanPhamChiTietRepository.save(spct);
         }
         gioHangCTSessionService.clearSessionCart(session);
         hd.setPhuongThucThanhToan(phuongThucThanhToan);
