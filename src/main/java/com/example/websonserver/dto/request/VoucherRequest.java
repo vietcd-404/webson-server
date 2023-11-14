@@ -13,9 +13,10 @@ import java.time.LocalDateTime;
 public class VoucherRequest {
     private Long maVoucher;
 
-    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
-    private BigDecimal giamToiDa;
+//    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
+//    private BigDecimal giamToiDa;
 
+    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
     private BigDecimal giaTriGiam;
 
     private String kieuGiamGia;
@@ -39,13 +40,27 @@ public class VoucherRequest {
 
     private Boolean xoa=false;
 
+    public boolean isValidDateRange() {
+        if (thoiGianBatDau == null || thoiGianKetThuc == null) {
+            return false; // Trường hợp bất thường, không thể kiểm tra
+        }
+
+        if (thoiGianBatDau.isAfter(thoiGianKetThuc)) {
+            return false;
+        }
+        return true;
+    }
     public Voucher map(Voucher voucher){
-        voucher.setGiamToiDa(this.getGiamToiDa());
         voucher.setTenVoucher(this.getTenVoucher());
         voucher.setKieuGiamGia(this.getKieuGiamGia());
         voucher.setGiaTriGiam(this.getGiaTriGiam());
-        voucher.setThoiGianBatDau(this.getThoiGianBatDau());
-        voucher.setThoiGianKetThuc(this.getThoiGianKetThuc());
+        if (!isValidDateRange()) {
+            // Xử lý khi ngày bắt đầu lớn hơn ngày kết thúc
+            System.out.println("Ngày bắt đầu không được lớn hơn ngày kết thúc");
+        } else {
+            voucher.setThoiGianBatDau(this.getThoiGianBatDau());
+            voucher.setThoiGianKetThuc(this.getThoiGianKetThuc());
+        }
         voucher.setSoLuong(this.getSoLuong());
         voucher.setMoTa(this.getMoTa());
         voucher.setTrangThai(this.getTrangThai());

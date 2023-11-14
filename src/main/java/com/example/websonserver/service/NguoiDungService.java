@@ -2,6 +2,7 @@ package com.example.websonserver.service;
 
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.NguoiDungRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.NguoiDungResponse;
 import com.example.websonserver.entity.Loai;
 
@@ -24,6 +25,7 @@ public interface NguoiDungService {
     Boolean  existByUsername(String username);
     Boolean  existByEmail(String email);
     NguoiDung saveOrUpdate(NguoiDung nguoiDung);
+    NguoiDung updateStatus(UpdateTrangThai trangThai, Long maNguoiDung);
 }
 
 

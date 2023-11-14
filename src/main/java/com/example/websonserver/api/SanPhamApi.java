@@ -2,6 +2,7 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.SanPhamRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
 import com.example.websonserver.service.serviceIpml.SanPhamServiceImpl;
 import jakarta.validation.Valid;
@@ -47,6 +48,19 @@ public class SanPhamApi {
     @GetMapping("/get-one/{tenSP}")
     public ResponseEntity<?> getOne(@PathVariable String tenSP) {
         return ResponseEntity.ok(sanPhamServiceImpl.findByTen(tenSP));
+    }
+
+    @PutMapping("/sua/{ma}")
+    public ResponseEntity<?> update(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(sanPhamServiceImpl.updateStatus(trangThai, ma));
+    }
+
+    @GetMapping("/load-sp")
+    public ResponseEntity<?> loadSanPham() {
+        return ResponseEntity.ok(sanPhamServiceImpl.fillComboSpctBySanPham());
     }
 }
 

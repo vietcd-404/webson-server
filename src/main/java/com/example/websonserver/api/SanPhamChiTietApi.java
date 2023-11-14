@@ -2,6 +2,7 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.dto.request.ThuocTinhRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.AnhSanPham;
@@ -62,6 +63,16 @@ public class SanPhamChiTietApi {
         request.setGiaTangDan(giaTangDan);
         request.setGiaThap(giaThap);
         return ResponseEntity.ok(sanPhamChiTietService.getAllSanPhamUser(request,page,size));
+    }
+
+    @GetMapping("/guest/san-pham/{ma}")
+    public ResponseEntity<?> getDetailById(@PathVariable String ma) {
+        return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
+    }
+    @GetMapping("/guest/san-pham-chi-tiet/{maSanPhamCT}/images")
+    public ResponseEntity<List<AnhSanPham>> getImagesByGuest(@PathVariable Long maSanPhamCT) {
+        List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
+        return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
 
     @GetMapping("/admin/san-pham-chi-tiet")
@@ -125,15 +136,12 @@ public class SanPhamChiTietApi {
         List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
         return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
-
-    @GetMapping("/guest/san-pham/{ma}")
-    public ResponseEntity<?> getDetailById(@PathVariable String ma) {
-        return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
-    }
-    @GetMapping("/guest/san-pham-chi-tiet/{maSanPhamCT}/images")
-    public ResponseEntity<List<AnhSanPham>> getImagesByGuest(@PathVariable Long maSanPhamCT) {
-        List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
-        return new ResponseEntity<>(imageUrls, HttpStatus.OK);
+    @PutMapping("/admin/san-pham-chi-tiet/sua/{ma}")
+    public ResponseEntity<?> update(@Valid @RequestBody UpdateTrangThai request, @PathVariable Long ma, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
     }
 
 

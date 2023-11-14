@@ -57,6 +57,4 @@ public class HoaDonRequest {
     private Boolean xoa = false;
 
 
-
-
 }

@@ -14,7 +14,7 @@ public class MauSacRequest {
     private String tenMau;
 
     private Boolean xoa = false;
-    private Integer trangThai=0;
+    private Integer trangThai=1;
 
 
     public MauSac map(MauSac mauSac){

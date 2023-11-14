@@ -60,6 +60,7 @@ public class NguoiDung extends BaseEntity implements Serializable {
     @Column(name = "xoa")
     private Boolean xoa;
 
+
     @ManyToOne
     @JoinColumn(name = "ma_vai_tro")
     private VaiTro vaiTro;
