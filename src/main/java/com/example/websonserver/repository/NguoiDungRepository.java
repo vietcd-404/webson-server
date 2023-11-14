@@ -1,5 +1,6 @@
 package com.example.websonserver.repository;
 
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.NguoiDungResponse;
 import com.example.websonserver.entity.NguoiDung;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ import java.util.List;
 
 @Repository
 public interface NguoiDungRepository extends JpaRepository<NguoiDung,Long> {
-    public List<NguoiDung> findAllByXoaFalse();
+    public List<NguoiDung> findAllByXoaFalseOrderByNgayTaoDesc();;
     public Page<NguoiDungResponse> findAllByXoaFalse(Pageable pageable);
 
     NguoiDung findByUsername(String username);
@@ -41,5 +42,6 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung,Long> {
     @Query("SELECT nd FROM NguoiDung nd WHERE nd.username LIKE %:keyword% " +
             "OR nd.ho LIKE %:keyword%")
     List<NguoiDung> searchByKeyword(@Param("keyword") String keyword);
+
 
 }

@@ -2,6 +2,7 @@ package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.MauSacRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.entity.Loai;
 import com.example.websonserver.entity.MauSac;
 import com.example.websonserver.repository.LoaiRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,7 +40,7 @@ public class MauSacServiceImpl implements MauSacService {
 
     @Override
     public Page<MauSac> getAll(Pageable pageable) {
-        return mauSacRepository.findAllByXoaFalse(pageable);
+        return mauSacRepository.findAllByXoaFalseOrderByNgayTaoDesc(pageable);
     }
 
     @Override
@@ -57,5 +59,19 @@ public class MauSacServiceImpl implements MauSacService {
     @Override
     public MauSac findByTen(String ten) {
         return mauSacRepository.findByTen(ten);
+    }
+
+    @Override
+    public MauSac updateStatus(UpdateTrangThai trangThai, Long id) {
+        Optional<MauSac> optional = mauSacRepository.findById(id);
+        return optional.map(o->{
+            o.setTrangThai(trangThai.getTrangThai());
+            return mauSacRepository.save(o);
+        }).orElse(null);
+    }
+
+    @Override
+    public List<MauSac> fillComboSpctByNMau() {
+        return mauSacRepository.fillComboSpctByNMau();
     }
 }

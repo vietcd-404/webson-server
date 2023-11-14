@@ -18,7 +18,7 @@ public class SanPhamRequest {
 
     private Boolean xoa = false;
 
-    private Integer trangThai=0;
+    private Integer trangThai=1;
 
 
     public SanPham map(SanPham sanPham){

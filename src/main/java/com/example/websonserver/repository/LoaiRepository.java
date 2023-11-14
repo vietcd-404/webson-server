@@ -12,10 +12,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface LoaiRepository extends JpaRepository<Loai,Long> {
 
-    public Page<Loai> findAllByXoaFalse(Pageable pageable);
+    public Page<Loai> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
+
+    @Query("SELECT sp FROM Loai sp WHERE sp.xoa = false and sp.trangThai =1  order by  sp.ngayTao desc ")
+    public List<Loai> fillComboSpct();
 
     @Transactional
     @Modifying
