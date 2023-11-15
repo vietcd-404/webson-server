@@ -4,6 +4,7 @@ import com.example.websonserver.dto.request.HoaDonRequest;
 import com.example.websonserver.dto.request.NguoiDungSessionRequest;
 import com.example.websonserver.dto.request.SanPhamHoaDonRequest;
 import com.example.websonserver.dto.request.UpdateHoaDonRequest;
+import com.example.websonserver.dto.response.GioHangChiTietResponse;
 import com.example.websonserver.dto.response.HoaDonResponse;
 import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.dto.response.ThanhToanRes;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -130,7 +132,7 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.HuyHoaDon(Long.parseLong(maHD)));
     }
 
-    @PostMapping("/auth/order/place")
+    @PostMapping("/guest/order/place")
     public ResponseEntity<?> taoHoaDonSession(@RequestBody NguoiDungSessionRequest request, HttpSession session) {
         Map<String, Integer> sessionCart = gioHangCTSessionService.getSessionCart(session);
         try {
@@ -163,6 +165,17 @@ public class HoaDonApi {
             return ResponseEntity.ok("Mã hóa đơn không tồn tại");
         }
         return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDon,soLuong));
+    }
+
+    @PostMapping("/guest/order/thanh-toan")
+    public ResponseEntity<?> thanhToanGuest(@RequestBody HoaDonRequest request,@RequestParam  List<Long> ma) {
+        try {
+            return ResponseEntity.ok(hoaDonService.thanhToanGuest(request,ma));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+
     }
 
 }

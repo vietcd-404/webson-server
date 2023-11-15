@@ -20,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class HoaDonRequest {
     private Long maHoaDon;
+    private Long maSanPhamCT;
     private LocalDateTime ngayNhan;
     private LocalDateTime ngayThanhToan;
 
@@ -51,7 +52,9 @@ public class HoaDonRequest {
 
     private Integer thanhToan;
 
-    private List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
+    private Integer soLuong;
+    private List<HoaDonChiTiet> hoaDonChiTietList ;
+    private List<SanPhamChiTiet> sanPhamChiTiets;
     private List<VoucherChiTiet> voucherChiTiets = new ArrayList<>();
     private Integer trangThai =0;
     private Boolean xoa = false;

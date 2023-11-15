@@ -35,6 +35,8 @@ public class SanPhamChiTietResponse {
 
      List<AnhSanPham> danhSachAnh;
 
+     List<String> img;
+
      Integer trangThai;
 
  }

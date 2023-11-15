@@ -2,10 +2,9 @@ package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.dto.response.GioHangChiTietResponse;
-import com.example.websonserver.entity.GioHang;
-import com.example.websonserver.entity.GioHangChiTiet;
-import com.example.websonserver.entity.NguoiDung;
-import com.example.websonserver.entity.SanPhamChiTiet;
+import com.example.websonserver.dto.response.GioHangDetailResponse;
+import com.example.websonserver.dto.response.HoaDonResponse;
+import com.example.websonserver.entity.*;
 import com.example.websonserver.repository.GioHangChiTietRepository;
 import com.example.websonserver.repository.GioHangRepository;
 import com.example.websonserver.repository.NguoiDungRepository;
@@ -14,7 +13,6 @@ import com.example.websonserver.service.GioHangCTSessionService;
 import com.example.websonserver.service.GioHangChiTietService;
 import com.example.websonserver.service.GioHangService;
 import com.example.websonserver.service.SanPhamChiTietService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +39,13 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     GioHangChiTietRepository gioHangChiTietRepository;
     @Autowired
     NguoiDungRepository nguoiDungRepository;
+
+    @Autowired
+    private NguoiDungServiceImpl nguoiDungService;
+
+    @Autowired
+    private AnhSanPhamServiceImpl anhSanPhamService;
+
     @Autowired
     GioHangRepository gioHangRepository;
     @Autowired
@@ -51,7 +58,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
         int quantity = Integer.parseInt(soLuong);
         GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
-        if (gioHang == null){
+        if (gioHang == null) {
             gioHang = new GioHang();
             gioHang.setNguoiDung(nguoiDung);
             gioHang.setTrangThai(0);
@@ -60,27 +67,28 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
         }
         SanPhamChiTiet spct = sanPhamChiTietService.findById(SPCTId);
         GioHangChiTiet ghctWithIdSPCT = null;
-        try{
-            ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(),Long.parseLong(SPCTId));
-        }catch (Exception e){
+        try {
+            ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(), Long.parseLong(SPCTId));
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if (spct == null){
+        if (spct == null) {
             String errorMessage = "Không tìm thấy sản phẩm chi tiết.";
             throw new RuntimeException(errorMessage);
         }
         if (ghctWithIdSPCT != null){
-            if (quantity > 0 && quantity<= spct.getSoLuongTon()){
+            if (quantity > 0 && (quantity+ ghctWithIdSPCT.getSoLuong())<= spct.getSoLuongTon()){
                 ghctWithIdSPCT.setSoLuong(ghctWithIdSPCT.getSoLuong()+quantity);
+//                spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
 
                 // Cập nhật thông tin vào cơ sở dữ liệu
                 gioHangChiTietRepository.save(ghctWithIdSPCT);
-                sanPhamChiTietRepository.save(spct);
+//                sanPhamChiTietRepository.save(spct);
             }else {
-                String errorMessage = "Số lượng không hợp lệ.";
+                String errorMessage = "Số lượng vượt giới hạn.";
                 throw new RuntimeException(errorMessage);
             }
-        }else {
+        } else {
             GioHangChiTiet newGHCT = GioHangChiTiet.builder()
                     .soLuong(quantity)
                     .donGia(spct.getGiaBan())
@@ -91,8 +99,8 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                     .build();
             gioHangChiTietRepository.save(newGHCT);
             // Đảm bảo cập nhật số lượng tồn kho
-            spct.setSoLuongTon(spct.getSoLuongTon() - quantity);
-            sanPhamChiTietRepository.save(spct);
+//            spct.setSoLuongTon(spct.getSoLuongTon() - quantity);
+//            sanPhamChiTietRepository.save(spct);
             ghctWithIdSPCT = newGHCT;
         }
         GioHangChiTietResponse gioHangChiTietResponse = GioHangChiTietResponse.builder()
@@ -109,9 +117,9 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
 
     @Override
     public List<GioHangChiTietResponse> getAllCarts(Pageable pageable) {
-        Page<GioHangChiTiet> gh =  gioHangChiTietRepository.findAllByXoaFalse(pageable);
+        Page<GioHangChiTiet> gh = gioHangChiTietRepository.findAllByXoaFalse(pageable);
         List<GioHangChiTietResponse> listGHCTResponse = new ArrayList<>();
-        for (GioHangChiTiet item : gh.getContent()){
+        for (GioHangChiTiet item : gh.getContent()) {
             GioHangChiTietResponse ghForm = GioHangChiTietResponse.builder()
                     .tenLoai(item.getSanPhamChiTiet().getLoai().getTenLoai())
                     .donGia(item.getSanPhamChiTiet().getGiaBan())
@@ -119,15 +127,42 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                     .tenMauSac(item.getSanPhamChiTiet().getMauSac().getTenMau())
                     .tenSanPham(item.getSanPhamChiTiet().getSanPham().getTenSanPham())
                     .tenThuongHieu(item.getSanPhamChiTiet().getThuongHieu().getTenThuongHieu())
+                    .anh(item.getSanPhamChiTiet().getAnhSanPhamList().isEmpty() ? null :
+                            Collections.singletonList(item.getSanPhamChiTiet().getAnhSanPhamList().get(0).getAnh()))
                     .soLuong(item.getSoLuong())
                     .build();
             listGHCTResponse.add(ghForm);
         }
-        return  listGHCTResponse;
+        return listGHCTResponse;
+    }
+
+    public List<GioHangDetailResponse> gioHangUser(Principal principal) {
+        NguoiDung nguoiDung = nguoiDungService.findByUsername(principal.getName());
+        List<GioHang> gioHangList = gioHangRepository.findByNguoiDung(nguoiDung);
+        List<GioHangDetailResponse> gioHangDetailResponses = new ArrayList<>();
+        for (GioHang gioHang : gioHangList) {
+            List<GioHangChiTiet> gioHangChiTiets = this.gioHangChiTietRepository.findByGioHang(gioHang);
+            for (GioHangChiTiet gioHangChiTiet : gioHangChiTiets) {
+                SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT()).orElse(null);
+
+                GioHangDetailResponse dto = new GioHangDetailResponse();
+                dto.setMaGioHang(gioHangChiTiet.getMaGHCT());
+                dto.setMaGH(gioHangChiTiet.getGioHang().getMaGioHang());
+                dto.setMaSanPhamCT(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT());
+                dto.setAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+                dto.setSoLuong(gioHangChiTiet.getSoLuong());
+                dto.setGiaBan(gioHangChiTiet.getDonGia());
+                dto.setTenSanPham(gioHangChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
+                gioHangDetailResponses.add(dto);
+            }
+
+
+        }
+        return gioHangDetailResponses;
     }
 
     @Override
-    public List<GioHangChiTietResponse> getCart(Pageable pageable,HttpSession session) {
+    public List<GioHangChiTietResponse> getCart(Pageable pageable, HttpSession session) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
@@ -148,6 +183,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 if (ghctWithSession != null) {
                     if (quantitySession > 0 && quantitySession <= spctCheckWithMaSPCTSession.getSoLuongTon()) {
                         ghctWithSession.setSoLuong(ghctWithSession.getSoLuong() + quantitySession);
+//                        spctCheckWithMaSPCTSession.setSoLuongTon(spctCheckWithMaSPCTSession.getSoLuongTon() - quantitySession);
                         gioHangCTSessionService.removeFromSessionCart(maspct,session);
                         // Cập nhật thông tin vào cơ sở dữ liệu
                         gioHangChiTietRepository.save(ghctWithSession);
@@ -166,16 +202,17 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                             .xoa(Boolean.FALSE)
                             .build();
                     gioHangChiTietRepository.save(newGHCT);
-                    gioHangCTSessionService.removeFromSessionCart(maspct,session);
+                    gioHangCTSessionService.removeFromSessionCart(maspct, session);
                     // Đảm bảo cập nhật số lượng tồn kho
-                    spctCheckWithMaSPCTSession.setSoLuongTon(spctCheckWithMaSPCTSession.getSoLuongTon() - quantitySession);
-                    sanPhamChiTietRepository.save(spctCheckWithMaSPCTSession);
+//                    spctCheckWithMaSPCTSession.setSoLuongTon(spctCheckWithMaSPCTSession.getSoLuongTon() - quantitySession);
+//                    sanPhamChiTietRepository.save(spctCheckWithMaSPCTSession);
                 }
             }
         }
-        Page<GioHangChiTiet> gh =  gioHangChiTietRepository.findByMaGioHang(gioHang.getMaGioHang(),pageable);
+
+        Page<GioHangChiTiet> gh = gioHangChiTietRepository.findByMaGioHang(gioHang.getMaGioHang(), pageable);
         List<GioHangChiTietResponse> listGHCTResponse = new ArrayList<>();
-        for (GioHangChiTiet item : gh.getContent()){
+        for (GioHangChiTiet item : gh.getContent()) {
             GioHangChiTietResponse ghForm = GioHangChiTietResponse.builder()
                     .tenLoai(item.getSanPhamChiTiet().getLoai().getTenLoai())
                     .donGia(item.getSanPhamChiTiet().getGiaBan())
@@ -187,7 +224,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                     .build();
             listGHCTResponse.add(ghForm);
         }
-        return  listGHCTResponse;
+        return listGHCTResponse;
     }
 
     @Override
@@ -199,30 +236,30 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
         GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
         SanPhamChiTiet spct = sanPhamChiTietService.findById(SPCTId);
         GioHangChiTiet ghctWithIdSPCT = null;
-        try{
-            ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(),Long.parseLong(SPCTId));
-        }catch (Exception e){
+        try {
+            ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(), Long.parseLong(SPCTId));
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if (spct == null){
+        if (spct == null) {
             String errorMessage = "Không tìm thấy sản phẩm chi tiết.";
             throw new RuntimeException(errorMessage);
         }
         if (ghctWithIdSPCT != null){
-            spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
+//            spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
             // Cập nhật thông tin vào cơ sở dữ liệu
-            sanPhamChiTietRepository.save(spct);
+//            sanPhamChiTietRepository.save(spct);
             if (quantity > 0 && quantity<= spct.getSoLuongTon()){
                 ghctWithIdSPCT.setSoLuong(quantity);
-                spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
+//                spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
                 // Cập nhật thông tin vào cơ sở dữ liệu
                 gioHangChiTietRepository.save(ghctWithIdSPCT);
-                sanPhamChiTietRepository.save(spct);
+//                sanPhamChiTietRepository.save(spct);
             }else {
-                String errorMessage = "Số lượng không hợp lệ.";
+                String errorMessage = "Số lượng vượt giới hạn.";
                 throw new RuntimeException(errorMessage);
             }
-        }else {
+        } else {
             String errorMessage = "Không tìm thấy giỏ hàng trong giỏ hàng.";
             throw new RuntimeException(errorMessage);
         }
@@ -240,7 +277,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
 
     @Override
     public void updateProductInCarts(SanPhamChiTietRequest request, Long maSPCT) {
-        sanPhamChiTietService.update(request,maSPCT);
+        sanPhamChiTietService.update(request, maSPCT);
     }
 
     @Override
@@ -250,9 +287,19 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
         GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
         GioHangChiTiet ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(),maSPCT);
-        SanPhamChiTiet spct = sanPhamChiTietService.findById(String.valueOf(maSPCT));
-        spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
-        sanPhamChiTietRepository.save(spct);
+//        SanPhamChiTiet spct = sanPhamChiTietService.findById(String.valueOf(maSPCT));
+//        spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
+//        sanPhamChiTietRepository.save(spct);
         gioHangChiTietRepository.delete(gioHang.getMaGioHang(),maSPCT);
+    }
+
+    public void deleteGioHang(Long maGioHangCT){
+        gioHangChiTietRepository.deleteById(maGioHangCT);
+    }
+
+    public void deleteAllGioHang(Principal principal){
+        NguoiDung nguoiDung = nguoiDungService.findByUsername(principal.getName());
+        List<GioHang> gioHangList = gioHangRepository.findByNguoiDung(nguoiDung);
+        gioHangRepository.deleteAll(gioHangList);
     }
 }
