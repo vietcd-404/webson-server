@@ -13,7 +13,6 @@ import com.example.websonserver.service.GioHangCTSessionService;
 import com.example.websonserver.service.GioHangChiTietService;
 import com.example.websonserver.service.GioHangService;
 import com.example.websonserver.service.SanPhamChiTietService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -77,16 +76,16 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
             String errorMessage = "Không tìm thấy sản phẩm chi tiết.";
             throw new RuntimeException(errorMessage);
         }
-        if (ghctWithIdSPCT != null) {
-            if (quantity > 0 && quantity <= spct.getSoLuongTon()) {
-                ghctWithIdSPCT.setSoLuong(ghctWithIdSPCT.getSoLuong() + quantity);
-                spct.setSoLuongTon(spct.getSoLuongTon() - quantity);
+        if (ghctWithIdSPCT != null){
+            if (quantity > 0 && (quantity+ ghctWithIdSPCT.getSoLuong())<= spct.getSoLuongTon()){
+                ghctWithIdSPCT.setSoLuong(ghctWithIdSPCT.getSoLuong()+quantity);
+//                spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
 
                 // Cập nhật thông tin vào cơ sở dữ liệu
                 gioHangChiTietRepository.save(ghctWithIdSPCT);
-                sanPhamChiTietRepository.save(spct);
-            } else {
-                String errorMessage = "Số lượng không hợp lệ.";
+//                sanPhamChiTietRepository.save(spct);
+            }else {
+                String errorMessage = "Số lượng vượt giới hạn.";
                 throw new RuntimeException(errorMessage);
             }
         } else {
@@ -100,8 +99,8 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                     .build();
             gioHangChiTietRepository.save(newGHCT);
             // Đảm bảo cập nhật số lượng tồn kho
-            spct.setSoLuongTon(spct.getSoLuongTon() - quantity);
-            sanPhamChiTietRepository.save(spct);
+//            spct.setSoLuongTon(spct.getSoLuongTon() - quantity);
+//            sanPhamChiTietRepository.save(spct);
             ghctWithIdSPCT = newGHCT;
         }
         GioHangChiTietResponse gioHangChiTietResponse = GioHangChiTietResponse.builder()
@@ -176,7 +175,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
             gioHangRepository.save(gioHang);
         }
         Map<String, Integer> ghctSession = gioHangCTSessionService.getSessionCart(session);
-        if (ghctSession != null) {
+        if (ghctSession != null && ghctSession.size() != 0) {
             for (String maspct : ghctSession.keySet()) {
                 GioHangChiTiet ghctWithSession = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(), Long.parseLong(maspct));
                 int quantitySession = ghctSession.get(maspct);
@@ -184,11 +183,11 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 if (ghctWithSession != null) {
                     if (quantitySession > 0 && quantitySession <= spctCheckWithMaSPCTSession.getSoLuongTon()) {
                         ghctWithSession.setSoLuong(ghctWithSession.getSoLuong() + quantitySession);
-                        spctCheckWithMaSPCTSession.setSoLuongTon(spctCheckWithMaSPCTSession.getSoLuongTon() - quantitySession);
-                        gioHangCTSessionService.removeFromSessionCart(maspct, session);
+//                        spctCheckWithMaSPCTSession.setSoLuongTon(spctCheckWithMaSPCTSession.getSoLuongTon() - quantitySession);
+                        gioHangCTSessionService.removeFromSessionCart(maspct,session);
                         // Cập nhật thông tin vào cơ sở dữ liệu
                         gioHangChiTietRepository.save(ghctWithSession);
-                        sanPhamChiTietRepository.save(spctCheckWithMaSPCTSession);
+//                        sanPhamChiTietRepository.save(spctCheckWithMaSPCTSession);
                     } else {
                         String errorMessage = "Số lượng không hợp lệ.";
                         throw new RuntimeException(errorMessage);
@@ -205,11 +204,12 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                     gioHangChiTietRepository.save(newGHCT);
                     gioHangCTSessionService.removeFromSessionCart(maspct, session);
                     // Đảm bảo cập nhật số lượng tồn kho
-                    spctCheckWithMaSPCTSession.setSoLuongTon(spctCheckWithMaSPCTSession.getSoLuongTon() - quantitySession);
-                    sanPhamChiTietRepository.save(spctCheckWithMaSPCTSession);
+//                    spctCheckWithMaSPCTSession.setSoLuongTon(spctCheckWithMaSPCTSession.getSoLuongTon() - quantitySession);
+//                    sanPhamChiTietRepository.save(spctCheckWithMaSPCTSession);
                 }
             }
         }
+
         Page<GioHangChiTiet> gh = gioHangChiTietRepository.findByMaGioHang(gioHang.getMaGioHang(), pageable);
         List<GioHangChiTietResponse> listGHCTResponse = new ArrayList<>();
         for (GioHangChiTiet item : gh.getContent()) {
@@ -245,18 +245,18 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
             String errorMessage = "Không tìm thấy sản phẩm chi tiết.";
             throw new RuntimeException(errorMessage);
         }
-        if (ghctWithIdSPCT != null) {
-            spct.setSoLuongTon(spct.getSoLuongTon() + ghctWithIdSPCT.getSoLuong());
+        if (ghctWithIdSPCT != null){
+//            spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
             // Cập nhật thông tin vào cơ sở dữ liệu
-            sanPhamChiTietRepository.save(spct);
-            if (quantity > 0 && quantity <= spct.getSoLuongTon()) {
+//            sanPhamChiTietRepository.save(spct);
+            if (quantity > 0 && quantity<= spct.getSoLuongTon()){
                 ghctWithIdSPCT.setSoLuong(quantity);
-                spct.setSoLuongTon(spct.getSoLuongTon() - quantity);
+//                spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
                 // Cập nhật thông tin vào cơ sở dữ liệu
                 gioHangChiTietRepository.save(ghctWithIdSPCT);
-                sanPhamChiTietRepository.save(spct);
-            } else {
-                String errorMessage = "Số lượng không hợp lệ.";
+//                sanPhamChiTietRepository.save(spct);
+            }else {
+                String errorMessage = "Số lượng vượt giới hạn.";
                 throw new RuntimeException(errorMessage);
             }
         } else {
@@ -286,11 +286,11 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
         String username = userDetails.getUsername();
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
         GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
-        GioHangChiTiet ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(), maSPCT);
-        SanPhamChiTiet spct = sanPhamChiTietService.findById(String.valueOf(maSPCT));
-        spct.setSoLuongTon(spct.getSoLuongTon() + ghctWithIdSPCT.getSoLuong());
-        sanPhamChiTietRepository.save(spct);
-        gioHangChiTietRepository.delete(gioHang.getMaGioHang(), maSPCT);
+        GioHangChiTiet ghctWithIdSPCT = gioHangChiTietRepository.findCartItemByMaGHAndMaSPCT(gioHang.getMaGioHang(),maSPCT);
+//        SanPhamChiTiet spct = sanPhamChiTietService.findById(String.valueOf(maSPCT));
+//        spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
+//        sanPhamChiTietRepository.save(spct);
+        gioHangChiTietRepository.delete(gioHang.getMaGioHang(),maSPCT);
     }
 
     public void deleteGioHang(Long maGioHangCT){

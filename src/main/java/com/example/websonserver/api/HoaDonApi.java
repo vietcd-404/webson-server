@@ -2,6 +2,9 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.HoaDonRequest;
 import com.example.websonserver.dto.request.NguoiDungSessionRequest;
+import com.example.websonserver.dto.request.SanPhamHoaDonRequest;
+import com.example.websonserver.dto.request.UpdateHoaDonRequest;
+import com.example.websonserver.dto.response.GioHangChiTietResponse;
 import com.example.websonserver.dto.response.HoaDonResponse;
 import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.dto.response.ThanhToanRes;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +84,16 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.statusHoaDon(request, maDonHang));
     }
 
+    @PutMapping("/user/order/update/{maDonHang}")
+    public ResponseEntity<?> updateHoaDon(@RequestBody UpdateHoaDonRequest request, @PathVariable Long maDonHang) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
+
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        return ResponseEntity.ok(hoaDonService.updateOrder(request, maDonHang));
+    }
+
     @GetMapping("/user/order/get-hoadon")
     public ResponseEntity<?> getHoaDon(Principal principal, @RequestParam("trangThai") Integer trangThai) {
         return ResponseEntity.ok(hoaDonService.getOrdersByUser(principal, trangThai));
@@ -96,8 +110,8 @@ public class HoaDonApi {
     }
 
     @GetMapping("/user/order/get-hoadon/{maHoaDon}")
-    public ResponseEntity<?> getHoaDonAll(Principal principal,@PathVariable Long maHoaDon) {
-        return ResponseEntity.ok(hoaDonService.getOrdersDetail(principal,maHoaDon));
+    public ResponseEntity<?> getHoaDonAll(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetail(maHoaDon));
     }
 
     @PutMapping("/user/order/update-quantity")
@@ -105,7 +119,7 @@ public class HoaDonApi {
             Principal principal,
             @RequestParam("SPCTId") String SPCTId,
             @RequestParam("soLuong") String soLuong) {
-        HoaDonChiTiet hdct = hoaDonService.updateQuantity(principal,Long.parseLong(SPCTId),Integer.parseInt(soLuong));
+        HoaDonChiTiet hdct = hoaDonService.updateQuantity(principal, Long.parseLong(SPCTId), Integer.parseInt(soLuong));
         if (hdct == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Sản phẩm không có trong hóa đơn"));
         }
@@ -117,11 +131,12 @@ public class HoaDonApi {
             @RequestParam("maHD") String maHD) {
         return ResponseEntity.ok(hoaDonService.HuyHoaDon(Long.parseLong(maHD)));
     }
-    @PostMapping("/auth/order/place")
+
+    @PostMapping("/guest/order/place")
     public ResponseEntity<?> taoHoaDonSession(@RequestBody NguoiDungSessionRequest request, HttpSession session) {
         Map<String, Integer> sessionCart = gioHangCTSessionService.getSessionCart(session);
         try {
-            if (sessionCart==null) {
+            if (sessionCart == null) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Bạn chưa chọn sản phẩm nào"));
             }
             return ResponseEntity.ok(hoaDonService.hoaDonSession(session, request));
@@ -130,10 +145,37 @@ public class HoaDonApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
         }
     }
+
+    @DeleteMapping("/user/order/delete")
+    public ResponseEntity<?> xoaHoaDon(
+            @RequestParam("maHoaDonCT") Long maHDCT) {
+        hoaDonService.deleteHDCT(maHDCT);
+        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
+    }
     //TODO: Update hóa đơn theo trạng thái là 0: User update đc
     //TODO: Update hóa đơn theo trạng thái là 1: ADMIN update đc
     //TODO: Update số lượng sản phẩm, địa chỉ,...
     //TODO: Làm hủy hóa hóa chuyển thành trạng thái 5
 
+    @PostMapping("/user/order/update-so-luong")
+    public ResponseEntity<?> updateSoLuong(@RequestParam Integer soLuong,
+                                          @RequestParam Long maHoaDon ) {
+        HoaDon hoaDon = this.hoaDonRepository.findById(maHoaDon).orElse(null);
+        if(hoaDon==null){
+            return ResponseEntity.ok("Mã hóa đơn không tồn tại");
+        }
+        return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDon,soLuong));
+    }
+
+    @PostMapping("/guest/order/thanh-toan")
+    public ResponseEntity<?> thanhToanGuest(@RequestBody HoaDonRequest request,@RequestParam  List<Long> ma) {
+        try {
+            return ResponseEntity.ok(hoaDonService.thanhToanGuest(request,ma));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+
+    }
 
 }

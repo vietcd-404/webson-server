@@ -69,6 +69,12 @@ public class SanPhamChiTietApi {
     public ResponseEntity<?> getDetailById(@PathVariable String ma) {
         return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
     }
+
+    @GetMapping("/guest/san-pham/get-all/loc")
+    public ResponseEntity<?> getLoc() {
+        return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
+    }
+
     @GetMapping("/guest/san-pham-chi-tiet/{maSanPhamCT}/images")
     public ResponseEntity<List<AnhSanPham>> getImagesByGuest(@PathVariable Long maSanPhamCT) {
         List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
@@ -145,3 +151,6 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
     }
 }
+
+
+
