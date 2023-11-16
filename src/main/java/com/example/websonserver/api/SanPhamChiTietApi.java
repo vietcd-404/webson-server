@@ -144,5 +144,8 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
     }
 
-
+    @GetMapping("/auth/san-pham-chi-tiet/top5")
+    public ResponseEntity<?> Top5SanPhamMoiNhat(){
+        return ResponseEntity.ok(sanPhamChiTietService.Top5SanPhamMoiNhat());
+    }
 }

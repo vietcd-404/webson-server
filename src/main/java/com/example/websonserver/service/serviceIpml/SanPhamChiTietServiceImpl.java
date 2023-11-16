@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
@@ -179,6 +180,24 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             o.setTrangThai(request.getTrangThai());
             return sanPhamChiTietRepository.save(o);
         }).orElse(null);
+    }
+
+    @Override
+    public List<SanPhamChiTietRes> Top5SanPhamMoiNhat() {
+        List<SanPhamChiTietRes> sanPhamChiTietPage = sanPhamChiTietRepository.Top5SanPhamMoiNhat().stream()
+                .map(sanPhamChiTiets -> new SanPhamChiTietRes(
+                        sanPhamChiTiets.getMaSanPhamCT(),
+                        sanPhamChiTiets.getGiaBan(),
+                        sanPhamChiTiets.getPhanTramGiam(),
+                        sanPhamChiTiets.getSoLuongTon(),
+                        sanPhamChiTiets.getSanPham().getTenSanPham(),
+                        sanPhamChiTiets.getLoai().getTenLoai(),
+                        sanPhamChiTiets.getThuongHieu().getTenThuongHieu(),
+                        sanPhamChiTiets.getMauSac().getTenMau(),
+                        sanPhamChiTiets.getTrangThai(),
+                        anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiets.getMaSanPhamCT())
+                )).collect(Collectors.toList());
+        return sanPhamChiTietPage;
     }
 
 

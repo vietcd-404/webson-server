@@ -34,4 +34,6 @@ public interface SanPhamChiTietService {
                                           BigDecimal giaThap, BigDecimal giaCao,
                                           String sortBy, String sortDirection);
     SanPhamChiTiet updateStatus(UpdateTrangThai request, Long id);
+
+    List<SanPhamChiTietRes> Top5SanPhamMoiNhat();
 }
