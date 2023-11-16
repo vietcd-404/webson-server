@@ -67,7 +67,7 @@ public class SanPhamChiTietApi {
 
     @GetMapping("/guest/san-pham/{ma}")
     public ResponseEntity<?> getDetailById(@PathVariable String ma) {
-        return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
+        return ResponseEntity.ok(sanPhamChiTietService.findByIdResponse(ma));
     }
 
     @GetMapping("/guest/san-pham/get-all/loc")
@@ -150,8 +150,12 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
     }
 
-    @GetMapping("/auth/san-pham-chi-tiet/top5")
+    @GetMapping("/auth/san-pham-chi-tiet/top-5-moi-nhat")
     public ResponseEntity<?> Top5SanPhamMoiNhat(){
         return ResponseEntity.ok(sanPhamChiTietService.Top5SanPhamMoiNhat());
+    }
+    @GetMapping("/auth/san-pham-chi-tiet/top-4-ban-chay")
+    public ResponseEntity<?> Top4BanChay(){
+        return ResponseEntity.ok(sanPhamChiTietService.findTop4BanChay());
     }
 }
