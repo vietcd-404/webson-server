@@ -15,14 +15,14 @@ import java.security.Principal;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/user/gio-hang-chi-tiet")
+@RequestMapping("/api")
 public class GioHangChiTietApi {
     @Autowired
     private GioHangChiTietServiceImpl gioHangChiTietService;
 
     @Autowired
     private UserDetailService userDetailService;
-    @PostMapping("/add")
+    @PostMapping("/user/gio-hang-chi-tiet/add")
     public ResponseEntity<?> addProductToCart(
             @RequestParam("SPCTId") String SPCTId,
             @RequestParam("soLuong") String soLuong) {
@@ -31,10 +31,10 @@ public class GioHangChiTietApi {
             return ResponseEntity.ok(ghct);
         } catch (Exception e) {
             String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
     }
-    @PutMapping("/update-product-quantity")
+    @PutMapping("/user/gio-hang-chi-tiet/update-product-quantity")
     public ResponseEntity<?> updateProductQuantity(
             @RequestParam("SPCTId") String SPCTId,
             @RequestParam("soLuong") String soLuong) {
@@ -46,33 +46,34 @@ public class GioHangChiTietApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
     }
-    @GetMapping("/getAll")
+    @GetMapping("/user/gio-hang-chi-tiet/getAll")
     public ResponseEntity<?> getAll(Pageable pageable){
         return ResponseEntity.ok(gioHangChiTietService.getAllCarts(pageable));
     }
-    @GetMapping("/getOne")
+
+    @GetMapping("/guest/getOne")
     public ResponseEntity<?> getByNGuoiDung(Pageable pageable,HttpSession session){
         return ResponseEntity.ok(gioHangChiTietService.getCart(pageable,session));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/user/gio-hang-chi-tiet/delete")
     public ResponseEntity<?> delete(@RequestParam("SPCTId") String SPCTId) {
         gioHangChiTietService.deleteProductFromCart(Long.valueOf(SPCTId));
         return ResponseEntity.ok(new MessageResponse("Xóa giỏ hàng thành công"));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/user/gio-hang-chi-tiet/all")
     public ResponseEntity<?> getGioHangUser(Principal principal) {
         return ResponseEntity.ok(gioHangChiTietService.gioHangUser(principal));
     }
 
-    @DeleteMapping("/delete-all")
+    @DeleteMapping("/user/gio-hang-chi-tiet/delete-all")
     public ResponseEntity<?> deleteAll(Principal principal) {
         gioHangChiTietService.deleteAllGioHang(principal);
         return ResponseEntity.ok(new MessageResponse("Xóa tất cả giỏ hàng theo " + principal.getName()));
     }
 
-    @DeleteMapping("/delete-gio-hang")
+    @DeleteMapping("/user/gio-hang-chi-tiet/delete-gio-hang")
     public ResponseEntity<?> delete(@RequestParam("maGioHangCT") Long ma) {
         gioHangChiTietService.deleteGioHang(ma);
         return ResponseEntity.ok(new MessageResponse("Xóa giỏ hàng thành công"));

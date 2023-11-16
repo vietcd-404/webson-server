@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -236,35 +237,76 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             if (giaThap != null && giaCao != null) {
                 predicate = cb.and(predicate, cb.between(root.get("giaBan"), giaThap, giaCao));
             }
+
+            predicate = cb.and(predicate, cb.equal(root.get("trangThai"), 1));
+
             predicate = cb.and(predicate, cb.equal(root.get("xoa"), false));
             return predicate;
         };
 
         Sort sort = null;
-         sort = Sort.by(Sort.Direction.DESC, "ngayTao");
+        sort = Sort.by(Sort.Direction.DESC, "ngayTao");
         if (giaGiamDan != null && giaGiamDan) {
             sort = Sort.by(Sort.Direction.DESC, "giaBan");
         } else if (giaTangDan != null && giaTangDan) {
             sort = Sort.by(Sort.Direction.ASC, "giaBan");
         }
 
-        Pageable pageable = PageRequest.of(page - 1, size,sort);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
         Page<SanPhamChiTietRes> sanPhamChiTietPage = sanPhamChiTietRepository
                 .findAll(receptionistSpecification, pageable)
                 .map(sanPhamChiTiets -> new SanPhamChiTietRes(
-                                        sanPhamChiTiets.getMaSanPhamCT(),
-                                        sanPhamChiTiets.getGiaBan(),
-                                        sanPhamChiTiets.getPhanTramGiam(),
-                                        sanPhamChiTiets.getSoLuongTon(),
-                                        sanPhamChiTiets.getSanPham().getTenSanPham(),
-                                        sanPhamChiTiets.getLoai().getTenLoai(),
-                                        sanPhamChiTiets.getThuongHieu().getTenThuongHieu(),
-                                        sanPhamChiTiets.getMauSac().getTenMau(),
-                                        sanPhamChiTiets.getTrangThai(),
-                                        anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiets.getMaSanPhamCT())
-                                ));
+                        sanPhamChiTiets.getMaSanPhamCT(),
+                        sanPhamChiTiets.getGiaBan(),
+                        sanPhamChiTiets.getPhanTramGiam(),
+                        sanPhamChiTiets.getSoLuongTon(),
+                        sanPhamChiTiets.getSanPham().getTenSanPham(),
+                        sanPhamChiTiets.getLoai().getTenLoai(),
+                        sanPhamChiTiets.getThuongHieu().getTenThuongHieu(),
+                        sanPhamChiTiets.getMauSac().getTenMau(),
+                        sanPhamChiTiets.getTrangThai(),
+                        anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiets.getMaSanPhamCT())
+                ));
 
         return sanPhamChiTietPage;
+    }
+
+    public List<SanPhamChiTietResponse> getAllLoc() {
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThai(1);
+        List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
     }
 
     public void addImagesToProductChiTiet(Long productId, List<Long> imageIds) {

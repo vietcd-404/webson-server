@@ -64,7 +64,7 @@ public class HoaDon extends BaseEntity{
 
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<HoaDonChiTiet> invoiceDetails = new ArrayList<>();
+    private List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
 
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

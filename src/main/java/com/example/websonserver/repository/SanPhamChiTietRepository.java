@@ -18,6 +18,7 @@ import java.util.List;
 public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, Long> , JpaSpecificationExecutor<SanPhamChiTiet> {
     public Page<SanPhamChiTiet> findAllByXoaFalse(Pageable pageable);
 
+    public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThai(Integer trangThai);
     public List<SanPhamChiTiet> findAllByXoaFalse();
 
     @Query("SELECT s FROM SanPhamChiTiet s " +

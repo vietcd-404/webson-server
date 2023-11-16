@@ -85,7 +85,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 gioHangChiTietRepository.save(ghctWithIdSPCT);
 //                sanPhamChiTietRepository.save(spct);
             }else {
-                String errorMessage = "Số lượng không hợp lệ.";
+                String errorMessage = "Số lượng vượt giới hạn.";
                 throw new RuntimeException(errorMessage);
             }
         } else {
@@ -209,6 +209,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 }
             }
         }
+
         Page<GioHangChiTiet> gh = gioHangChiTietRepository.findByMaGioHang(gioHang.getMaGioHang(), pageable);
         List<GioHangChiTietResponse> listGHCTResponse = new ArrayList<>();
         for (GioHangChiTiet item : gh.getContent()) {
@@ -255,7 +256,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 gioHangChiTietRepository.save(ghctWithIdSPCT);
 //                sanPhamChiTietRepository.save(spct);
             }else {
-                String errorMessage = "Số lượng không hợp lệ.";
+                String errorMessage = "Số lượng vượt giới hạn.";
                 throw new RuntimeException(errorMessage);
             }
         } else {

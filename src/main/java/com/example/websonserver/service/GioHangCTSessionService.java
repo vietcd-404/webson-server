@@ -15,7 +15,10 @@ import java.util.Map;
 public class GioHangCTSessionService {
     @Autowired
     SanPhamChiTietService sanPhamChiTietService;
-    public void addToSessionCart(String SPCTId, int quantity, HttpSession session) {
+
+    @Autowired
+    private AnhSanPhamService anhSanPhamService;
+    public boolean addToSessionCart(String SPCTId, int quantity, HttpSession session) {
         // Lấy giỏ hàng từ session
         Map<String, Integer> sessionCart = (Map<String, Integer>) session.getAttribute("sessionCart");
 
@@ -47,6 +50,7 @@ public class GioHangCTSessionService {
 
         // Lưu lại giỏ hàng vào session
         session.setAttribute("sessionCart", sessionCart);
+        return true;
     }
     public void updateQuantityInSessionCart(HttpSession session, String SPCTId, int newQuantity) {
         Map<String, Integer> sessionCart = (Map<String, Integer>) session.getAttribute("sessionCart");
@@ -108,6 +112,7 @@ public class GioHangCTSessionService {
                     .phanTramGiam(spct.getPhanTramGiam())
                     .donGia(spct.getGiaBan())
                     .tenLoai(spct.getLoai().getTenLoai())
+                    .anh(anhSanPhamService.getImagesBySanPhamChiTiet(spct.getMaSanPhamCT()))
                     .build();
             lstGHSession.add(ghct);
         }
