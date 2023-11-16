@@ -21,6 +21,8 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThai(Integer trangThai);
     public List<SanPhamChiTiet> findAllByXoaFalse();
 
+    public List<SanPhamChiTiet> findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(String tenThuongHieu,Integer trangThai);
+
     @Query("SELECT s FROM SanPhamChiTiet s " +
             "JOIN s.anhSanPhamList a " +
             "WHERE s.maSanPhamCT = :maSanPhamCT")

@@ -14,17 +14,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/admin/mau-sac")
+@RequestMapping("/api")
 public class MauSacApi {
     @Autowired
     private MauSacServiceImpl mauSacServiceImpl;
 
-    @GetMapping
+    @GetMapping("/admin/mau-sac")
     public ResponseEntity<?> getAll(Pageable pageable) {
         return ResponseEntity.ok(mauSacServiceImpl.getAll(pageable).getContent());
     }
 
-    @PostMapping("/add")
+    @GetMapping("/guest/filter/mau-sac")
+    public ResponseEntity<?> getAllFill(Pageable pageable) {
+        return ResponseEntity.ok(mauSacServiceImpl.getAll(pageable).getContent());
+    }
+
+    @PostMapping("/admin/mau-sac/add")
     public ResponseEntity<?> saveMauSac(@Valid @RequestBody MauSacRequest mauSac, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -32,7 +37,7 @@ public class MauSacApi {
         return ResponseEntity.ok(mauSacServiceImpl.create(mauSac));
     }
 
-    @PutMapping("/update/{ma}")
+    @PutMapping("/admin/mau-sac/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody MauSacRequest mauSac, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -40,13 +45,13 @@ public class MauSacApi {
         return ResponseEntity.ok(mauSacServiceImpl.update(mauSac, ma));
     }
 
-    @DeleteMapping("/delete/{ma}")
+    @DeleteMapping("/admin/mau-sac/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         mauSacServiceImpl.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @PutMapping("/sua/{ma}")
+    @PutMapping("/admin/mau-sac/sua/{ma}")
     public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -54,7 +59,7 @@ public class MauSacApi {
         return ResponseEntity.ok(mauSacServiceImpl.updateStatus(trangThai, ma));
     }
 
-    @GetMapping("/load-mau")
+    @GetMapping("/admin/mau-sac/load-mau")
     public ResponseEntity<?> loadMau() {
         return ResponseEntity.ok(mauSacServiceImpl.fillComboSpctByNMau());
     }
