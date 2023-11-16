@@ -1,5 +1,6 @@
 package com.example.websonserver.repository;
 
+import com.example.websonserver.entity.GioHang;
 import com.example.websonserver.entity.GioHangChiTiet;
 import com.example.websonserver.entity.Loai;
 import org.springframework.data.domain.Page;
@@ -19,9 +20,17 @@ public interface GioHangChiTietRepository extends JpaRepository<GioHangChiTiet,L
     @Query("SELECT ghct FROM GioHangChiTiet ghct WHERE ghct.gioHang.maGioHang = ?1")
     Page<GioHangChiTiet> findByMaGioHang(Long ma,Pageable pageable);
 
+    List<GioHangChiTiet> findByGioHang(GioHang gioHang);
+
     @Transactional
     @Modifying
     @Query("UPDATE GioHangChiTiet a " +
             "SET a.xoa = true WHERE a.gioHang.maGioHang = ?1 AND a.sanPhamChiTiet.maSanPhamCT = ?2")
     void delete(Long maGH ,Long maSPCT);
+
+//    @Transactional
+//    @Query("DELETE FROM GioHangChiTiet a " +
+//            "WHERE a.gioHang.maGioHang = ?1 AND a.sanPhamChiTiet.maSanPhamCT = ?2")
+//    void delete(Long maGH ,Long maSPCT);
+
 }

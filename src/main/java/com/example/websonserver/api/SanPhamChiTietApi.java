@@ -144,6 +144,4 @@ public class SanPhamChiTietApi {
         }
         return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
     }
-
-
 }

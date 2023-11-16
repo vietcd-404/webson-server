@@ -38,6 +38,15 @@ public class HoaDon extends BaseEntity{
     @Column(name = "tong_tien")
     private BigDecimal tongTien;
 
+    @Column(name = "tinh")
+    private String tinh;
+
+    @Column(name = "huyen")
+    private String huyen;
+
+    @Column(name = "xa")
+    private String xa;
+
     @Column(name = "dia_chi")
     private String diaChi;
 

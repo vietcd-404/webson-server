@@ -1,7 +1,6 @@
 package com.example.websonserver.dto.response;
 
 import com.example.websonserver.entity.AnhSanPham;
-import com.example.websonserver.entity.SanPhamChiTiet;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +9,10 @@ import java.util.List;
 
 @Data
 @Builder
-public class GioHangChiTietResponse {
+public class DanhSachYTResponse {
+
+    private Long maSanPhamCT;
+
     private BigDecimal donGia;
 
     private Integer soLuong;
@@ -25,5 +27,5 @@ public class GioHangChiTietResponse {
 
     private String tenMauSac;
 
-    private List<String> anh;
+    private String anh;
 }
