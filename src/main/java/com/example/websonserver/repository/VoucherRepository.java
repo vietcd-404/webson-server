@@ -15,6 +15,8 @@ public interface VoucherRepository extends JpaRepository<Voucher,Long> {
         List<Voucher> findAllByXoaFalse();
         Optional<Voucher> findByMaVoucher(Long id);
 
+        Voucher findByTenVoucher(String tenVoucher);
+
         @Transactional
         @Modifying
         @Query("UPDATE Voucher a " +

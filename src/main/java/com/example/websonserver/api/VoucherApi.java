@@ -11,19 +11,24 @@ import org.springframework.web.bind.annotation.*;
 
 
 @CrossOrigin("*")
-@RequestMapping("/api/admin/voucher")
+@RequestMapping("/api")
 @RestController
 public class VoucherApi {
 
     @Autowired
     VoucherServiceImpl voucherService;
 
-    @GetMapping
+    @GetMapping("/admin/voucher")
     public ResponseEntity<?> getAllPage(){
         return ResponseEntity.ok(voucherService.getAllVoucher());
     }
 
-    @PostMapping("/add")
+    @GetMapping("/user/voucher")
+    public ResponseEntity<?> getAllVoucher(){
+        return ResponseEntity.ok(voucherService.getAllVoucher());
+    }
+
+    @PostMapping("/admin/voucher/add")
     public ResponseEntity<?> getAllPage(@Valid @RequestBody VoucherRequest voucherRequest, BindingResult result){
         if(result.hasErrors()){
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -34,7 +39,7 @@ public class VoucherApi {
             return ResponseEntity.ok("Thêm thất bại");
         }
     }
-    @PutMapping("/update/{ma}")
+    @PutMapping("/admin/voucher/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody VoucherRequest voucherRequest, @PathVariable Long ma, BindingResult result){
         if(result.hasErrors()){
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -46,7 +51,7 @@ public class VoucherApi {
         }
     }
 
-    @DeleteMapping("/delete/{ma}")
+    @DeleteMapping("/admin/voucher/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma){
         voucherService.deleteVoucher(ma);
             return ResponseEntity.ok(new MessageResponse("Xóa thành công"));
