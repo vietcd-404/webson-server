@@ -13,11 +13,14 @@ import com.example.websonserver.service.HoaDonService;
 import com.example.websonserver.service.SanPhamChiTietService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -297,6 +300,32 @@ public class HoaDonServiceIpml implements HoaDonService {
         return orderResponses;
     }
 
+    public Page<HoaDonResponse> getAllOrderByAdmin(Pageable pageable, Integer trangThai) {
+        Page<HoaDon> orderList = hoaDonRepository.findAllByXoaFalseAndTrangThaiOrderByNgayTaoDesc(trangThai,pageable);
+
+        return orderList.map(hoaDon -> {
+            HoaDonResponse dto = new HoaDonResponse();
+            dto.setMaHoaDon(hoaDon.getMaHoaDon());
+            dto.setTongTien(hoaDon.getTongTien());
+            dto.setTrangThai(hoaDon.getTrangThai());
+            dto.setNgayTao(hoaDon.getNgayTao());
+            dto.setThanhToan(hoaDon.getThanhToan());
+            String fullName="";
+            if(hoaDon.getNguoiDung()==null)
+            {
+                fullName="Khách Ngoài";
+            }
+            else {
+                fullName = hoaDon.getNguoiDung().getHo() + " " + hoaDon.getNguoiDung().getTenDem() + " " + hoaDon.getNguoiDung().getTen();
+            }
+            dto.setTenNguoiDung(fullName);
+            if(hoaDon.getThanhToan()==1){
+                dto.setNgayThanhToan(hoaDon.getNgayThanhToan());
+            }
+            return dto;
+        });
+    }
+
     public List<HoaDonResponse> orderDetail(Long maHoaDon) {
 
         List<HoaDon> list = hoaDonRepository.findByMaHoaDon(maHoaDon);
@@ -309,12 +338,27 @@ public class HoaDonServiceIpml implements HoaDonService {
             response.setSdt(hoaDon.getSdt());
             response.setTinh(hoaDon.getTinh());
             response.setDiaChi(hoaDon.getDiaChi());
+            response.setNguoiDung(hoaDon.getNguoiDung());
+            if(hoaDon.getNguoiDung()!=null) {
+                response.setEmail(hoaDon.getNguoiDung().getEmail());
+            }else{
+                response.setEmail("hai123@gmail.com");
+            }
             response.setDiaChiChiTiet(hoaDon.getDiaChi() + ", " + hoaDon.getXa() + ", " + hoaDon.getHuyen() + ", " + hoaDon.getTinh());
             response.setTongTien(hoaDon.getTongTien());
             response.setTenPhuongThucThanhToan(hoaDon.getPhuongThucThanhToan().getTenPhuongThuc());
             response.setHuyen(hoaDon.getHuyen());
             response.setXa(hoaDon.getXa());
             response.setNgayTao(hoaDon.getNgayTao());
+            String fullName ="";
+            if(hoaDon.getNguoiDung()==null)
+            {
+                fullName="Khách Ngoài";
+            }
+            else {
+                fullName = hoaDon.getNguoiDung().getHo() + " " + hoaDon.getNguoiDung().getTenDem() + " " + hoaDon.getNguoiDung().getTen();
+            }
+            response.setTenNguoiDung(fullName);
             response.setTrangThai(hoaDon.getTrangThai());
             hoaDonResponses.add(response);
         }
@@ -341,6 +385,8 @@ public class HoaDonServiceIpml implements HoaDonService {
                 dto.setMaHoaDon(hoaDon.getMaHoaDon());
                 dto.setTrangThai(hoaDon.getTrangThai());
                 dto.setMaSanPhamCT(hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT());
+                dto.setTongTien(hoaDon.getTongTien());
+                dto.setTienGiam(hoaDon.getTienGiam());
                 hoaDonChiTietResponses.add(dto);
             }
         }
@@ -350,33 +396,7 @@ public class HoaDonServiceIpml implements HoaDonService {
 
     @Override
     public HoaDonChiTiet updateQuantity(Long idSPCT, int soLuong) {
-
-        HoaDonChiTiet hdctNew = new HoaDonChiTiet();
-        List<HoaDon> list = this.hoaDonRepository.findByMaHoaDon(hdctNew.getHoaDon().getMaHoaDon());
-        for (HoaDon x : list) {
-            if (x.getTrangThai() == 0) {
-                SanPhamChiTiet spct = sanPhamChiTietRepository.findById(idSPCT).orElse(null);
-//                HoaDonChiTiet hdct = hoaDonChiTietRepository.findByMaSPCTAndMaHD(idSPCT, x.getMaHoaDon());
-                //Lấy ra số lượng trước update
-                int soLuongCu = hdctNew.getSoLuong();
-                //Cộng số lượng cũ vào số lượng sản phẩm chi tiết
-                spct.setSoLuongTon(spct.getSoLuongTon() + soLuongCu);
-                //Lưu
-                sanPhamChiTietRepository.save(spct);
-                //Set số lượng mới
-                hdctNew.setSoLuong(soLuong);
-                //Lưu
-                hoaDonChiTietRepository.save(hdctNew);
-                //Trừ số lượng trong sản phẩm chi tiết
-                spct.setSoLuongTon(spct.getSoLuongTon() - soLuong);
-                //Lưu
-                sanPhamChiTietRepository.save(spct);
-            } else {
-                String errorMessage = "Đơn hàng đã được xác nhận,bạn có thể hủy và đặt lại.";
-                throw new RuntimeException(errorMessage);
-            }
-        }
-        return hdctNew;
+        return null;
     }
 
     @Override
@@ -567,4 +587,18 @@ public class HoaDonServiceIpml implements HoaDonService {
 
         return hoaDonChiTiet;
     }
+
+    public HoaDon updateStatus(Integer trangThai,Long maHoaDon){
+        HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
+        hoaDon.setTrangThai(trangThai);
+        return hoaDonRepository.save(hoaDon);
+    }
+
+    public HoaDon updatePaid(Integer thanhToan,Long maHoaDon){
+        HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
+        hoaDon.setThanhToan(thanhToan);
+        hoaDon.setNgayThanhToan(LocalDateTime.now());
+        return hoaDonRepository.save(hoaDon);
+    }
+
 }

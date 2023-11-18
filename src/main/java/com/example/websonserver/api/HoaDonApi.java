@@ -195,6 +195,16 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.getAllOrderByAdmin(pageable,trangThai));
     }
 
+    @GetMapping("/admin/order/get-hoadon/detail/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonDetailAd(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.orderDetail(maHoaDon));
+    }
+
+    @GetMapping("/admin/order/get-hoadon/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonAllAd(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetail(maHoaDon));
+    }
+
     @PutMapping("/admin/order/huy-hoa-don")
     public ResponseEntity<?> huyHoaDonByAdmin(
             @RequestParam("maHD") String maHD) {
@@ -205,5 +215,11 @@ public class HoaDonApi {
     public ResponseEntity<?> capNhapTrangThaiHoaDonByAdmin(
             @RequestParam("maHD") String maHD,@RequestParam("trangThai") Integer trangThai ){
         return ResponseEntity.ok(hoaDonService.updateStatus(trangThai,Long.parseLong(maHD)));
+    }
+
+    @PutMapping("/admin/order/thanhToan")
+    public ResponseEntity<?> capNhapThanhToanHoaDonByAdmin(
+            @RequestParam("maHD") String maHD,@RequestParam("thanhToan") Integer thanhToan ){
+        return ResponseEntity.ok(hoaDonService.updatePaid(thanhToan,Long.parseLong(maHD)));
     }
 }
