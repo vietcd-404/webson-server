@@ -22,6 +22,8 @@ public class HoaDonChiTietResponse {
 
     private Integer soLuong;
 
+    private Integer soLuongTon;
+
     private BigDecimal giaBan;
 
     private String tenSanPham;
