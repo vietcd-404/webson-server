@@ -90,10 +90,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         if (request.getTenVoucher() != null) {
             voucher = voucherRepository.findByTenVoucher(request.getTenVoucher());
         }
-//        if (voucher == null) {
-//            String errorMessage = "Không tồn tại.";
-//            throw new RuntimeException(errorMessage);
-//        }
+
         BigDecimal tongTienSauGiamGia = BigDecimal.ZERO;
         if (voucher != null) {
             if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
@@ -509,6 +506,11 @@ public class HoaDonServiceIpml implements HoaDonService {
     }
 
     public void deleteHDCT(Long maHDCT) {
+        BigDecimal tongTien = BigDecimal.ZERO;
+        HoaDonChiTiet hoaDonChiTiet = this.hoaDonChiTietRepository.findById(maHDCT).orElse(null);
+        HoaDon hoaDon = hoaDonChiTiet.getHoaDon();
+        hoaDon.setTongTien(tongTien);
+        hoaDonRepository.save(hoaDon);
         hoaDonChiTietRepository.deleteById(maHDCT);
     }
 
