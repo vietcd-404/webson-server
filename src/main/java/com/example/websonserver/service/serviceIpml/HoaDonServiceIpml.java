@@ -496,7 +496,6 @@ public class HoaDonServiceIpml implements HoaDonService {
         hoaDonChiTietRepository.deleteById(maHDCT);
     }
 
-
     public HoaDonChiTiet suaSoLuongVaoHoaDon(Long maHoaDonChiTiet, Integer soLuong ,Long maHoaDon) {
        HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
 
@@ -517,17 +516,18 @@ public class HoaDonServiceIpml implements HoaDonService {
             throw new RuntimeException(errorMessage);
         }
 
-        sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() + hoaDonChiTiet.getSoLuong());
-        sanPhamChiTietRepository.save(sanPhamChiTiet);
-        hoaDonChiTiet.setSoLuong(soLuong);
-        hoaDonChiTietRepository.save(hoaDonChiTiet);
-        sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() - soLuong);
-        sanPhamChiTietRepository.save(sanPhamChiTiet);
+
         List<HoaDonChiTiet> hoaDonChiTiets = hoaDon.getHoaDonChiTietList();
                 BigDecimal tongTien = BigDecimal.ZERO;
                 if (hoaDonChiTiets != null && !hoaDonChiTiets.isEmpty()) {
                     for (HoaDonChiTiet hoaDonChiTieta : hoaDonChiTiets) {
-                        tongTien = tongTien.add(hoaDonChiTiet.getDonGia().multiply(BigDecimal.valueOf(hoaDonChiTieta.getSoLuong())));
+                        sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() + hoaDonChiTiet.getSoLuong());
+                        sanPhamChiTietRepository.save(sanPhamChiTiet);
+                        hoaDonChiTiet.setSoLuong(soLuong);
+                        hoaDonChiTietRepository.save(hoaDonChiTiet);
+                        tongTien = tongTien.add(hoaDonChiTieta.getDonGia().multiply(BigDecimal.valueOf(hoaDonChiTieta.getSoLuong())));
+                        sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() - soLuong);
+                        sanPhamChiTietRepository.save(sanPhamChiTiet);
                     }
                 }
                 BigDecimal tongTienSauGiamGia = BigDecimal.ZERO;
@@ -536,26 +536,28 @@ public class HoaDonServiceIpml implements HoaDonService {
                 if (voucherChiTiets != null && !voucherChiTiets.isEmpty()) {
                     for (VoucherChiTiet voucherChiTiet : voucherChiTiets) {
                         Voucher voucher = voucherChiTiet.getVoucher();
+                        if(voucher!=null){
+                            if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
+                                BigDecimal phanTramGiam = voucher.getGiaTriGiam();
+                                BigDecimal giamToiDa = voucher.getGiamToiDa();
 
-                        if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
-                            BigDecimal phanTramGiam = voucher.getGiaTriGiam();
-                            BigDecimal giamToiDa = voucher.getGiamToiDa();
+                                BigDecimal giamGia = tongTien.multiply(phanTramGiam.divide(BigDecimal.valueOf(100)));
 
-                            BigDecimal giamGia = tongTien.multiply(phanTramGiam.divide(BigDecimal.valueOf(100)));
+                                if (giamGia.compareTo(giamToiDa) > 0) {
+                                    giamGia = giamToiDa;
+                                }
+                                tongTienSauGiamGia = tongTien.subtract(giamGia);
+                                hoaDon.setTienGiam(giamGia);
+                                hoaDon.setTongTien(tongTienSauGiamGia);
 
-                            if (giamGia.compareTo(giamToiDa) > 0) {
-                                giamGia = giamToiDa;
+                            }else {
+                                String errorMessage = "Không đủ điểu kiện hợp lệ";
+                                throw new RuntimeException(errorMessage);
                             }
-                            tongTienSauGiamGia = tongTien.subtract(giamGia);
-                            hoaDon.setTienGiam(giamGia);
                         }else {
-                            String errorMessage = "Không đủ điểu kiện hợp lệ";
-                            throw new RuntimeException(errorMessage);
+                            hoaDon.setTongTien(tongTien);
                         }
-
-
                     }
-                    hoaDon.setTongTien(tongTienSauGiamGia);
                 }else {
                     hoaDon.setTongTien(tongTien);
                 }
