@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,15 +75,7 @@ public class HoaDonApi {
         }
     }
 
-    @PutMapping("/admin/order/update-status/{maDonHang}")
-    public ResponseEntity<?> updateStatus(@RequestBody HoaDonRequest request, @PathVariable Long maDonHang) {
-        HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
 
-        if (hoaDon1 == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
-        }
-        return ResponseEntity.ok(hoaDonService.statusHoaDon(request, maDonHang));
-    }
 
     @PutMapping("/user/order/update/{maDonHang}")
     public ResponseEntity<?> updateHoaDon(@RequestBody UpdateHoaDonRequest request, @PathVariable Long maDonHang) {
@@ -178,4 +171,30 @@ public class HoaDonApi {
 
     }
 
+    @PutMapping("/admin/order/update-status/{maDonHang}")
+    public ResponseEntity<?> updateStatus(@RequestBody HoaDonRequest request, @PathVariable Long maDonHang) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
+
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        return ResponseEntity.ok(hoaDonService.statusHoaDon(request, maDonHang));
+    }
+
+    @GetMapping("/admin/order/getAll")
+    public ResponseEntity<?> getAllOrderByAdmin(Pageable pageable, @RequestParam("trangThai") Integer trangThai){
+        return ResponseEntity.ok(hoaDonService.getAllOrderByAdmin(pageable,trangThai));
+    }
+
+    @PutMapping("/admin/order/huy-hoa-don")
+    public ResponseEntity<?> huyHoaDonByAdmin(
+            @RequestParam("maHD") String maHD) {
+        return ResponseEntity.ok(hoaDonService.HuyHoaDon(Long.parseLong(maHD)));
+    }
+
+    @PutMapping("/admin/order/thaydoiTrangThai")
+    public ResponseEntity<?> capNhapTrangThaiHoaDonByAdmin(
+            @RequestParam("maHD") String maHD,@RequestParam("trangThai") Integer trangThai ){
+        return ResponseEntity.ok(hoaDonService.updateStatus(trangThai,Long.parseLong(maHD)));
+    }
 }

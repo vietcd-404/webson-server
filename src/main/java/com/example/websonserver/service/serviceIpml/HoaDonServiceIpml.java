@@ -13,6 +13,8 @@ import com.example.websonserver.service.HoaDonService;
 import com.example.websonserver.service.SanPhamChiTietService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -295,6 +297,20 @@ public class HoaDonServiceIpml implements HoaDonService {
         return orderResponses;
     }
 
+    public Page<HoaDonResponse> getAllOrderByAdmin(Pageable pageable, Integer trangThai) {
+        Page<HoaDon> orderList = hoaDonRepository.findAllByXoaFalseAndTrangThaiOrderByNgayTaoDesc(trangThai,pageable);
+
+        return orderList.map(hoaDon -> {
+            HoaDonResponse dto = new HoaDonResponse();
+            dto.setMaHoaDon(hoaDon.getMaHoaDon());
+            dto.setTongTien(hoaDon.getTongTien());
+            dto.setTrangThai(hoaDon.getTrangThai());
+            dto.setNgayTao(hoaDon.getNgayTao());
+            dto.setTenNguoiDung(hoaDon.getNguoiDung().getHo()+" "+hoaDon.getNguoiDung().getTenDem()+" "+hoaDon.getNguoiDung().getTen());
+            return dto;
+        });
+    }
+
     public List<HoaDonResponse> orderDetail(Long maHoaDon) {
 
         List<HoaDon> list = hoaDonRepository.findByMaHoaDon(maHoaDon);
@@ -384,7 +400,12 @@ public class HoaDonServiceIpml implements HoaDonService {
             hd.setTrangThai(Constants.STATUS_ORDER.DA_HUY);
             hoaDonRepository.save(hd);
             return "Bạn đã hủy hóa đơn thành công.";
-        } else {
+        }else if(hd.getTrangThai()==1 && hd.getNguoiDung().getVaiTro().getMaVaiTro()==1){
+            hd.setTrangThai(Constants.STATUS_ORDER.DA_HUY);
+            hoaDonRepository.save(hd);
+            return "Bạn đã hủy hóa đơn thành công.";
+        }
+        else {
             return "Bạn đơn hàng của bạn đã được xác nhận hoặc không có nên không thể hủy";
         }
     }
@@ -474,6 +495,12 @@ public class HoaDonServiceIpml implements HoaDonService {
             sanPhamChiTietRepository.save(sanPhamChiTiet);
         }
         hoaDon.setTongTien(tongTien);
+        return hoaDonRepository.save(hoaDon);
+    }
+
+    public HoaDon updateStatus(Integer trangThai,Long maHoaDon){
+        HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
+        hoaDon.setTrangThai(trangThai);
         return hoaDonRepository.save(hoaDon);
     }
 

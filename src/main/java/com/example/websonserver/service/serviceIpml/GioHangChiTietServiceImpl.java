@@ -4,6 +4,7 @@ import com.example.websonserver.dto.request.SanPhamChiTietRequest;
 import com.example.websonserver.dto.response.GioHangChiTietResponse;
 import com.example.websonserver.dto.response.GioHangDetailResponse;
 import com.example.websonserver.dto.response.HoaDonResponse;
+import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.*;
 import com.example.websonserver.repository.GioHangChiTietRepository;
 import com.example.websonserver.repository.GioHangRepository;

@@ -9,10 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface AnhSanPhamService {
-    public AnhSanPham create(AnhSanPhamRequest anhSP, MultipartFile data);
-    public AnhSanPham update(AnhSanPhamRequest anhSP,Long id);
-    public Page<AnhSanPham> getAll(Pageable pageable);
-    public void delete(Long id);
-    public AnhSanPham findById(String id);
+     AnhSanPham create(AnhSanPhamRequest anhSP, MultipartFile data);
+     AnhSanPham update(AnhSanPhamRequest anhSP,Long id);
+     Page<AnhSanPham> getAll(Pageable pageable);
+     void delete(Long id);
+     AnhSanPham findById(String id);
     List<String> getImagesBySanPhamChiTiet(Long maSanPhamCT);
 }

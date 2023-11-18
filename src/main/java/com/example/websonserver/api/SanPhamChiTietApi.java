@@ -67,13 +67,18 @@ public class SanPhamChiTietApi {
 
     @GetMapping("/guest/san-pham/{ma}")
     public ResponseEntity<?> getDetailById(@PathVariable String ma) {
-        return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
+        return ResponseEntity.ok(sanPhamChiTietService.findByIdResponse(ma));
     }
 
     @GetMapping("/guest/san-pham/get-all/loc")
     public ResponseEntity<?> getLoc() {
         return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
     }
+    @GetMapping("/guest/san-pham/get-thuong-hieu")
+    public ResponseEntity<?> getThuongHieu(@RequestParam String tenThuongHieu) {
+        return ResponseEntity.ok(sanPhamChiTietService.getSanPhamByThuongHieu(tenThuongHieu));
+    }
+
 
     @GetMapping("/guest/san-pham-chi-tiet/{maSanPhamCT}/images")
     public ResponseEntity<List<AnhSanPham>> getImagesByGuest(@PathVariable Long maSanPhamCT) {
@@ -150,6 +155,16 @@ public class SanPhamChiTietApi {
         }
         return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
     }
+
+    @GetMapping("/auth/san-pham-chi-tiet/top-5-moi-nhat")
+    public ResponseEntity<?> Top5SanPhamMoiNhat(){
+        return ResponseEntity.ok(sanPhamChiTietService.Top5SanPhamMoiNhat());
+    }
+    @GetMapping("/auth/san-pham-chi-tiet/top-4-ban-chay")
+    public ResponseEntity<?> Top4BanChay(){
+        return ResponseEntity.ok(sanPhamChiTietService.findTop4BanChay());
+    }
+
 }
 
 

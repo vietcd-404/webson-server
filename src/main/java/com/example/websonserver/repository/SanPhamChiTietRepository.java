@@ -21,11 +21,15 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThai(Integer trangThai);
     public List<SanPhamChiTiet> findAllByXoaFalse();
 
+    public List<SanPhamChiTiet> findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(String tenThuongHieu,Integer trangThai);
+
     @Query("SELECT s FROM SanPhamChiTiet s " +
             "JOIN s.anhSanPhamList a " +
             "WHERE s.maSanPhamCT = :maSanPhamCT")
     List<SanPhamChiTiet> findSanPhamChiTietWithImages(@Param("maSanPhamCT") Long maSanPhamCT);
 
+    @Query(value = "SELECT * FROM san_pham_chi_tiet spct WHERE spct.xoa = false   ORDER BY spct.ngay_tao  desc limit 5",nativeQuery = true)
+    List<SanPhamChiTiet> Top5SanPhamMoiNhat();
 
     @Query(value = "select san_pham.ten_san_pham as tenSanPham,\n" +
             "loai.ten_loai as tenLoai,\n" +

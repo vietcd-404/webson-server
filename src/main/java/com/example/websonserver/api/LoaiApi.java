@@ -12,19 +12,24 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/admin/loai")
+@RequestMapping("/api")
 public class LoaiApi {
     @Autowired
     private LoaiServiceIpml loaiServiceIpml;
 
-    @GetMapping
+    @GetMapping("/admin/loai")
     public ResponseEntity<?> getAll(Pageable pageable) {
             return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
     }
 
+    @GetMapping("/guest/filter")
+    public ResponseEntity<?> getAllFill(Pageable pageable) {
+        return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
+    }
 
 
-    @PostMapping("/add")
+
+    @PostMapping("/admin/loai/add")
     public ResponseEntity<?> saveLoai(@Valid @RequestBody LoaiResquest loai, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -32,7 +37,7 @@ public class LoaiApi {
         return ResponseEntity.ok(loaiServiceIpml.create(loai));
     }
 
-    @PutMapping("/update/{ma}")
+    @PutMapping("/admin/loai/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody LoaiResquest loai, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -40,13 +45,13 @@ public class LoaiApi {
         return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
     }
 
-    @DeleteMapping("/delete/{ma}")
+    @DeleteMapping("/admin/loai/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         loaiServiceIpml.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @PutMapping("/sua/{ma}")
+    @PutMapping("/admin/loai/sua/{ma}")
     public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -54,7 +59,7 @@ public class LoaiApi {
         return ResponseEntity.ok(loaiServiceIpml.updateStatusLoai(trangThai, ma));
     }
 
-    @GetMapping("/load-loai")
+    @GetMapping("/admin/loai/load-loai")
     public ResponseEntity<?> loadAll() {
         return ResponseEntity.ok(loaiServiceIpml.fillComboSpct());
     }
