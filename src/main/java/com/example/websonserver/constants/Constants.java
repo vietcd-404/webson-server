@@ -32,4 +32,8 @@ public class Constants {
         public static String vnp_ReturnUrl = "http://localhost:8000/api/auth/ok";
 
     }
+    public static class STATUS_VOUCHER{
+        public static final int HOAT_DONG = 0;
+        public static final int KHONG_HOAT_DONG = 1;
+    }
 }
