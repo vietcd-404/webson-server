@@ -16,6 +16,8 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet,Lon
 
     List<HoaDonChiTiet> findByHoaDon(HoaDon hoaDon);
 
+    List<HoaDonChiTiet> findBySanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet);
+
     HoaDonChiTiet findByHoaDonAndSanPhamChiTiet(HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
 
     @Query(value = "SELECT hdct.ma_san_pham_chi_tiet , SUM(hdct.so_luong) AS tongSL\n" +

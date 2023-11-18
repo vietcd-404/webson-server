@@ -45,7 +45,7 @@ public class HoaDonRequest {
     @NotNull(message = "Không bỏ trống phương thức thanh toán")
     private String tenPhuongThuc;
 
-    private Long maVoucher;
+    private String tenVoucher;
 
     @NotNull(message = "Số điện thoại không được để trống")
     private String sdt;

@@ -39,4 +39,5 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     @Query("UPDATE HoaDon a " +
             "SET a.trangThai = ?1 WHERE a.maHoaDon = ?2")
     void delete(Integer trangThai,Long maHoaDon);
+
 }

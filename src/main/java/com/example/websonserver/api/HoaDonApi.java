@@ -8,10 +8,7 @@ import com.example.websonserver.dto.response.GioHangChiTietResponse;
 import com.example.websonserver.dto.response.HoaDonResponse;
 import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.dto.response.ThanhToanRes;
-import com.example.websonserver.entity.GioHang;
-import com.example.websonserver.entity.GioHangChiTiet;
-import com.example.websonserver.entity.HoaDon;
-import com.example.websonserver.entity.HoaDonChiTiet;
+import com.example.websonserver.entity.*;
 import com.example.websonserver.jwt.JwtTokenProvider;
 import com.example.websonserver.repository.GioHangRepository;
 import com.example.websonserver.repository.HoaDonRepository;
@@ -64,14 +61,18 @@ public class HoaDonApi {
     @PostMapping("/user/order/place/{maGioHang}")
     public ResponseEntity<?> placeOrder(@RequestBody HoaDonRequest hoaDon, @PathVariable Long maGioHang) {
         GioHang gioHang = gioHangRepository.findById(maGioHang).orElse(null);
+        Voucher voucher = voucherRepository.findByTenVoucher(hoaDon.getTenVoucher());
         try {
             if (gioHang == null) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Giỏ hàng không tồn tại"));
             }
+            if (voucher == null) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Voucher không tồn tại"));
+            }
             return ResponseEntity.ok(hoaDonService.placeOrder(hoaDon, maGioHang));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
     }
 
@@ -109,10 +110,10 @@ public class HoaDonApi {
 
     @PutMapping("/user/order/update-quantity")
     public ResponseEntity<?> updateQuantity(
-            Principal principal,
+
             @RequestParam("SPCTId") String SPCTId,
             @RequestParam("soLuong") String soLuong) {
-        HoaDonChiTiet hdct = hoaDonService.updateQuantity(principal, Long.parseLong(SPCTId), Integer.parseInt(soLuong));
+        HoaDonChiTiet hdct = hoaDonService.updateQuantity( Long.parseLong(SPCTId), Integer.parseInt(soLuong));
         if (hdct == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Sản phẩm không có trong hóa đơn"));
         }
@@ -152,12 +153,14 @@ public class HoaDonApi {
 
     @PostMapping("/user/order/update-so-luong")
     public ResponseEntity<?> updateSoLuong(@RequestParam Integer soLuong,
-                                          @RequestParam Long maHoaDon ) {
-        HoaDon hoaDon = this.hoaDonRepository.findById(maHoaDon).orElse(null);
-        if(hoaDon==null){
-            return ResponseEntity.ok("Mã hóa đơn không tồn tại");
+                                          @RequestParam Long maHoaDonCT ) {
+        try {
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT,soLuong));
+
+        }catch (Exception e){
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
-        return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDon,soLuong));
     }
 
     @PostMapping("/guest/order/thanh-toan")
@@ -186,6 +189,16 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.getAllOrderByAdmin(pageable,trangThai));
     }
 
+    @GetMapping("/admin/order/get-hoadon/detail/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonDetailAd(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.orderDetail(maHoaDon));
+    }
+
+    @GetMapping("/admin/order/get-hoadon/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonAllAd(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetail(maHoaDon));
+    }
+
     @PutMapping("/admin/order/huy-hoa-don")
     public ResponseEntity<?> huyHoaDonByAdmin(
             @RequestParam("maHD") String maHD) {
@@ -196,5 +209,11 @@ public class HoaDonApi {
     public ResponseEntity<?> capNhapTrangThaiHoaDonByAdmin(
             @RequestParam("maHD") String maHD,@RequestParam("trangThai") Integer trangThai ){
         return ResponseEntity.ok(hoaDonService.updateStatus(trangThai,Long.parseLong(maHD)));
+    }
+
+    @PutMapping("/admin/order/thanhToan")
+    public ResponseEntity<?> capNhapThanhToanHoaDonByAdmin(
+            @RequestParam("maHD") String maHD,@RequestParam("thanhToan") Integer thanhToan ){
+        return ResponseEntity.ok(hoaDonService.updatePaid(thanhToan,Long.parseLong(maHD)));
     }
 }

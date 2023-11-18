@@ -164,7 +164,6 @@ public class SanPhamChiTietApi {
     public ResponseEntity<?> Top4BanChay(){
         return ResponseEntity.ok(sanPhamChiTietService.findTop4BanChay());
     }
-
 }
 
 
