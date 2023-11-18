@@ -65,9 +65,7 @@ public class HoaDonApi {
             if (gioHang == null) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Giỏ hàng không tồn tại"));
             }
-            if (voucher == null) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Voucher không tồn tại"));
-            }
+
             return ResponseEntity.ok(hoaDonService.placeOrder(hoaDon, maGioHang));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
@@ -92,7 +90,14 @@ public class HoaDonApi {
         if (hoaDon1 == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
         }
-        return ResponseEntity.ok(hoaDonService.updateOrder(request, maDonHang));
+        try {
+            return ResponseEntity.ok(hoaDonService.updateOrder(request, maDonHang));
+        }
+        catch (Exception e){
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+
     }
 
     @GetMapping("/user/order/get-hoadon")
@@ -160,9 +165,10 @@ public class HoaDonApi {
 
     @PostMapping("/user/order/update-so-luong")
     public ResponseEntity<?> updateSoLuong(@RequestParam Integer soLuong,
-                                          @RequestParam Long maHoaDonCT ) {
+                                          @RequestParam Long maHoaDonCT,
+                                           @RequestParam Long maHoaDon) {
         try {
-            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT,soLuong));
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT,soLuong,maHoaDon));
 
         }catch (Exception e){
             String errorMessage = e.getMessage();
