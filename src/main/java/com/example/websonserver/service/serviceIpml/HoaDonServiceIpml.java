@@ -336,6 +336,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                 dto.setSoLuong(hoaDonChiTiet.getSoLuong());
                 dto.setTenPhuongThucThanhToan(hoaDonChiTiet.getHoaDon().getPhuongThucThanhToan().getTenPhuongThuc());
                 dto.setGiaBan(hoaDonChiTiet.getDonGia());
+                dto.setSoLuongTon(hoaDonChiTiet.getSanPhamChiTiet().getSoLuongTon());
                 dto.setMaHoaDonCT(hoaDonChiTiet.getMaHDCT());
                 dto.setMaHoaDon(hoaDon.getMaHoaDon());
                 dto.setTrangThai(hoaDon.getTrangThai());
@@ -491,8 +492,6 @@ public class HoaDonServiceIpml implements HoaDonService {
         BigDecimal tongTien = BigDecimal.ZERO;
         HoaDonChiTiet hoaDonChiTiet = this.hoaDonChiTietRepository.findById(maHDCT).orElse(null);
         HoaDon hoaDon = hoaDonChiTiet.getHoaDon();
-        hoaDon.setTongTien(tongTien);
-        hoaDonRepository.save(hoaDon);
         hoaDonChiTietRepository.deleteById(maHDCT);
     }
 
@@ -515,6 +514,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             String errorMessage = "Số lượng cập nhật vượt quá số lượng tồn kho";
             throw new RuntimeException(errorMessage);
         }
+
 
 
         List<HoaDonChiTiet> hoaDonChiTiets = hoaDon.getHoaDonChiTietList();
