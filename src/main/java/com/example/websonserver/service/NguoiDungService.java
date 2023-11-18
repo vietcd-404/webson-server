@@ -1,6 +1,7 @@
 package com.example.websonserver.service;
 
 import com.example.websonserver.dto.request.LoaiResquest;
+import com.example.websonserver.dto.request.MatKhauNguoiDungRequest;
 import com.example.websonserver.dto.request.NguoiDungRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.NguoiDungResponse;
@@ -22,10 +23,13 @@ public interface NguoiDungService {
     public NguoiDung findById(String id);
     public List<NguoiDung> searchByKeyword(String keyword);
     NguoiDung findByUsername(String username);
+    NguoiDung findById(Long id);
     Boolean  existByUsername(String username);
     Boolean  existByEmail(String email);
     NguoiDung saveOrUpdate(NguoiDung nguoiDung);
     NguoiDung updateStatus(UpdateTrangThai trangThai, Long maNguoiDung);
+    NguoiDung changePass(MatKhauNguoiDungRequest nguoiDungRequest, Long maNguoiDung);
+
 }
 
 

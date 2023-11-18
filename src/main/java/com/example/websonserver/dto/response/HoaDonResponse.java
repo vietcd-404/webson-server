@@ -28,6 +28,7 @@ public class HoaDonResponse {
     @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime ngayTao;
 
+    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime ngayThanhToan;
 
     private String tenNguoiNhan;
@@ -46,6 +47,8 @@ public class HoaDonResponse {
 
     private String sdt;
 
+    private String email;
+
     private String diaChiChiTiet;
 
     private String tenPhuongThucThanhToan;
@@ -55,6 +58,8 @@ public class HoaDonResponse {
     private Integer trangThai; //Trạng thái giao hàng
 
     private Integer thanhToan; //Trạng thái thanh toán
+
+    private NguoiDung nguoiDung;
 
     private Boolean xoa;
 }

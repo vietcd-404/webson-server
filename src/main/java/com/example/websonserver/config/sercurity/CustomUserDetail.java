@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -32,6 +33,17 @@ public class CustomUserDetail implements UserDetails {
     private String sdt;
 
     private int trangThai;
+
+    private String ho;
+
+    private String tenDem;
+
+    private String ten;
+
+
+    private Date ngaySinh;
+
+    private Integer gioiTinh;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -52,6 +64,11 @@ public class CustomUserDetail implements UserDetails {
                 nguoiDung.getSdt(),
                 nguoiDung.getEmail(),
                 nguoiDung.getTrangThai(),
+                nguoiDung.getHo(),
+                nguoiDung.getTenDem(),
+                nguoiDung.getTen(),
+                nguoiDung.getNgaySinh(),
+                nguoiDung.getGioiTinh(),
                 authorities
         );
     }

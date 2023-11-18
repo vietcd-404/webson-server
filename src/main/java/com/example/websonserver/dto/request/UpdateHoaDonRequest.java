@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class UpdateHoaDonRequest {
     private Long maHoaDon;
+    private  Long maHoaDonCT;
     private String huyen;
     private String tinh;
     private String xa;

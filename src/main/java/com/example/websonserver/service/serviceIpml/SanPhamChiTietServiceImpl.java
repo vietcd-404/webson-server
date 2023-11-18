@@ -257,8 +257,9 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 predicate = cb.and(predicate, cb.equal(root.get("thuongHieu").get("maThuongHieu"), maThuongHieu));
             }
             if (giaThap != null && giaCao != null) {
-                predicate = cb.and(predicate, cb.between(root.get("giaBan"), giaThap, giaCao));
+                predicate = cb.and(predicate, cb.between(root.get("giaBan"), giaCao, giaThap));
             }
+            predicate = cb.and(predicate, cb.equal(root.get("trangThai"), 1));
             predicate = cb.and(predicate, cb.equal(root.get("xoa"), false));
             return predicate;
         };

@@ -22,7 +22,7 @@ public interface HoaDonService {
    HoaDon getHoaDonChiTiet(Long maHoaDon);
 
     HoaDon updateOrder(UpdateHoaDonRequest request , Long maHoaDon);
-    HoaDonChiTiet updateQuantity(Principal principal, Long idSPCT, int soLuong);
+    HoaDonChiTiet updateQuantity(Long idSPCT, int soLuong);
 
     String HuyHoaDon(Long maHD);
 

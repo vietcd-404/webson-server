@@ -1,5 +1,6 @@
 package com.example.websonserver.service.serviceIpml;
 
+import com.example.websonserver.dto.request.MatKhauNguoiDungRequest;
 import com.example.websonserver.dto.request.NguoiDungRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.NguoiDungResponse;
@@ -65,7 +66,10 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 //            LocalDateTime dateTime = LocalDateTime.parse(request.getNgaySinh(), formatter);
             o.setNgaySinh(request.getNgaySinh());
             o.setUsername(request.getUsername());
-            o.setPassword(passwordEncoder.encode(request.getPassword()));
+
+            if (!request.getPassword().equals(o.getPassword())) {
+                o.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
             o.setSdt(request.getSdt());
             o.setHo(request.getHo());
             o.setTenDem(request.getTenDem());
@@ -130,6 +134,11 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     }
 
     @Override
+    public NguoiDung findById(Long id) {
+        return nguoiDungRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public Boolean existByUsername(String username) {
         return nguoiDungRepository.existsByUsername(username);
     }
@@ -149,6 +158,15 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         Optional<NguoiDung> optional = nguoiDungRepository.findById(maNguoiDung);
         return optional.map(o -> {
       o.setTrangThai(updateTrangThai.getTrangThai());
+            return nguoiDungRepository.save(o);
+        }).orElse(null);
+    }
+
+    @Override
+    public NguoiDung changePass(MatKhauNguoiDungRequest nguoiDungRequest, Long maNguoiDung) {
+        Optional<NguoiDung> optional = nguoiDungRepository.findById(maNguoiDung);
+        return optional.map(o -> {
+            o.setPassword(passwordEncoder.encode(nguoiDungRequest.getNewpass()));
             return nguoiDungRepository.save(o);
         }).orElse(null);
     }

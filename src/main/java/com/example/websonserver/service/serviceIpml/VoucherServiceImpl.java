@@ -62,6 +62,8 @@ public class VoucherServiceImpl implements VoucherService {
             o.setMoTa(vcr.getMoTa());
             o.setTrangThai(vcr.getTrangThai());
             o.setXoa(vcr.getXoa());
+            o.setDieuKien(vcr.getDieuKien());
+            o.setGiamToiDa(vcr.getGiamToiDa());
             return voucherRepository.save(o);
         }).orElse(null);
     }

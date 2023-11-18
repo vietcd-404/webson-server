@@ -152,6 +152,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 dto.setMaSanPhamCT(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT());
                 dto.setAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
                 dto.setSoLuong(gioHangChiTiet.getSoLuong());
+                dto.setSoLuongTon(gioHangChiTiet.getSanPhamChiTiet().getSoLuongTon());
                 dto.setGiaBan(gioHangChiTiet.getDonGia());
                 dto.setTenSanPham(gioHangChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
                 gioHangDetailResponses.add(dto);

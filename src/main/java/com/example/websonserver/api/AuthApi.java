@@ -4,6 +4,7 @@ package com.example.websonserver.api;
 import com.example.websonserver.config.email.EmailService;
 import com.example.websonserver.config.sercurity.CustomUserDetail;
 import com.example.websonserver.dto.request.LoginRequest;
+import com.example.websonserver.dto.request.NguoiDungRequest;
 import com.example.websonserver.dto.request.SignupRequest;
 import com.example.websonserver.dto.response.JwtResponse;
 import com.example.websonserver.dto.response.MessageResponse;
@@ -80,8 +81,10 @@ public class AuthApi {
             //Lấy các quyền của user
             String role = customUserDetail.getAuthorities().iterator().next().getAuthority();
 
-            return ResponseEntity.ok(new JwtResponse(token, customUserDetail.getUsername(), customUserDetail.getSdt(),
-                    customUserDetail.getEmail(), role));
+            return ResponseEntity.ok(new JwtResponse(token,customUserDetail.getId(),customUserDetail.getUsername(), customUserDetail.getPassword(),customUserDetail.getSdt(),
+                    customUserDetail.getEmail(), role, customUserDetail.getHo(),
+                    customUserDetail.getTenDem(), customUserDetail.getTen(),
+                    customUserDetail.getNgaySinh(), customUserDetail.getGioiTinh()));
         } catch (AuthenticationException e) {
             // Xử lý trường hợp sai tài khoản hoặc mật khẩu
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Sai tài khoản hoặc mật khẩu"));
@@ -129,6 +132,7 @@ public class AuthApi {
             }
         }
         users.setVaiTro(vaiTro);
+        users.setGioiTinh(1);
         nguoiDungService.saveOrUpdate(users);
         return ResponseEntity.ok(new MessageResponse("Đăng kí thành công"));
     }

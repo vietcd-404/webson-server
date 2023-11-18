@@ -147,6 +147,7 @@ public class SanPhamChiTietApi {
         List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
         return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
+
     @PutMapping("/admin/san-pham-chi-tiet/sua/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody UpdateTrangThai request, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
@@ -164,3 +165,6 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.findTop4BanChay());
     }
 }
+
+
+
