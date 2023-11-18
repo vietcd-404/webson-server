@@ -320,6 +320,9 @@ public class HoaDonServiceIpml implements HoaDonService {
                 fullName = hoaDon.getNguoiDung().getHo() + " " + hoaDon.getNguoiDung().getTenDem() + " " + hoaDon.getNguoiDung().getTen();
             }
             dto.setTenNguoiDung(fullName);
+            if(hoaDon.getThanhToan()==1){
+                dto.setNgayThanhToan(hoaDon.getNgayThanhToan());
+            }
             return dto;
         });
     }

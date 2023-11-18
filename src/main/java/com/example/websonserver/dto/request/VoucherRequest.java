@@ -13,8 +13,11 @@ import java.time.LocalDateTime;
 public class VoucherRequest {
     private Long maVoucher;
 
-//    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
-//    private BigDecimal giamToiDa;
+    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
+    private BigDecimal giamToiDa;
+
+    @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
+    private BigDecimal dieuKien;
 
     @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
     private BigDecimal giaTriGiam;
