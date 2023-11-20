@@ -103,19 +103,25 @@ public class VnPayServiceImpl implements VnPayService {
 
     }
 
-    public String payWithVNPAY(ThanhToanRes payModel, HttpServletRequest request) throws UnsupportedEncodingException {
+    public String payWithVNPAY(ThanhToanRes payModel,Long tongTien, HttpServletRequest request) throws UnsupportedEncodingException {
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String vnp_CreateDate = formatter.format(cld.getTime());
 
         cld.add(Calendar.MINUTE,15);
         String vnp_ExpireDate = formatter.format(cld.getTime());
+        HoaDon orderBo = hoaDonRepository.findById(Long.valueOf(payModel.getMaHoaDon())).orElse(null);
+//        if (orderBo != null) {
+//            orderBo.setTrangThai();Constants..IS_ACTIVE_DRAFT);
+//            orderDao.save(orderBo);
+//        }
+        Long amout = tongTien * 100;
 
         Map<String,String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", Constants.VnPayConstant.vnp_Version);
         vnp_Params.put("vnp_Command",Constants.VnPayConstant.vnp_Command);
         vnp_Params.put("vnp_TmnCode",Constants.VnPayConstant.vnp_TmnCode);
-        vnp_Params.put("vnp_Amount",String.valueOf(payModel.tongTien));
+        vnp_Params.put("vnp_Amount",String.valueOf(amout));
         vnp_Params.put("vnp_BankCode", Constants.VnPayConstant.vnp_BankCode);
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
         vnp_Params.put("vnp_CurrCode",Constants.VnPayConstant.vnp_CurrCode);

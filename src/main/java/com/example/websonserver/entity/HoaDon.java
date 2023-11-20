@@ -53,6 +53,9 @@ public class HoaDon extends BaseEntity{
     @Column(name = "sdt")
     private String sdt;
 
+    @Column(name = "email")
+    private String email;
+
     @ManyToOne
     @JoinColumn(name = "ma_phuong_thuc_thanh_toan")
     @JsonIgnore

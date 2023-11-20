@@ -21,20 +21,6 @@ public class EmailService implements EmailSender{
     @Override
     @Async
     public void send(String to, String otp) {
-//        try {
-//            MimeMessage mimeMessage = mailSender.createMimeMessage();
-//            MimeMessageHelper helper =
-//                    new MimeMessageHelper(mimeMessage, "utf-8");
-//            helper.setText(email, true);
-//            helper.setTo(to);
-//            helper.setSubject("Confirm your email");
-//            helper.setFrom("hello@amigoscode.com");
-//            mailSender.send(mimeMessage);
-//        } catch (MessagingException e) {
-//            log.error("failed to send email", e);
-//            throw new IllegalStateException("failed to send email");
-//        }
-
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -47,6 +33,39 @@ public class EmailService implements EmailSender{
             log.error("Failed to send email", e);
             throw new IllegalStateException("Failed to send email");
         }
+    }
 
+
+    @Override
+    @Async
+    public void sendKhachdatHang(String to, String otp) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+            helper.setText("Thư cảm ơn: \n" + otp);
+            helper.setTo(to);
+            helper.setSubject("Cảm ơn bạn đã đặt hàng tại HEVA Shop");
+            helper.setFrom("hello@amigoscode.com");
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            log.error("Failed to send email", e);
+            throw new IllegalStateException("Failed to send email");
+        }
+    }
+
+    @Override
+    public void sendThongBao(String to, String text,String thongBao) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+            helper.setText(text);
+            helper.setTo(to);
+            helper.setSubject("HEVA Shop thông báo đơn hàng của bạn " +thongBao);
+            helper.setFrom("hello@amigoscode.com");
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            log.error("Failed to send email", e);
+            throw new IllegalStateException("Failed to send email");
+        }
     }
 }
