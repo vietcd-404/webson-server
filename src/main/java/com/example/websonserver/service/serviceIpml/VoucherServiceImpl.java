@@ -29,7 +29,6 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public List<Voucher> getAllVoucher() {
-        updateStatus();
         return voucherRepository.findAllByXoaFalse();
     }
 
@@ -72,20 +71,23 @@ public class VoucherServiceImpl implements VoucherService {
         String formattedTime = LocalDateTime.now().format(formatter);
         List<Voucher> listVoucher = getAllVoucher();
         for (Voucher x : listVoucher) {
-            Voucher voucher = getVoucherById(x.getMaVoucher());
-            LocalDateTime startTime = voucher.getThoiGianBatDau();
-            LocalDateTime endTime = voucher.getThoiGianKetThuc();
+            LocalDateTime startTime = x.getThoiGianBatDau();
+            LocalDateTime endTime = x.getThoiGianKetThuc();
             if (LocalDate.parse(formattedTime, formatter).isBefore(startTime.toLocalDate()) ||
                     LocalDate.parse(formattedTime, formatter).isAfter(endTime.toLocalDate())) {
-                voucher.setTrangThai(KHONG_HOAT_DONG);
+                x.setTrangThai(KHONG_HOAT_DONG);
             } else {
-                voucher.setTrangThai(HOAT_DONG);
+                x.setTrangThai(HOAT_DONG);
             }
-            voucherRepository.save(voucher);
+            voucherRepository.save(x);
         }
     }
     @Scheduled(cron = "0 0 0 * * *") // Chạy mỗi ngày lúc 00:00:00
     public void scheduledUpdateStatus() {
         updateStatus();
     }
+//    @Scheduled(fixedRate = 2000) // Chạy mỗi 2 giây
+//    public void scheduledUpdateStatus() {
+//        updateStatus();
+//    }
 }

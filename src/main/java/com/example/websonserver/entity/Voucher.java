@@ -48,7 +48,7 @@ public class Voucher extends BaseEntity implements Serializable {
     @Column(name = "so_luong")
     private Integer soLuong;
 
-    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private List<VoucherChiTiet> voucherChiTiets = new ArrayList<>();
 
