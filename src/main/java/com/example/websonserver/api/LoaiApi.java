@@ -24,7 +24,7 @@ public class LoaiApi {
 
     @GetMapping("/guest/filter")
     public ResponseEntity<?> getAllFill(Pageable pageable) {
-        return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
+        return ResponseEntity.ok(loaiServiceIpml.fillComboSpct());
     }
 
 

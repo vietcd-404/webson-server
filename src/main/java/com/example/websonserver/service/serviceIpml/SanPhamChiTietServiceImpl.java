@@ -1,6 +1,7 @@
 package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.SanPhamChiTietRequestDemo;
 import com.example.websonserver.dto.request.ThuocTinhRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
@@ -88,7 +89,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                         .loai(loaiService.findByTen(x.getTenLoai()))
                         .thuongHieu(thuongHieuService.findByTen(x.getTenThuongHieu()))
                         .mauSac(mauSacService.findByTen(x.getTenMau()))
-//                    .anhSanPhamList(request.getAnhSanPhamList())
+//                        .anhSanPhamList(request.getAnhSanPhamList())
                         .trangThai(x.getTrangThai())
                         .xoa(x.getXoa())
                         .build();
@@ -121,7 +122,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     @Override
     public List<SanPhamChiTietResponse> getAllCT() {
-        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalse();
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseOrderByNgayTaoDesc();
         List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
         for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
             SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
@@ -354,6 +355,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             }
         }
         return dtoList;
+    }
+
+    @Override
+    public SanPhamChiTiet findDuplicate(String tenSanPham, String tenLoai, String tenMau, String tenThuongHieu) {
+        return sanPhamChiTietRepository.findByNamesAndXoaFalse(tenSanPham,tenLoai,tenMau,tenThuongHieu);
     }
 
     public void addImagesToProductChiTiet(Long productId, List<Long> imageIds) {

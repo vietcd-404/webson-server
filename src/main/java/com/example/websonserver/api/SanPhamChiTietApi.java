@@ -1,6 +1,7 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.SanPhamChiTietRequestDemo;
 import com.example.websonserver.dto.request.ThuocTinhRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
@@ -21,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +108,6 @@ public class SanPhamChiTietApi {
     @PostMapping("/admin/san-pham-chi-tiet/add")
     public ResponseEntity<?> save(@Valid @RequestBody SanPhamChiTietRequest request, BindingResult result) {
         if (result.hasErrors()) {
-
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
         return ResponseEntity.ok(sanPhamChiTietService.createOne(request));
@@ -125,7 +126,26 @@ public class SanPhamChiTietApi {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(sanPhamChiTietService.createList(listRequest));
+        if(listRequest.isEmpty()){
+            return ResponseEntity.ok("");
+        }
+        List<SanPhamChiTietRequest> listSpCTAdd = new ArrayList<>();
+        for (SanPhamChiTietRequest request : listRequest) {
+            SanPhamChiTiet existingChiTiet = sanPhamChiTietService.findDuplicate(request.getTenSanPham(), request.getTenLoai(),request.getTenMau(),request.getTenThuongHieu());
+            if (existingChiTiet != null) {
+                request.setSoLuongTon(existingChiTiet.getSoLuongTon() + request.getSoLuongTon());
+                sanPhamChiTietService.update(request,existingChiTiet.getMaSanPhamCT());
+            }else{
+                listSpCTAdd.add(request);
+            }
+
+        }
+        if(listSpCTAdd.isEmpty()){
+            return ResponseEntity.ok("Đã update hết");
+        }
+        else {
+            return ResponseEntity.ok(sanPhamChiTietService.createList(listSpCTAdd));
+        }
     }
 
     @PutMapping("/admin/san-pham-chi-tiet/update/{ma}")

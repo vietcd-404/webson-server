@@ -26,7 +26,7 @@ public class ThuongHieuApi {
 
     @GetMapping("/guest/filter/thuong-hieu")
     public ResponseEntity<?> getAllFill(Pageable pageable) {
-        return ResponseEntity.ok(thuongHieuServiceImpl.getAll(pageable).getContent());
+        return ResponseEntity.ok(thuongHieuServiceImpl.fillComboSpct());
     }
 
     @PostMapping("/admin/thuong-hieu/add")

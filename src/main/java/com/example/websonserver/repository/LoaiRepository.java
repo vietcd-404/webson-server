@@ -28,6 +28,6 @@ public interface LoaiRepository extends JpaRepository<Loai,Long> {
             "SET a.xoa = true WHERE a.maLoai = ?1")
     void delete(Long maLoai);
 
-    @Query("SELECT sp FROM Loai sp WHERE sp.tenLoai = ?1")
+    @Query("SELECT sp FROM Loai sp WHERE sp.tenLoai = ?1 and sp.xoa=false")
     Loai findByTen(String tenLoai);
 }

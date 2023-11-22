@@ -1,26 +1,25 @@
 package com.example.websonserver.dto.request;
 
 
-import com.example.websonserver.entity.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 @Builder
 @Data
-public class SanPhamChiTietRequest {
+public class SanPhamChiTietRequestDemo {
+
+    private String id;
+
     @NotNull(message = "Không bỏ trống giá bán")
     @Min(value = 1, message = "Giá bán phải lớn hơn 0")
     private BigDecimal giaBan;
 
-    @NotNull(message = "Không bỏ phần trăm giảm")
-    @Min(value = 0 ,message = "Phần trăm giảm không được nhỏ hơn 0")
-    private Integer phanTramGiam;
 
     @NotNull(message = "Không bỏ trống giá bán")
     @Min(value = 1 ,message = "Số lượng tồn phải lớn hơn 0")

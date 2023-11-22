@@ -2,6 +2,7 @@ package com.example.websonserver.service;
 
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.SanPhamChiTietRequestDemo;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
@@ -39,4 +40,5 @@ public interface SanPhamChiTietService {
     List<SanPhamChiTietRes> Top5SanPhamMoiNhat();
     List<SanPhamChiTietResponse> getAllLoc();
     List<SanPhamChiTietResponse> findTop4BanChay();
+    SanPhamChiTiet findDuplicate(String tenSanPham,String tenLoai,String tenMau,String tenThuongHieu);
 }

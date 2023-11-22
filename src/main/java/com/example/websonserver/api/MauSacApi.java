@@ -26,7 +26,7 @@ public class MauSacApi {
 
     @GetMapping("/guest/filter/mau-sac")
     public ResponseEntity<?> getAllFill(Pageable pageable) {
-        return ResponseEntity.ok(mauSacServiceImpl.getAll(pageable).getContent());
+        return ResponseEntity.ok(mauSacServiceImpl.fillComboSpctByNMau());
     }
 
     @PostMapping("/admin/mau-sac/add")

@@ -23,7 +23,7 @@ public interface ThuongHieuRepository extends JpaRepository<ThuongHieu, Long> {
             "SET a.xoa = true WHERE a.maThuongHieu = ?1")
     void delete(Long maThuongHieu);
 
-    @Query("SELECT sp FROM ThuongHieu sp WHERE sp.tenThuongHieu = ?1")
+    @Query("SELECT sp FROM ThuongHieu sp WHERE sp.tenThuongHieu = ?1 and sp.xoa=false")
     ThuongHieu findByTen(String tenThuongHieu);
 
     @Query("SELECT sp FROM ThuongHieu sp WHERE sp.xoa = false and sp.trangThai =1  order by  sp.ngayTao desc ")

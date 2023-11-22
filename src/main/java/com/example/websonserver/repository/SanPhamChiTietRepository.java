@@ -2,6 +2,7 @@ package com.example.websonserver.repository;
 
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.SanPhamChiTiet;
+import com.example.websonserver.service.SanPhamChiTietService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,12 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
 
     public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThai(Integer trangThai);
     public List<SanPhamChiTiet> findAllByXoaFalse();
+    public List<SanPhamChiTiet> findAllByXoaFalseOrderByNgayTaoDesc();
+
+    @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.tenSanPham = ?1 AND s.loai.tenLoai = ?2" +
+            " AND s.mauSac.tenMau = ?3 " +
+            "AND s.thuongHieu.tenThuongHieu = ?4 and s.xoa=false ")
+    SanPhamChiTiet findByNamesAndXoaFalse(String tenSanPham, String tenLoai, String tenMau, String tenThuongHieu);
 
     public List<SanPhamChiTiet> findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(String tenThuongHieu,Integer trangThai);
 
