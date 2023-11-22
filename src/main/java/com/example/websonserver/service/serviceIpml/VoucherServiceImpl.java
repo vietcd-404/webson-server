@@ -5,11 +5,16 @@ import com.example.websonserver.entity.Voucher;
 import com.example.websonserver.repository.VoucherRepository;
 import com.example.websonserver.service.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.websonserver.constants.Constants.STATUS_VOUCHER.*;
 
 @Service
 public class VoucherServiceImpl implements VoucherService {
@@ -61,4 +66,28 @@ public class VoucherServiceImpl implements VoucherService {
             return voucherRepository.save(o);
         }).orElse(null);
     }
+    public void updateStatus() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedTime = LocalDateTime.now().format(formatter);
+        List<Voucher> listVoucher = getAllVoucher();
+        for (Voucher x : listVoucher) {
+            LocalDateTime startTime = x.getThoiGianBatDau();
+            LocalDateTime endTime = x.getThoiGianKetThuc();
+            if (LocalDate.parse(formattedTime, formatter).isBefore(startTime.toLocalDate()) ||
+                    LocalDate.parse(formattedTime, formatter).isAfter(endTime.toLocalDate())) {
+                x.setTrangThai(KHONG_HOAT_DONG);
+            } else {
+                x.setTrangThai(HOAT_DONG);
+            }
+            voucherRepository.save(x);
+        }
+    }
+    @Scheduled(cron = "0 0 0 * * *") // Chạy mỗi ngày lúc 00:00:00
+    public void scheduledUpdateStatus() {
+        updateStatus();
+    }
+//    @Scheduled(fixedRate = 2000) // Chạy mỗi 2 giây
+//    public void scheduledUpdateStatus() {
+//        updateStatus();
+//    }
 }
