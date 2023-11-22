@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ThanhToanRes {
     public Long tongTien;
-    public String moTa ="Thanh toán ví VNPAY" ;
+    public String moTa ="Thanh toan vi VNPAY" ;
     public Long maHoaDon;
     public String url;
 }

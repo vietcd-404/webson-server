@@ -21,12 +21,17 @@ public class VNPayApi {
     private VnPayServiceImpl vnPayService;
 
     @PostMapping("/pay")
-    public ResponseEntity<?> pay(ThanhToanRes payModel , @RequestParam Long tongTien, HttpServletRequest request) {
+    public ResponseEntity<?> pay(ThanhToanRes payModel, @RequestParam Long tongTien, HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(new UrlResponse(vnPayService.payWithVNPAY(payModel,tongTien, request)));
+            return ResponseEntity.ok(new UrlResponse(vnPayService.payWithVNPAY(payModel, tongTien, request)));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PutMapping("/thanh-toan")
+    public ResponseEntity<?> ThanhToan(@RequestParam Long maHoaDon) {
+        return ResponseEntity.ok(vnPayService.vnpayReturn(maHoaDon));
     }
 
 
