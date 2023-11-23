@@ -237,4 +237,16 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.updatePaid(thanhToan, Long.parseLong(maHD)));
     }
 
+    @PostMapping("/user/order/them-san-pham-vao-hoa-don")
+    public ResponseEntity<?> themSanPhamVaoHoaDon(@RequestParam Long maSPCT,
+                                           @RequestParam int soLuong,
+                                           @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
 }
