@@ -1,6 +1,7 @@
 package com.example.websonserver.api;
 
 
+import com.example.websonserver.dto.request.HoaDonRequest;
 import com.example.websonserver.dto.response.ThanhToanRes;
 import com.example.websonserver.dto.response.UrlResponse;
 import com.example.websonserver.service.serviceIpml.VnPayServiceImpl;
@@ -21,17 +22,27 @@ public class VNPayApi {
     private VnPayServiceImpl vnPayService;
 
     @PostMapping("/pay")
-    public ResponseEntity<?> pay(ThanhToanRes payModel, @RequestParam Long tongTien, HttpServletRequest request) {
+    public ResponseEntity<?> pay(@RequestBody ThanhToanRes payModel, HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(new UrlResponse(vnPayService.payWithVNPAY(payModel, tongTien, request)));
+            return ResponseEntity.ok(new UrlResponse(vnPayService.payWithVNPAY(payModel, request)));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @PutMapping("/thanh-toan")
-    public ResponseEntity<?> ThanhToan(@RequestParam Long maHoaDon) {
-        return ResponseEntity.ok(vnPayService.vnpayReturn(maHoaDon));
+    @GetMapping("/callback")
+    public String handleVnPayCallback(@RequestParam("vnp_ResponseCode") String responseCode,
+                                      @RequestParam("vnp_TxnRef") String transactionRef,
+                                      @RequestParam Long maHoaDon) {
+
+        if ("00".equals(responseCode)) {
+
+
+            return "Payment successful";
+        } else {
+            // Payment failed, handle accordingly
+            return "Payment failed";
+        }
     }
 
 

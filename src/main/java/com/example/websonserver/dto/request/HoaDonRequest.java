@@ -24,6 +24,9 @@ public class HoaDonRequest {
     private LocalDateTime ngayNhan;
     private LocalDateTime ngayThanhToan;
 
+    public Long tongTien1;
+    public String moTa ="  ";
+
     @NotBlank(message = "Không bỏ trong tên người nhận")
     private String tenNguoiNhan;
 
