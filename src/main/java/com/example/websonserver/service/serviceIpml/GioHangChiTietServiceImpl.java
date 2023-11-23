@@ -53,11 +53,11 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     GioHangCTSessionService gioHangCTSessionService;
 
     @Override
-    public GioHangChiTietResponse addProductToCart(String SPCTId, String soLuong) {
+    public GioHangChiTietResponse addProductToCart(String SPCTId, Integer soLuong) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
-        int quantity = Integer.parseInt(soLuong);
+        int quantity = soLuong;
         GioHang gioHang = gioHangService.findByMaNguoiDung(nguoiDung.getMaNguoiDung());
         if (gioHang == null) {
             gioHang = new GioHang();
@@ -66,6 +66,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
             gioHang.setXoa(Boolean.FALSE);
             gioHangRepository.save(gioHang);
         }
+
         SanPhamChiTiet spct = sanPhamChiTietService.findById(SPCTId);
         GioHangChiTiet ghctWithIdSPCT = null;
         try {
@@ -77,7 +78,12 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
             String errorMessage = "Không tìm thấy sản phẩm chi tiết.";
             throw new RuntimeException(errorMessage);
         }
+        if (spct.getSoLuongTon() -soLuong < 0) {
+            String errorMessage = "Số lượng vượt giới hạn.";
+            throw new RuntimeException(errorMessage);
+        }
         if (ghctWithIdSPCT != null){
+
             if (quantity > 0 && (quantity+ ghctWithIdSPCT.getSoLuong())<= spct.getSoLuongTon()){
                 ghctWithIdSPCT.setSoLuong(ghctWithIdSPCT.getSoLuong()+quantity);
 //                spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
@@ -152,6 +158,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 dto.setMaSanPhamCT(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT());
                 dto.setAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
                 dto.setSoLuong(gioHangChiTiet.getSoLuong());
+                dto.setPhanTramGiam(gioHangChiTiet.getSanPhamChiTiet().getPhanTramGiam());
                 dto.setSoLuongTon(gioHangChiTiet.getSanPhamChiTiet().getSoLuongTon());
                 dto.setGiaBan(gioHangChiTiet.getDonGia());
                 dto.setTenSanPham(gioHangChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());

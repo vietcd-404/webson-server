@@ -61,6 +61,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/vnpay/**").permitAll()
                 .requestMatchers("/api/anh/**").permitAll()
                 .requestMatchers("/api/guest/**").permitAll()
+//                .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http
 //                .exceptionHandling()

@@ -29,7 +29,7 @@ public class Constants {
         public static String vnp_BankCode = "NCB";
         public static String vnp_CurrCode = "VND";
         public static String vnp_Locale = "vn";
-        public static String vnp_ReturnUrl = "http://localhost:8000/api/auth/ok";
+        public static String vnp_ReturnUrl = "http://localhost:3000/home";
 
     }
     public static class STATUS_VOUCHER{

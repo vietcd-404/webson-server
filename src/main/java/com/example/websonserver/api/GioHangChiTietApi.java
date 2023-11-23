@@ -25,7 +25,7 @@ public class GioHangChiTietApi {
     @PostMapping("/user/gio-hang-chi-tiet/add")
     public ResponseEntity<?> addProductToCart(
             @RequestParam("SPCTId") String SPCTId,
-            @RequestParam("soLuong") String soLuong) {
+            @RequestParam("soLuong") Integer soLuong) {
         try {
             GioHangChiTietResponse ghct = gioHangChiTietService.addProductToCart(SPCTId, soLuong);
             return ResponseEntity.ok(ghct);
@@ -34,6 +34,7 @@ public class GioHangChiTietApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
     }
+
     @PutMapping("/user/gio-hang-chi-tiet/update-product-quantity")
     public ResponseEntity<?> updateProductQuantity(
             @RequestParam("SPCTId") String SPCTId,

@@ -13,6 +13,7 @@ import java.util.List;
 public class GioHangDetailResponse {
     private Long maGioHang;
     private Long maGH;
+    private Integer phanTramGiam;
     private Integer soLuongTon;
     private Long maSanPhamCT;
     private List<String> anh;

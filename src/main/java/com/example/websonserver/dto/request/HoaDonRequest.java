@@ -39,6 +39,8 @@ public class HoaDonRequest {
     @NotBlank(message = "Không bỏ trống địa chỉ")
     private String diaChi;
 
+    private String email;
+
 
     private String nguoiDung;
 
