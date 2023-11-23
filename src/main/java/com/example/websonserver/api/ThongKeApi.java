@@ -82,4 +82,56 @@ public class ThongKeApi {
         }
         return ResponseEntity.ok(map);
     }
+
+    @GetMapping("/doanh-thu-theo-quy-1")
+    public ResponseEntity<?> getDoanhThuTheoQuy1(){
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoQuy1();
+        List<ThongTinThongKe> list = new ArrayList<>();
+        for (Object[] x : lst) {
+            ThongTinThongKe  data = new ThongTinThongKe();
+            data.setDoanhThu(x[0].toString());
+            data.setSlDaBan(x[1].toString());
+            list.add(data);
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/doanh-thu-theo-quy-2")
+    public ResponseEntity<?> getDoanhThuTheoQuy2(){
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoQuy2();
+        List<ThongTinThongKe> list = new ArrayList<>();
+        for (Object[] x : lst) {
+            ThongTinThongKe  data = new ThongTinThongKe();
+            data.setDoanhThu(x[0].toString());
+            data.setSlDaBan(x[1].toString());
+            list.add(data);
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/doanh-thu-theo-quy-3")
+    public ResponseEntity<?> getDoanhThuTheoQuy3(){
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoQuy3();
+        List<ThongTinThongKe> list = new ArrayList<>();
+        for (Object[] x : lst) {
+            ThongTinThongKe  data = new ThongTinThongKe();
+            data.setDoanhThu(x[0].toString());
+            data.setSlDaBan(x[1].toString());
+            list.add(data);
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/doanh-thu-theo-quy-4")
+    public ResponseEntity<?> getDoanhThuTheoQuy4(){
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoQuy4();
+        List<ThongTinThongKe> list = new ArrayList<>();
+        for (Object[] x : lst) {
+            ThongTinThongKe  data = new ThongTinThongKe();
+            data.setDoanhThu(x[0].toString());
+            data.setSlDaBan(x[1].toString());
+            list.add(data);
+        }
+        return ResponseEntity.ok(list);
+    }
 }

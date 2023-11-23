@@ -44,4 +44,43 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
     @Query("SELECT COUNT(hdct) FROM HoaDonChiTiet hdct WHERE FUNCTION('YEAR', hdct.ngayTao) = :nam AND hdct.trangThai = :status")
     List<Object[]> getSoLuongHoaDonTheoTrangThaiVaNam(@Param("nam") Integer nam, @Param("status") Integer status);
 
+    @Query("SELECT " +
+            "   SUM(h.donGia * h.soLuong)," +
+            "   SUM(h.soLuong) " +
+            "FROM HoaDonChiTiet h " +
+            "WHERE FUNCTION('MONTH', h.ngayTao) = 01 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 02 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 03 " +
+            "   AND h.trangThai = 3 ")
+    List<Object[]> getDoanhThuTheoQuy1();
+
+    @Query("SELECT " +
+            "   SUM(h.donGia * h.soLuong)," +
+            "   SUM(h.soLuong) " +
+            "FROM HoaDonChiTiet h " +
+            "WHERE FUNCTION('MONTH', h.ngayTao) = 04 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 05 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 06 " +
+            "   AND h.trangThai = 3 ")
+    List<Object[]> getDoanhThuTheoQuy2();
+
+    @Query("SELECT " +
+            "   SUM(h.donGia * h.soLuong)," +
+            "   SUM(h.soLuong) " +
+            "FROM HoaDonChiTiet h " +
+            "WHERE FUNCTION('MONTH', h.ngayTao) = 07 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 08 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 09 " +
+            "   AND h.trangThai = 3 ")
+    List<Object[]> getDoanhThuTheoQuy3();
+
+    @Query("SELECT " +
+            "   SUM(h.donGia * h.soLuong)," +
+            "   SUM(h.soLuong) " +
+            "FROM HoaDonChiTiet h " +
+            "WHERE FUNCTION('MONTH', h.ngayTao) = 10 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 11 " +
+            "OR FUNCTION('MONTH', h.ngayTao) = 12 " +
+            "   AND h.trangThai = 3 ")
+    List<Object[]> getDoanhThuTheoQuy4();
 }
