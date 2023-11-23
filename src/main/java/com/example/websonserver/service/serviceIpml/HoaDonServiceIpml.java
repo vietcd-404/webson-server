@@ -695,4 +695,67 @@ public class HoaDonServiceIpml implements HoaDonService {
         return hoaDonRepository.save(hoaDon);
     }
 
+    public HoaDonChiTiet themSanPhamVaoHoaDon(Long maSPCT, Integer soLuong, Long maHoaDon) {
+        HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
+
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(maSPCT).orElse(null);
+        if (sanPhamChiTiet == null) {
+            String errorMessage = "Không tìm thấy sản phẩm chi tiết";
+            throw new RuntimeException(errorMessage);
+        }
+        int soLuongTon = sanPhamChiTiet.getSoLuongTon();
+        if (soLuong > soLuongTon) {
+            String errorMessage = "Số lượng cập nhật vượt quá số lượng tồn kho";
+            throw new RuntimeException(errorMessage);
+        }
+        HoaDonChiTiet hdct = new HoaDonChiTiet();
+        hdct.setHoaDon(hoaDon);
+        hdct.setDonGia(sanPhamChiTiet.getGiaBan());
+        hdct.setSanPhamChiTiet(sanPhamChiTiet);
+        hdct.setSoLuong(soLuong);
+        hdct.setTrangThai(0);
+        hdct.setXoa(Boolean.FALSE);
+        hoaDonChiTietRepository.save(hdct);
+        sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() - soLuong);
+        sanPhamChiTietRepository.save(sanPhamChiTiet);
+
+        List<HoaDonChiTiet> hoaDonChiTiets = hoaDon.getHoaDonChiTietList();
+        BigDecimal tongTien = BigDecimal.ZERO;
+        if (hoaDonChiTiets != null && !hoaDonChiTiets.isEmpty()) {
+            for (HoaDonChiTiet hoaDonChiTieta : hoaDonChiTiets) {
+                tongTien = tongTien.add((hoaDonChiTieta.getDonGia().subtract(hoaDonChiTieta.getDonGia().multiply(BigDecimal.valueOf(hoaDonChiTieta.getSanPhamChiTiet().getPhanTramGiam()).divide(BigDecimal.valueOf(100))))).multiply(BigDecimal.valueOf(hoaDonChiTieta.getSoLuong())));
+            }
+        }
+        BigDecimal tongTienSauGiamGia = BigDecimal.ZERO;
+        List<VoucherChiTiet> voucherChiTiets = hoaDon.getVoucherChiTiets();
+
+        if (voucherChiTiets != null && !voucherChiTiets.isEmpty()) {
+            for (VoucherChiTiet voucherChiTiet : voucherChiTiets) {
+                Voucher voucher = voucherChiTiet.getVoucher();
+                if (voucher != null) {
+                    if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
+                        BigDecimal phanTramGiam = voucher.getGiaTriGiam();
+                        BigDecimal giamToiDa = voucher.getGiamToiDa();
+                        BigDecimal giamGia = tongTien.multiply(phanTramGiam.divide(BigDecimal.valueOf(100)));
+                        if (giamGia.compareTo(giamToiDa) > 0) {
+                            giamGia = giamToiDa;
+                        }
+                        tongTienSauGiamGia = tongTien.subtract(giamGia);
+                        hoaDon.setTienGiam(giamGia);
+                        hoaDon.setTongTien(tongTienSauGiamGia);
+                    } else {
+                        String errorMessage = "Không đủ điểu kiện hợp lệ";
+                        throw new RuntimeException(errorMessage);
+                    }
+                } else {
+                    hoaDon.setTongTien(tongTien);
+                }
+            }
+        } else {
+            hoaDon.setTongTien(tongTien);
+        }
+        hoaDon.setVoucherChiTiets(voucherChiTiets);
+        hoaDonRepository.save(hoaDon);
+        return hdct;
+    }
 }
