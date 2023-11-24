@@ -427,6 +427,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 String tenMau = mauSac.getTenMau();
                 dto.setTenMau(tenMau);
             }
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
             dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
             dto.setTrangThai(sanPhamChiTiet.getTrangThai());
             sanPhamChiTietDtos.add(dto);
