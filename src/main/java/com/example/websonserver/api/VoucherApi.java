@@ -25,7 +25,7 @@ public class VoucherApi {
 
     @GetMapping("/user/voucher")
     public ResponseEntity<?> getAllVoucher(){
-        return ResponseEntity.ok(voucherService.getAllVoucher());
+        return ResponseEntity.ok(voucherService.getAllVoucherUser());
     }
 
     @PostMapping("/admin/voucher/add")

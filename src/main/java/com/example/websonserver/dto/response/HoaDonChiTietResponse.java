@@ -16,6 +16,8 @@ public class HoaDonChiTietResponse {
     private Long maHoaDonCT;
     private Long maSanPhamCT;
 
+    private Integer phanTramGiam;
+
     private LocalDateTime ngayTao;
 
     private String tenNguoiNhan;

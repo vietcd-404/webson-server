@@ -23,9 +23,9 @@ public class HoaDonRequest {
     private Long maSanPhamCT;
     private LocalDateTime ngayNhan;
     private LocalDateTime ngayThanhToan;
-
+    private Long maGioHang;
     public Long tongTien1;
-    public String moTa ="  ";
+    public String moTa = "  ";
 
     @NotBlank(message = "Không bỏ trong tên người nhận")
     private String tenNguoiNhan;
@@ -58,10 +58,10 @@ public class HoaDonRequest {
     private Integer thanhToan;
 
     private Integer soLuong;
-    private List<HoaDonChiTiet> hoaDonChiTietList ;
+    private List<HoaDonChiTiet> hoaDonChiTietList;
     private List<SanPhamChiTiet> sanPhamChiTiets;
     private List<VoucherChiTiet> voucherChiTiets = new ArrayList<>();
-    private Integer trangThai =0;
+    private Integer trangThai = 0;
     private Boolean xoa = false;
 
 

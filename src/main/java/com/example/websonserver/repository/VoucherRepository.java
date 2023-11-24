@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface VoucherRepository extends JpaRepository<Voucher,Long> {
+        List<Voucher> findAllByXoaFalseAndTrangThai(Integer trangThai);
         List<Voucher> findAllByXoaFalse();
         Optional<Voucher> findByMaVoucher(Long id);
 
