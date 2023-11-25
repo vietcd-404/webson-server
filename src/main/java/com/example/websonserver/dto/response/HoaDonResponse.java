@@ -22,6 +22,7 @@ import java.util.List;
 public class HoaDonResponse {
 
     private Long maHoaDon;
+    private Long maHoaDonCT;
 
     private LocalDateTime ngayNhan;
 
@@ -62,4 +63,6 @@ public class HoaDonResponse {
     private NguoiDung nguoiDung;
 
     private Boolean xoa;
+
+    private List<HoaDonChiTietResponse> hoaDonChiTiet;
 }
