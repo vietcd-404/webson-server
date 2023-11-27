@@ -1,9 +1,14 @@
 package com.example.websonserver.api;
 
+import com.example.websonserver.dto.response.NguoiDungResponse;
+import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.dto.response.ThongKeResponse.ThongTinThongKe;
 import com.example.websonserver.entity.HoaDonChiTiet;
+import com.example.websonserver.repository.HoaDonChiTietRepository;
 import com.example.websonserver.repository.ThongKeRepository;
+import com.example.websonserver.service.serviceIpml.HoaDonServiceIpml;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +23,13 @@ import java.util.Map;
 public class ThongKeApi {
     @Autowired
     ThongKeRepository thongKeRepository;
+
+    @Autowired
+    HoaDonServiceIpml hoaDonService;
+
     @GetMapping("/doanh-thu-theo-nam")
-    public ResponseEntity<?> getDoanhThuTheoNam(@RequestParam Integer year){
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNam(year);
+    public ResponseEntity<?> getDoanhThuTheoNam(@RequestParam Integer startYear,@RequestParam Integer endYear ){
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNam(startYear,endYear);
         List<ThongTinThongKe> list = new ArrayList<>();
         for (Object[] x : lst) {
             ThongTinThongKe  data = new ThongTinThongKe();
@@ -133,5 +142,32 @@ public class ThongKeApi {
             list.add(data);
         }
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/top-4-product")
+    public ResponseEntity<?> getTop4Product() {
+        List<SanPhamChiTietResponse> top4Products = hoaDonService.findTop4BanChay();
+
+        if (top4Products.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm nào.");
+        }
+
+        return ResponseEntity.ok(top4Products);
+    }
+
+    @GetMapping("/total-all-bill")
+    public ResponseEntity<?> getTotalBill() {
+        return ResponseEntity.ok(hoaDonService.sumTotalBill());
+    }
+
+    @GetMapping("/top-4-customer")
+    public ResponseEntity<?> getTop4Customer() {
+        List<NguoiDungResponse> top4Customer = hoaDonService.findTop4NguoiMua();
+
+        if (top4Customer.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng  nào.");
+        }
+
+        return ResponseEntity.ok(top4Customer);
     }
 }

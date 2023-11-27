@@ -20,10 +20,12 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet,Lon
 
     HoaDonChiTiet findByHoaDonAndSanPhamChiTiet(HoaDon hoaDon, SanPhamChiTiet sanPhamChiTiet);
 
-    @Query(value = "SELECT hdct.ma_san_pham_chi_tiet , SUM(hdct.so_luong) AS tongSL\n" +
-            "FROM hoa_don_chi_tiet hdct \n" +
-            "WHERE hdct.xoa = false\n" +
-            "GROUP BY hdct.ma_san_pham_chi_tiet\n" +
-            "ORDER BY tongSL desc limit 4",nativeQuery = true)
+    @Query(value = "SELECT hdct.ma_san_pham_chi_tiet, SUM(hdct.so_luong) AS tongSL " +
+            "FROM hoa_don_chi_tiet hdct " +
+            "WHERE (hdct.xoa = false OR hdct.xoa IS NULL)" +
+            "GROUP BY hdct.ma_san_pham_chi_tiet " +
+            "ORDER BY tongSL DESC " +
+            "LIMIT 4", nativeQuery = true)
     List<Object[]> findTop4BanChay();
+
 }

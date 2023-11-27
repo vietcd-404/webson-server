@@ -12,12 +12,14 @@ import java.util.List;
 @Repository
 public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
     @Query("SELECT " +
-            "   SUM(h.donGia * h.soLuong)," +
-            "   SUM(h.soLuong) " +
+            "   COALESCE(SUM(h.donGia * h.soLuong), 0)," +
+            "   COALESCE(SUM(h.soLuong), 0) " +
             "FROM HoaDonChiTiet h " +
-            "WHERE FUNCTION('YEAR', h.ngayTao) = ?1 " +
-            "   AND h.trangThai = 3 ")
-    List<Object[]> getDoanhThuTheoNam(Integer year);
+            "WHERE FUNCTION('YEAR', h.ngayTao) BETWEEN ?1 AND ?2 " +
+            "   AND h.hoaDon.trangThai = 3 " +
+            "   AND h.hoaDon.ngayThanhToan IS NOT NULL")
+    List<Object[]> getDoanhThuTheoNam(Integer startYear, Integer endYear);
+
 
     @Query("SELECT " +
             "   SUM(h.donGia * h.soLuong)," +
@@ -83,4 +85,5 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
             "OR FUNCTION('MONTH', h.ngayTao) = 12 " +
             "   AND h.trangThai = 3 ")
     List<Object[]> getDoanhThuTheoQuy4();
+
 }

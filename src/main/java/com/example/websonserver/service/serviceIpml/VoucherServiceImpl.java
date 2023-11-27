@@ -5,6 +5,7 @@ import com.example.websonserver.entity.Voucher;
 import com.example.websonserver.repository.VoucherRepository;
 import com.example.websonserver.service.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 import static com.example.websonserver.constants.Constants.STATUS_VOUCHER.*;
 
 @Service
+@EnableScheduling
 public class VoucherServiceImpl implements VoucherService {
 
     private final VoucherRepository voucherRepository;
@@ -38,8 +40,8 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public Voucher saveVoucher(VoucherRequest Voucher) {
-        Voucher km = Voucher.map(new Voucher());
+    public Voucher saveVoucher(VoucherRequest voucher) {
+        Voucher km = voucher.map(new Voucher());
         return voucherRepository.save(km);
     }
 
@@ -53,7 +55,6 @@ public class VoucherServiceImpl implements VoucherService {
         Optional<Voucher> optional = voucherRepository.findByMaVoucher(id);
         return optional.map(o->{
             o.setTenVoucher(vcr.getTenVoucher());
-            o.setKieuGiamGia(vcr.getKieuGiamGia());
             o.setGiaTriGiam(vcr.getGiaTriGiam());
             o.setThoiGianBatDau(vcr.getThoiGianBatDau());
             o.setThoiGianKetThuc(vcr.getThoiGianKetThuc());

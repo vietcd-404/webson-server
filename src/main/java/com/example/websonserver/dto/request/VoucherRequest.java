@@ -22,7 +22,7 @@ public class VoucherRequest {
     @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
     private BigDecimal giaTriGiam;
 
-    private String kieuGiamGia;
+//    private String kieuGiamGia;
 
     private String tenVoucher;
 
@@ -55,18 +55,24 @@ public class VoucherRequest {
     }
     public Voucher map(Voucher voucher){
         voucher.setTenVoucher(this.getTenVoucher());
-        voucher.setKieuGiamGia(this.getKieuGiamGia());
         voucher.setGiaTriGiam(this.getGiaTriGiam());
+        voucher.setDieuKien(this.getDieuKien());
+        voucher.setGiamToiDa(this.getGiamToiDa());
         if (!isValidDateRange()) {
-            // Xử lý khi ngày bắt đầu lớn hơn ngày kết thúc
-            System.out.println("Ngày bắt đầu không được lớn hơn ngày kết thúc");
+            System.out.println("Ngày bắt đầu không được sau ngày kết thúc");
         } else {
             voucher.setThoiGianBatDau(this.getThoiGianBatDau());
             voucher.setThoiGianKetThuc(this.getThoiGianKetThuc());
+            LocalDateTime now = LocalDateTime.now();
+            if (thoiGianBatDau != null && thoiGianBatDau.isAfter(now)) {
+                voucher.setTrangThai(1);
+            } else {
+                voucher.setTrangThai(0);
+            }
         }
+
         voucher.setSoLuong(this.getSoLuong());
         voucher.setMoTa(this.getMoTa());
-        voucher.setTrangThai(this.getTrangThai());
         voucher.setXoa(this.getXoa());
         return voucher;
     }

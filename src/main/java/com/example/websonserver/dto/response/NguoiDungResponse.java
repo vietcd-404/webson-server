@@ -25,4 +25,5 @@ public class NguoiDungResponse {
     private String ten;
     private Integer trangThai;
     private String vaiTro;
+    private Integer luotMua;
 }

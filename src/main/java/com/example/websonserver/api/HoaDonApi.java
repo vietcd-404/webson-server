@@ -209,6 +209,11 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.statusHoaDon(request, maDonHang));
     }
 
+    @GetMapping("/admin/order/all")
+    public ResponseEntity<?> getAllOrder(Pageable pageable) {
+        return ResponseEntity.ok(hoaDonService.findAllHd(pageable));
+    }
+
     @GetMapping("/admin/order/getAll")
     public ResponseEntity<?> getAllOrderByAdmin(Pageable pageable, @RequestParam("trangThai") Integer trangThai) {
         return ResponseEntity.ok(hoaDonService.getAllOrderByAdmin(pageable, trangThai));

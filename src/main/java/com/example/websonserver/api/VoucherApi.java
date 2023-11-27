@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 
 @CrossOrigin("*")
 @RequestMapping("/api")
@@ -44,11 +46,17 @@ public class VoucherApi {
         if(result.hasErrors()){
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        if(voucherService.update(ma,voucherRequest)!=null){
-            return ResponseEntity.ok("Sửa thành công");
-        }else{
-            return ResponseEntity.ok("Sửa thất bại");
+        LocalDateTime now = LocalDateTime.now();
+        if (voucherRequest.getThoiGianBatDau() != null && voucherRequest.getThoiGianBatDau().isAfter(now)) {
+            voucherRequest.setTrangThai(1);
+        } else {
+            voucherRequest.setTrangThai(0);
         }
+        if (voucherService.update(ma, voucherRequest) != null) {
+                return ResponseEntity.ok("Sửa thành công");
+            } else {
+                return ResponseEntity.ok("Sửa thất bại");
+            }
     }
 
     @DeleteMapping("/admin/voucher/delete/{ma}")

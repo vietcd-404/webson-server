@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,5 +40,24 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     @Query("UPDATE HoaDon a " +
             "SET a.trangThai = ?1 WHERE a.maHoaDon = ?2")
     void delete(Integer trangThai,Long maHoaDon);
+
+    @Query(value = "SELECT hct.ma_san_pham_chi_tiet, SUM(hct.so_luong) AS soLuongBan\n" +
+            "FROM hoa_don hd\n" +
+            "JOIN hoa_don_chi_tiet hct ON hd.ma_hoa_don = hct.ma_hoa_don\n" +
+            "WHERE hd.trang_thai = 3\n" +
+            "GROUP BY hct.ma_san_pham_chi_tiet\n" +
+            "ORDER BY soLuongBan DESC\n" +
+            "LIMIT 4;\n", nativeQuery = true)
+    List<Object[]> top4BestSeller();
+
+    @Query(value = "select sum(hd.tong_tien) as tongTien from hoa_don hd where hd.trang_thai=3",nativeQuery = true)
+    BigDecimal sumTotalBill();
+
+    @Query(value = "SELECT hd.nguoiDung, COUNT(hd) AS totalOrders " +
+            "FROM HoaDon hd " +
+            "WHERE hd.trangThai = 3 " +
+            "GROUP BY hd.nguoiDung " +
+            "ORDER BY totalOrders DESC ")
+    List<Object[]> findTop4Buyers();
 
 }

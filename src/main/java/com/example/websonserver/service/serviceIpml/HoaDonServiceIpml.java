@@ -3,9 +3,7 @@ package com.example.websonserver.service.serviceIpml;
 import com.example.websonserver.config.email.EmailService;
 import com.example.websonserver.constants.Constants;
 import com.example.websonserver.dto.request.*;
-import com.example.websonserver.dto.response.HoaDonChiTietResponse;
-import com.example.websonserver.dto.response.HoaDonResponse;
-import com.example.websonserver.dto.response.MessageResponse;
+import com.example.websonserver.dto.response.*;
 import com.example.websonserver.entity.*;
 import com.example.websonserver.exceptions.NotFoundException;
 import com.example.websonserver.repository.*;
@@ -60,6 +58,8 @@ public class HoaDonServiceIpml implements HoaDonService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private ThongKeRepository thongKeRepository;
 
 
 
@@ -366,10 +366,16 @@ public class HoaDonServiceIpml implements HoaDonService {
             response.setTinh(hoaDon.getTinh());
             response.setDiaChi(hoaDon.getDiaChi());
             response.setNguoiDung(hoaDon.getNguoiDung());
-            if (hoaDon.getNguoiDung() != null) {
-                response.setEmail(hoaDon.getNguoiDung().getEmail());
-            } else {
-                response.setEmail("hai123@gmail.com");
+            if(hoaDon.getEmail()==null) {
+                if (hoaDon.getNguoiDung() != null) {
+
+                    response.setEmail(hoaDon.getNguoiDung().getEmail());
+
+                } else {
+                    response.setEmail("123@gmail.com");
+                }
+            }else{
+                response.setEmail(hoaDon.getEmail());
             }
             response.setDiaChiChiTiet(hoaDon.getDiaChi() + ", " + hoaDon.getXa() + ", " + hoaDon.getHuyen() + ", " + hoaDon.getTinh());
             response.setTongTien(hoaDon.getTongTien());
@@ -758,4 +764,70 @@ public class HoaDonServiceIpml implements HoaDonService {
         hoaDonRepository.save(hoaDon);
         return hdct;
     }
+
+    public Page<HoaDonResponse> findAllHd(Pageable pageable) {
+        Page<HoaDon> orderList = hoaDonRepository.findAllByXoaFalseOrderByNgayTaoDesc(pageable);
+
+        return orderList.map(hoaDon -> {
+            HoaDonResponse dto = new HoaDonResponse();
+            dto.setMaHoaDon(hoaDon.getMaHoaDon());
+            dto.setTongTien(hoaDon.getTongTien());
+            dto.setTrangThai(hoaDon.getTrangThai());
+            dto.setNgayTao(hoaDon.getNgayTao());
+            dto.setThanhToan(hoaDon.getThanhToan());
+            String fullName = "";
+            if (hoaDon.getNguoiDung() == null) {
+                fullName = "Khách Ngoài";
+            } else {
+                fullName = hoaDon.getNguoiDung().getHo() + " " + hoaDon.getNguoiDung().getTenDem() + " " + hoaDon.getNguoiDung().getTen();
+            }
+            dto.setTenNguoiDung(fullName);
+            if (hoaDon.getThanhToan() == 1) {
+                dto.setNgayThanhToan(hoaDon.getNgayThanhToan());
+            }
+            return dto;
+        });
+    }
+    public List<SanPhamChiTietResponse> findTop4BanChay(){
+        List<Object[]> dsMa = hoaDonRepository.top4BestSeller();
+        List<SanPhamChiTietResponse> dsSpct = new ArrayList<>();
+        for (Object[] obj: dsMa) {
+            Long maSanPham = (Long) obj[0];
+            BigDecimal soLg = (BigDecimal) obj[1];
+            Integer soLuong = soLg.intValue();
+            System.out.println(maSanPham);
+            SanPhamChiTiet spct = sanPhamChiTietService.findById(String.valueOf(maSanPham));
+            if (spct != null) {
+                SanPhamChiTietResponse sanPhamChiTietResponse = new SanPhamChiTietResponse();
+                sanPhamChiTietResponse.setTenSanPham(spct.getSanPham().getTenSanPham()+" "+spct.getMauSac().getTenMau());
+                sanPhamChiTietResponse.setSoLuongTon(soLuong);
+                sanPhamChiTietResponse.setGiaBan(spct.getGiaBan());
+                dsSpct.add(sanPhamChiTietResponse);
+            }
+        }
+        return dsSpct;
+    }
+
+    public BigDecimal sumTotalBill(){
+        return hoaDonRepository.sumTotalBill();
+    }
+
+    public List<NguoiDungResponse> findTop4NguoiMua(){
+        List<Object[]> ds = hoaDonRepository.findTop4Buyers();
+        List<NguoiDungResponse> dsSpct = new ArrayList<>();
+        for (Object[] obj: ds) {
+            NguoiDung nguoiDung = (NguoiDung) obj[0];
+            Long soLg =(Long) obj[1];
+            Integer soLuong = soLg.intValue();
+                NguoiDungResponse nguoiDungResponse = new NguoiDungResponse();
+                nguoiDungResponse.setTen(nguoiDung.getHo() + " " + nguoiDung.getTenDem() + " " + nguoiDung.getTen());
+                nguoiDungResponse.setLuotMua(soLuong);
+                nguoiDungResponse.setUsername(nguoiDung.getUsername());
+                nguoiDung.setSdt(nguoiDung.getSdt());
+             dsSpct.add(nguoiDungResponse);
+
+        }
+        return dsSpct;
+    }
+
 }
