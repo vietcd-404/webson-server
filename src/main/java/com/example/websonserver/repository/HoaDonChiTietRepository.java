@@ -13,6 +13,7 @@ import java.util.List;
 public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet,Long> {
     @Query("SELECT hdct FROM HoaDonChiTiet hdct WHERE hdct.sanPhamChiTiet.maSanPhamCT = ?1 AND hdct.hoaDon.maHoaDon = ?2")
     HoaDonChiTiet findByMaSPCTAndMaHD(Long maSPCT, Long maHD);
+    List<HoaDonChiTiet> findByHoaDon_MaHoaDon(Long maHoaDon);
 
     List<HoaDonChiTiet> findByHoaDon(HoaDon hoaDon);
 

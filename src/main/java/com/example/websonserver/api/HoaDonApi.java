@@ -116,9 +116,9 @@ public class HoaDonApi {
 
 
     @PutMapping("/admin/order/thaydoiTrangThai")
+    @ResponseBody
     public ResponseEntity<?> capNhapTrangThaiHoaDonByAdmin(
             @RequestParam("maHD") String maHD, @RequestParam("trangThai") Integer trangThai) {
-        HoaDon hoaDon = hoaDonService.updateStatus(trangThai, Long.parseLong(maHD));
         UpdateStatus status = new UpdateStatus();
         status.setMaHoaDon(Long.parseLong(maHD));
         status.setTrangThai(trangThai);
