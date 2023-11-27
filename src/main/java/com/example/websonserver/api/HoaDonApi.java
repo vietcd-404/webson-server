@@ -1,5 +1,6 @@
 package com.example.websonserver.api;
 
+import com.example.websonserver.config.socket.NewOrder;
 import com.example.websonserver.config.socket.UpdateStatus;
 import com.example.websonserver.dto.request.HoaDonRequest;
 import com.example.websonserver.dto.request.NguoiDungSessionRequest;
@@ -74,7 +75,11 @@ public class HoaDonApi {
             if (gioHang == null) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Giỏ hàng không tồn tại"));
             }
+            NewOrder newOrder = new NewOrder();
+            newOrder.setMaGioHang(maGioHang);
+            newOrder.setRequest(hoaDon);
 
+            this.messagingTemplate.convertAndSend("/topic/orderStatus", newOrder);
             return ResponseEntity.ok(hoaDonService.placeOrder(hoaDon, maGioHang));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
@@ -96,7 +101,6 @@ public class HoaDonApi {
             String errorMessage = e.getMessage();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
-
     }
 
     @GetMapping("/user/order/get-hoadon")
@@ -112,9 +116,9 @@ public class HoaDonApi {
 
 
     @PutMapping("/admin/order/thaydoiTrangThai")
+    @ResponseBody
     public ResponseEntity<?> capNhapTrangThaiHoaDonByAdmin(
             @RequestParam("maHD") String maHD, @RequestParam("trangThai") Integer trangThai) {
-        HoaDon hoaDon = hoaDonService.updateStatus(trangThai, Long.parseLong(maHD));
         UpdateStatus status = new UpdateStatus();
         status.setMaHoaDon(Long.parseLong(maHD));
         status.setTrangThai(trangThai);
@@ -191,6 +195,10 @@ public class HoaDonApi {
     @PostMapping("/guest/order/thanh-toan")
     public ResponseEntity<?> thanhToanGuest(@RequestBody HoaDonRequest request, @RequestParam List<Long> ma) {
         try {
+            NewOrder newOrder = new NewOrder();
+            newOrder.setMa(ma);
+            newOrder.setRequest(request);
+            this.messagingTemplate.convertAndSend("/topic/orderStatus", newOrder);
             return ResponseEntity.ok(hoaDonService.thanhToanGuest(request, ma));
         } catch (Exception e) {
             String errorMessage = e.getMessage();

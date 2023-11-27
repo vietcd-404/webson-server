@@ -35,7 +35,7 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
             "WHERE s.maSanPhamCT = :maSanPhamCT")
     List<SanPhamChiTiet> findSanPhamChiTietWithImages(@Param("maSanPhamCT") Long maSanPhamCT);
 
-    @Query(value = "SELECT * FROM san_pham_chi_tiet spct WHERE spct.xoa = false   ORDER BY spct.ngay_tao  desc limit 5",nativeQuery = true)
+    @Query(value = "SELECT * FROM san_pham_chi_tiet spct WHERE spct.xoa = false and spct.trang_thai=1  ORDER BY spct.ngay_tao  desc limit 5",nativeQuery = true)
     List<SanPhamChiTiet> Top5SanPhamMoiNhat();
 
     @Query(value = "select san_pham.ten_san_pham as tenSanPham,\n" +

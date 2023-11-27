@@ -34,6 +34,10 @@ public class VoucherServiceImpl implements VoucherService {
         return voucherRepository.findAllByXoaFalse();
     }
 
+    public List<Voucher> getAllVoucherUser() {
+        return voucherRepository.findAllByXoaFalseAndTrangThai(1);
+    }
+
     @Override
     public Voucher getVoucherById(Long id) {
         return null;

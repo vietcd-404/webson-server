@@ -1,10 +1,12 @@
 package com.example.websonserver.dto.request;
 
+import com.example.websonserver.entity.HoaDonChiTiet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +23,5 @@ public class UpdateHoaDonRequest {
     private Integer trangThai;
     private BigDecimal tongTien;
     private String diaChi;
+    private List<HoaDonChiTietRequest> hoaDonChiTietList;
 }

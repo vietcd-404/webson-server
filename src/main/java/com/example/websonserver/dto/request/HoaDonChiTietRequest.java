@@ -14,6 +14,7 @@ import java.util.List;
 public class HoaDonChiTietRequest {
     private BigDecimal donGia;
     private Integer soLuong;
+    private Long maHoaDonCT;
     private Long maSanPhamCT;
     private List<HoaDonChiTiet> hoaDonChiTietList;
 
