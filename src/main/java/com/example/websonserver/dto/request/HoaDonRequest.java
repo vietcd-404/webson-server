@@ -57,6 +57,8 @@ public class HoaDonRequest {
 
     private Integer thanhToan;
 
+    private List<Integer> soLuongList;
+
     private Integer soLuong;
     private List<HoaDonChiTiet> hoaDonChiTietList;
     private List<SanPhamChiTiet> sanPhamChiTiets;

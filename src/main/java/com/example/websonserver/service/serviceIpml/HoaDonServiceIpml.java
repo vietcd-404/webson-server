@@ -148,7 +148,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         return hoaDonRepository.save(hoaDon);
     }
 
-    public HoaDon thanhToanGuest(HoaDonRequest request, List<Long> maSanPhamCtList) {
+    public HoaDon thanhToanGuest(HoaDonRequest request, List<Long> maSanPhamCtList ) {
         PhuongThucThanhToan phuongThucThanhToan = phuongThucThanhToanRepository.findByTenPhuongThuc(request.getTenPhuongThuc());
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMaHoaDon(request.getMaHoaDon());
@@ -168,7 +168,8 @@ public class HoaDonServiceIpml implements HoaDonService {
         List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
 
         StringBuilder sanPhamInfo = new StringBuilder("Danh sách sản phẩm đã mua:\n\n");
-        for (Long maSanPhamCt : maSanPhamCtList) {
+        for (int i = 0; i < maSanPhamCtList.size(); i++) {
+            Long maSanPhamCt = maSanPhamCtList.get(i);
             SanPhamChiTiet spct = sanPhamChiTietRepository.findById(maSanPhamCt).orElse(null);
 
             if (spct != null) {
@@ -176,19 +177,27 @@ public class HoaDonServiceIpml implements HoaDonService {
                 chiTiet.setHoaDon(hoaDon);
                 chiTiet.setDonGia(spct.getGiaBan());
                 chiTiet.setSanPhamChiTiet(spct);
-                chiTiet.setSoLuong(request.getSoLuong());
-                if (request.getSoLuong() > spct.getSoLuongTon()) {
+
+                // Use the quantity from the request for each product
+                int soLuong = request.getSoLuongList().get(i);
+
+                chiTiet.setSoLuong(soLuong);
+
+                if (soLuong > spct.getSoLuongTon()) {
                     String errorMessage = "Số lượng sản phẩm vượt giới hạn.";
                     throw new RuntimeException(errorMessage);
                 }
-                if (spct.getSoLuongTon() - request.getSoLuong() >= 0) {
-                    spct.setSoLuongTon(spct.getSoLuongTon() - request.getSoLuong());
+
+                if (spct.getSoLuongTon() - soLuong >= 0) {
+                    spct.setSoLuongTon(spct.getSoLuongTon() - soLuong);
                     sanPhamChiTietRepository.save(spct);
-                    hoaDonChiTietList.add(chiTiet);
                 } else {
                     String errorMessage = "Số lượng vượt giới hạn.";
                     throw new RuntimeException(errorMessage);
                 }
+
+                hoaDonChiTietList.add(chiTiet);
+
                 sanPhamInfo.append("Tên sản phẩm: ").append(spct.getSanPham().getTenSanPham()).append("\n");
                 sanPhamInfo.append("Số lượng: ").append(chiTiet.getSoLuong()).append("\n");
                 sanPhamInfo.append("Đơn giá: ").append(chiTiet.getDonGia()).append("\n");

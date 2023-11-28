@@ -58,10 +58,10 @@ public class WebSocketController {
         return ResponseEntity.ok(hoaDonServiceIpml.placeOrder(hoaDon.getRequest(), hoaDon.getMaGioHang()));
     }
 
-    @MessageMapping("/newGuest")
-    public ResponseEntity<?> thanhToanGuest(NewOrder request) {
-            this.messagingTemplate.convertAndSend("/topic/orderStatus", request);
-            return ResponseEntity.ok(hoaDonServiceIpml.thanhToanGuest(request.getRequest(), request.getMa()));
-    }
+//    @MessageMapping("/newGuest")
+//    public ResponseEntity<?> thanhToanGuest(NewOrder request) {
+//            this.messagingTemplate.convertAndSend("/topic/orderStatus", request);
+//            return ResponseEntity.ok(hoaDonServiceIpml.thanhToanGuest(request.getRequest(), request.getMa()));
+//    }
 
 }
