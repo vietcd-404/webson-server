@@ -195,10 +195,10 @@ public class HoaDonApi {
     @PostMapping("/guest/order/thanh-toan")
     public ResponseEntity<?> thanhToanGuest(@RequestBody HoaDonRequest request, @RequestParam List<Long> ma) {
         try {
-//            NewOrder newOrder = new NewOrder();
-//            newOrder.setMa(ma);
-//            newOrder.setRequest(request);
-//            this.messagingTemplate.convertAndSend("/topic/orderStatus", newOrder);
+            NewOrder newOrder = new NewOrder();
+            newOrder.setMa(ma);
+            newOrder.setRequest(request);
+            this.messagingTemplate.convertAndSend("/topic/orderStatus", newOrder);
             return ResponseEntity.ok(hoaDonService.thanhToanGuest(request, ma));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
