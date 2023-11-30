@@ -61,8 +61,6 @@ public class HoaDonServiceIpml implements HoaDonService {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private ThongKeRepository thongKeRepository;
 
 
 

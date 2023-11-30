@@ -4,18 +4,23 @@ import com.example.websonserver.dto.response.NguoiDungResponse;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.dto.response.ThongKeResponse.ThongTinThongKe;
 import com.example.websonserver.entity.HoaDonChiTiet;
+import com.example.websonserver.entity.SanPhamChiTiet;
 import com.example.websonserver.repository.HoaDonChiTietRepository;
 import com.example.websonserver.repository.ThongKeRepository;
+import com.example.websonserver.service.serviceIpml.DanhSachYeuThichServiceImpl;
 import com.example.websonserver.service.serviceIpml.HoaDonServiceIpml;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @RestController
 @CrossOrigin("*")
@@ -27,42 +32,72 @@ public class ThongKeApi {
     @Autowired
     HoaDonServiceIpml hoaDonService;
 
+    @Autowired
+    DanhSachYeuThichServiceImpl danhSachYeuThichService;
+
     @GetMapping("/doanh-thu-theo-nam")
-    public ResponseEntity<?> getDoanhThuTheoNam(@RequestParam Integer startYear,@RequestParam Integer endYear ){
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNam(startYear,endYear);
+    public ResponseEntity<?> getDoanhThuTheoNam() {
         List<ThongTinThongKe> list = new ArrayList<>();
-        for (Object[] x : lst) {
-            ThongTinThongKe  data = new ThongTinThongKe();
-            data.setDoanhThu(x[0].toString());
-            data.setSlDaBan(x[1].toString());
-            list.add(data);
+        for (int year = 2020; year <= 2023; year++) {
+            List<Object[]> lst = thongKeRepository.getDoanhThuTheoNam(year);
+            ThongTinThongKe data1 = new ThongTinThongKe();
+            if (lst.isEmpty()) {
+                data1.setDoanhThu("0");
+                data1.setSlDaBan("0");
+                data1.setYear(year);
+                list.add(data1);
+            } else {
+                for (Object[] x : lst) {
+                    ThongTinThongKe data = new ThongTinThongKe();
+                    data.setDoanhThu(x[0].toString());
+                    data.setSlDaBan(x[1].toString());
+                    data.setYear(year);
+                    list.add(data);
+                }
+            }
         }
         return ResponseEntity.ok(list);
     }
+
     @GetMapping("/doanh-thu-theo-thang")
-    public ResponseEntity<?> getDoanhThuTheoThang(@RequestParam Integer month){
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(month);
-        List<ThongTinThongKe> list = new ArrayList<>();
-        for (Object[] x : lst) {
-            ThongTinThongKe  data = new ThongTinThongKe();
-            data.setDoanhThu(x[0].toString());
-            data.setSlDaBan(x[1].toString());
-            list.add(data);
+    public ResponseEntity<?> getDoanhThuTheoThang(@RequestParam Integer month,@RequestParam Integer year ){
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(month,year);
+        ThongTinThongKe thongKe = new ThongTinThongKe();
+        if(lst.isEmpty()) {
+        thongKe.setDoanhThu("0");
+        thongKe.setSlDaBan("0");
         }
-        return ResponseEntity.ok(list);
+        else{
+            for (Object[] x : lst) {
+                thongKe.setDoanhThu(x[0].toString());
+                thongKe.setSlDaBan(x[1].toString());
+                thongKe.setYear(year);
+                thongKe.setMonth(month);
+            }
+        }
+        return ResponseEntity.ok(thongKe);
     }
     @GetMapping("/doanh-thu-theo-ngay")
-    public ResponseEntity<?> getDoanhThuTheoNgay(@RequestParam Integer day){
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNgay(day);
-        List<ThongTinThongKe> list = new ArrayList<>();
-        for (Object[] x : lst) {
-            ThongTinThongKe  data = new ThongTinThongKe();
-            data.setDoanhThu(x[0].toString());
-            data.setSlDaBan(x[1].toString());
-            list.add(data);
+    public ResponseEntity<?> getDoanhThuTheoNgay(@RequestParam String day) {
+        ThongTinThongKe thongKe = new ThongTinThongKe();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(day, formatter);
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNgay(date);
+
+        if (lst.isEmpty()) {
+            thongKe.setDoanhThu("0");
+            thongKe.setSlDaBan("0");
         }
-        return ResponseEntity.ok(list);
+        else {
+            Object[] result = lst.get(0);
+            thongKe.setDoanhThu(result[0].toString());
+            thongKe.setSlDaBan(result[1].toString());
+        }
+
+        return ResponseEntity.ok(thongKe);
     }
+
+
     @GetMapping("/so-luong-hoa-don-theo-trang-thai-va-ngay")
     public ResponseEntity<?> getSoLuongHoaDonTheoTrangThaiVaNgay(@RequestParam Integer day,@RequestParam Integer status){
         List<Object[]> lst = thongKeRepository.getSoLuongHoaDonTheoTrangThaiVaNgay(day,status);
@@ -169,5 +204,21 @@ public class ThongKeApi {
         }
 
         return ResponseEntity.ok(top4Customer);
+    }
+
+    @GetMapping("/top-4-favorite")
+    public ResponseEntity<?> getTop4Favorite() {
+        List<SanPhamChiTietResponse> top4Favorite = danhSachYeuThichService.thongKeTopSanPhamYeuThich();
+
+        if (top4Favorite.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng  nào.");
+        }
+
+        return ResponseEntity.ok(top4Favorite);
+    }
+
+    @GetMapping("/status-bill")
+    public ResponseEntity<?> getCountStatus(@RequestParam Integer status) {
+        return ResponseEntity.ok(thongKeRepository.countByTrangThai(status));
     }
 }

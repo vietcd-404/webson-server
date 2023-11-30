@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface DanhSachYeuThichRepository extends JpaRepository<DanhSachYeuThich,Long> {
     Page<DanhSachYeuThich> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
@@ -18,4 +20,10 @@ public interface DanhSachYeuThichRepository extends JpaRepository<DanhSachYeuThi
 
     @Query("SELECT ds FROM DanhSachYeuThich ds WHERE ds.nguoiDung.maNguoiDung = ?1 and ds.sanPhamChiTiet.maSanPhamCT= ?2")
     DanhSachYeuThich findByUserAndProduct (Long maNguoiDung, Long maSanPhamCT);
+
+    @Query("SELECT dsyt.sanPhamChiTiet.maSanPhamCT, COUNT(dsyt.maDanhSach) AS luotYeuThich " +
+            "FROM DanhSachYeuThich dsyt " +
+            "GROUP BY dsyt.sanPhamChiTiet.maSanPhamCT " +
+            "ORDER BY luotYeuThich DESC")
+    List<Object[]> thongKeTopSanPhamYeuThich(Pageable pageable);
 }
