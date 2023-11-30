@@ -401,8 +401,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     public List<SanPhamChiTietResponse> getSanPhamByThuongHieu(String tenThuongHieu) {
         List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(tenThuongHieu, 1);
         List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
-
+        int maxResults = 5;
         for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            if (sanPhamChiTietDtos.size() >= maxResults) {
+                break;
+            }
             SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
             dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
             dto.setGiaBan(sanPhamChiTiet.getGiaBan());

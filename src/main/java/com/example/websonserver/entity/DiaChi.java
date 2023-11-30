@@ -22,6 +22,18 @@ public class DiaChi extends BaseEntity{
     @Column(name = "loai_dia_chi")
     private String loaiDiaChi;
 
+    @Column(name = "sdt")
+    private String sdt;
+
+    @Column(name = "tinh")
+    private String tinh;
+
+    @Column(name = "huyen")
+    private String huyen;
+
+    @Column(name = "xa")
+    private String xa;
+
     @ManyToOne
     @JoinColumn(name = "ma_nguoi_dung")
     private NguoiDung nguoiDung;
