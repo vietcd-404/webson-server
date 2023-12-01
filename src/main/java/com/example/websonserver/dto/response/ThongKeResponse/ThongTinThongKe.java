@@ -12,4 +12,8 @@ import java.math.BigDecimal;
 public class ThongTinThongKe {
     private String doanhThu;
     private String slDaBan;
+    private Integer year;
+    private Integer month;
+    private Integer day;
+
 }

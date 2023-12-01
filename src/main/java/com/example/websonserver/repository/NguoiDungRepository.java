@@ -43,5 +43,9 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung,Long> {
             "OR nd.ho LIKE %:keyword%")
     List<NguoiDung> searchByKeyword(@Param("keyword") String keyword);
 
+    @Query("SELECT nd FROM NguoiDung nd WHERE nd.ho LIKE %:keyword% " +
+            "OR nd.ten LIKE %:keyword%" +
+            "OR nd.tenDem LIKE %:keyword%")
+    List<NguoiDung> searchByHoTen(String keyword);
 
 }
