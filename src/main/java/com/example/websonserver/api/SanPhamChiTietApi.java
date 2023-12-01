@@ -67,9 +67,9 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.getAllSanPhamUser(request,page,size));
     }
 
-    @GetMapping("/guest/san-pham/{ma}")
-    public ResponseEntity<?> getDetailById(@PathVariable String ma) {
-        return ResponseEntity.ok(sanPhamChiTietService.findByIdResponse(ma));
+    @GetMapping("/guest/san-pham/detail")
+    public ResponseEntity<?> getDetailById(@RequestParam Long maSanPhamCT) {
+        return ResponseEntity.ok(sanPhamChiTietService.sanPhamDetail(maSanPhamCT));
     }
 
     @GetMapping("/guest/san-pham/get-all/loc")

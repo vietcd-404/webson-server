@@ -2,6 +2,7 @@ package com.example.websonserver.repository;
 
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.SanPhamChiTiet;
+import com.example.websonserver.entity.ThuongHieu;
 import com.example.websonserver.service.SanPhamChiTietService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +19,11 @@ import java.util.List;
 @Repository
 public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, Long> , JpaSpecificationExecutor<SanPhamChiTiet> {
     public Page<SanPhamChiTiet> findAllByXoaFalse(Pageable pageable);
-
+    public List<SanPhamChiTiet> findByThuongHieu_MaThuongHieu(Long mathuongHieu);
     public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThai(Integer trangThai);
+
+    public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThaiAndMaSanPhamCT(Integer trangThai,Long maSanPhamCT);
+
     public List<SanPhamChiTiet> findAllByXoaFalse();
     public List<SanPhamChiTiet> findAllByXoaFalseOrderByNgayTaoDesc();
 

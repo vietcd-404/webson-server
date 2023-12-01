@@ -182,18 +182,18 @@ public class HoaDonServiceIpml implements HoaDonService {
 
                 chiTiet.setSoLuong(soLuong);
 
-                if (soLuong > spct.getSoLuongTon()) {
-                    String errorMessage = "Số lượng sản phẩm vượt giới hạn.";
-                    throw new RuntimeException(errorMessage);
-                }
+//                if (soLuong > spct.getSoLuongTon()) {
+//                    String errorMessage = "Số lượng sản phẩm vượt giới hạn.";
+//                    throw new RuntimeException(errorMessage);
+//                }
 
-                if (spct.getSoLuongTon() - soLuong >= 0) {
-                    spct.setSoLuongTon(spct.getSoLuongTon() - soLuong);
-                    sanPhamChiTietRepository.save(spct);
-                } else {
-                    String errorMessage = "Số lượng vượt giới hạn.";
-                    throw new RuntimeException(errorMessage);
-                }
+//                if (spct.getSoLuongTon() - soLuong >= 0) {
+//                    spct.setSoLuongTon(spct.getSoLuongTon() - soLuong);
+//                    sanPhamChiTietRepository.save(spct);
+//                } else {
+//                    String errorMessage = "Số lượng vượt giới hạn.";
+//                    throw new RuntimeException(errorMessage);
+//                }
 
                 hoaDonChiTietList.add(chiTiet);
 
@@ -434,7 +434,6 @@ public class HoaDonServiceIpml implements HoaDonService {
                         dto.setTongTien(hoaDon.getTongTien());
                         dto.setTienGiam(hoaDon.getTienGiam());
                         dto.setDieuKien(voucherChiTiet.getVoucher().getDieuKien());
-
                         hoaDonChiTietResponses.add(dto);
                     }
                 }

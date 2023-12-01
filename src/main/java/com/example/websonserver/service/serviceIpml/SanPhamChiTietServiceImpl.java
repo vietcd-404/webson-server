@@ -6,6 +6,7 @@ import com.example.websonserver.dto.request.ThuocTinhRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
+import com.example.websonserver.dto.response.SanPhamTheoThuongHieuResponse;
 import com.example.websonserver.entity.*;
 import com.example.websonserver.repository.AnhSanPhamRepository;
 import com.example.websonserver.repository.HoaDonChiTietRepository;
@@ -291,6 +292,84 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
         return sanPhamChiTietPage;
     }
+    public List<SanPhamChiTietResponse> sanPhamDetail(Long maSanPhamCT) {
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThaiAndMaSanPhamCT(1,maSanPhamCT);
+        List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+
+            SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            List<AnhSanPham> imageUrls = anhSanPhamService.getImage(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setDanhSachAnh(imageUrls);
+            dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            List<SanPhamTheoThuongHieuResponse> sanPhamChiTietThuongHieu = new ArrayList<>();
+            List<SanPhamChiTiet> sanPhamChiTietList1=sanPhamChiTietRepository.findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(sanPhamChiTiet.getThuongHieu().getTenThuongHieu(),1);
+            for (SanPhamChiTiet sanPhamChiTiet1 : sanPhamChiTietList1){
+                SanPhamTheoThuongHieuResponse response = new SanPhamTheoThuongHieuResponse();
+                response.setMaSanPhamCT(sanPhamChiTiet1.getMaSanPhamCT());
+                response.setGiaBan(sanPhamChiTiet1.getGiaBan());
+                response.setPhanTramGiam(sanPhamChiTiet1.getPhanTramGiam());
+                response.setSoLuongTon(sanPhamChiTiet1.getSoLuongTon());
+                SanPham sanPham1 = sanPhamChiTiet1.getSanPham();
+                if (sanPham != null) {
+                    String tenSanPham = sanPham1.getTenSanPham();
+                    response.setTenSanPham(tenSanPham);
+                }
+                Loai loai1 = sanPhamChiTiet1.getLoai();
+                if (loai != null) {
+                    String tenLoai = loai1.getTenLoai();
+                    response.setTenLoai(tenLoai);
+                }
+
+                ThuongHieu thuongHieu1 = sanPhamChiTiet1.getThuongHieu();
+                if (thuongHieu != null) {
+                    String tenthuongHieu = thuongHieu1.getTenThuongHieu();
+                    response.setTenThuongHieu(tenthuongHieu);
+                }
+                MauSac mauSac1 = sanPhamChiTiet1.getMauSac();
+                if (mauSac != null) {
+                    String tenMau = mauSac1.getTenMau();
+                    response.setTenMau(tenMau);
+                }
+                List<AnhSanPham> imageUrlsa = anhSanPhamService.getImage(sanPhamChiTiet1.getMaSanPhamCT());
+                response.setDanhSachAnh(imageUrlsa);
+                response.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet1.getMaSanPhamCT()));
+                response.setTrangThai(sanPhamChiTiet1.getTrangThai());
+                sanPhamChiTietThuongHieu.add(response);
+            }
+            dto.setThuongHieuList(sanPhamChiTietThuongHieu);
+
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
+    }
+
     @Override
     public List<SanPhamChiTietResponse> getAllLoc() {
         List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThai(1);
