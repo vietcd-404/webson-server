@@ -29,7 +29,7 @@ public interface NguoiDungService {
     NguoiDung saveOrUpdate(NguoiDung nguoiDung);
     NguoiDung updateStatus(UpdateTrangThai trangThai, Long maNguoiDung);
     NguoiDung changePass(MatKhauNguoiDungRequest nguoiDungRequest, Long maNguoiDung);
-
+    List<NguoiDung> searchByHoTen(String keyword);
 }
 
 

@@ -171,6 +171,11 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         }).orElse(null);
     }
 
+    @Override
+    public List<NguoiDung> searchByHoTen(String keyword) {
+        return nguoiDungRepository.searchByHoTen(keyword);
+    }
+
     public NguoiDung findByEmail(String email) {
         return nguoiDungRepository.findByEmail(email);
     }

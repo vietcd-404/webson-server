@@ -152,7 +152,7 @@ public class HoaDonApi {
     @PutMapping("/user/order/huy-hoa-don")
     public ResponseEntity<?> huyHoaDon(
             @RequestParam("maHD") String maHD) {
-        return ResponseEntity.ok(hoaDonService.HuyHoaDon(Long.parseLong(maHD)));
+        return ResponseEntity.ok(hoaDonService.huyHoaDon(Long.parseLong(maHD)));
     }
 
     @PostMapping("/guest/order/place")
@@ -241,7 +241,12 @@ public class HoaDonApi {
     @PutMapping("/admin/order/huy-hoa-don")
     public ResponseEntity<?> huyHoaDonByAdmin(
             @RequestParam("maHD") String maHD) {
-        return ResponseEntity.ok(hoaDonService.HuyHoaDon(Long.parseLong(maHD)));
+        return ResponseEntity.ok(hoaDonService.huyHoaDon(Long.parseLong(maHD)));
+    }
+
+    @GetMapping("/admin/order/search")
+    public ResponseEntity<?> searchHoaDon(@RequestParam String thuocTinh,@RequestParam String value,Integer trangThai){
+        return ResponseEntity.ok(hoaDonService.findHoaDon(thuocTinh,value,trangThai));
     }
 
 
@@ -262,5 +267,7 @@ public class HoaDonApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
     }
+
+
 
 }

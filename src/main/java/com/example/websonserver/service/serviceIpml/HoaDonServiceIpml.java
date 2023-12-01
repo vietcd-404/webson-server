@@ -369,7 +369,6 @@ public class HoaDonServiceIpml implements HoaDonService {
             response.setNguoiDung(hoaDon.getNguoiDung());
             if(hoaDon.getEmail()==null) {
                 if (hoaDon.getNguoiDung() != null) {
-
                     response.setEmail(hoaDon.getNguoiDung().getEmail());
 
                 } else {
@@ -462,7 +461,7 @@ public class HoaDonServiceIpml implements HoaDonService {
     }
 
     @Override
-    public String HuyHoaDon(Long maHD) {
+    public String huyHoaDon(Long maHD) {
         HoaDon hd = hoaDonRepository.findById(maHD).orElse(null);
         if (hd.getTrangThai() == 0 || hd.getTrangThai() == 1) {
 
@@ -545,6 +544,39 @@ public class HoaDonServiceIpml implements HoaDonService {
         hd.setThanhToan(Constants.STATUS_PAYMENT.CHUA_THANH_TOAN);
         hoaDonRepository.save(hd);
         return hd;
+    }
+
+    @Override
+    public List<HoaDonResponse> findHoaDon(String thuocTinh, String value,Integer trangThai) {
+        List<HoaDonResponse> hoaDonResponseList = new ArrayList<>();
+        List<HoaDon> hoaDonList = new ArrayList<>();
+        if(thuocTinh.equals("maHoaDon")){
+           hoaDonList = hoaDonRepository.findByMaHoaDonAndTrangThaiAndXoaIsFalse(Long.parseLong((value)),trangThai);
+        }
+        if(thuocTinh.equals("tenNguoiDung")){
+          hoaDonList = hoaDonRepository.searchByHoTen(value,trangThai);
+        }
+        for (HoaDon hoaDon:
+                hoaDonList) {
+            HoaDonResponse dto = new HoaDonResponse();
+            dto.setMaHoaDon(hoaDon.getMaHoaDon());
+            dto.setTongTien(hoaDon.getTongTien());
+            dto.setTrangThai(hoaDon.getTrangThai());
+            dto.setNgayTao(hoaDon.getNgayTao());
+            dto.setThanhToan(hoaDon.getThanhToan());
+            String fullName = "";
+            if (hoaDon.getNguoiDung() == null) {
+                fullName = "Khách Ngoài";
+            } else {
+                fullName = hoaDon.getNguoiDung().getHo() + " " + hoaDon.getNguoiDung().getTenDem() + " " + hoaDon.getNguoiDung().getTen();
+            }
+            dto.setTenNguoiDung(fullName);
+            if (hoaDon.getThanhToan() == 1) {
+                dto.setNgayThanhToan(hoaDon.getNgayThanhToan());
+            }
+            hoaDonResponseList.add(dto);
+        };
+        return hoaDonResponseList;
     }
 
     @Override

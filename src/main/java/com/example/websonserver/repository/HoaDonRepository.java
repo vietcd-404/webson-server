@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,9 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     Optional<HoaDon> findByNguoiDungAndMaHoaDon(NguoiDung nguoiDung, Long maHoaDon);
 
     List<HoaDon> findByMaHoaDon(Long maHoaDon);
+
+
+    List<HoaDon> findByMaHoaDonAndTrangThaiAndXoaIsFalse(Long maHoaDon,Integer trangThai);
 
     @Transactional
     @Modifying
@@ -59,5 +63,15 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
             "GROUP BY hd.nguoiDung " +
             "ORDER BY totalOrders DESC ")
     List<Object[]> findTop4Buyers();
+
+    @Query("SELECT nd FROM HoaDon nd WHERE " +
+            "(nd.nguoiDung.ho LIKE %:keyword% OR " +
+            "nd.nguoiDung.ten LIKE %:keyword% OR " +
+            "nd.nguoiDung.tenDem LIKE %:keyword%) " +
+            "AND nd.xoa = false " +
+            "AND nd.trangThai = :trangThai " +
+            "ORDER BY nd.ngayTao DESC")
+    List<HoaDon> searchByHoTen(@Param("keyword") String keyword, @Param("trangThai") Integer trangThai);
+
 
 }
