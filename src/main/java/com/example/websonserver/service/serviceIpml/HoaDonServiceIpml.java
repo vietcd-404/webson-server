@@ -547,18 +547,18 @@ public class HoaDonServiceIpml implements HoaDonService {
     }
 
     @Override
-    public List<HoaDonResponse> findHoaDon(String thuocTinh, String value,Integer trangThai) {
+    public List<HoaDonResponse> findHoaDon(Pageable pageable,String thuocTinh, String value,Integer trangThai) {
         List<HoaDonResponse> hoaDonResponseList = new ArrayList<>();
         List<HoaDon> hoaDonList = new ArrayList<>();
         if(thuocTinh.equals("maHoaDon")){
-           hoaDonList = hoaDonRepository.findByMaHoaDonAndTrangThaiAndXoaIsFalse(Long.parseLong((value)),trangThai);
+           hoaDonList = hoaDonRepository.findByMaHoaDonAndTrangThaiAndXoaIsFalse(pageable,Long.parseLong((value)),trangThai);
         }
         if(thuocTinh.equals("tenNguoiDung")){
-          hoaDonList = hoaDonRepository.searchByHoTen(value,trangThai);
+          hoaDonList = hoaDonRepository.searchByHoTen(pageable,value,trangThai);
         }
+        HoaDonResponse dto = new HoaDonResponse();
         for (HoaDon hoaDon:
                 hoaDonList) {
-            HoaDonResponse dto = new HoaDonResponse();
             dto.setMaHoaDon(hoaDon.getMaHoaDon());
             dto.setTongTien(hoaDon.getTongTien());
             dto.setTrangThai(hoaDon.getTrangThai());

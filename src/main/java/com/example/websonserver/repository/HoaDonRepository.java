@@ -37,7 +37,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     List<HoaDon> findByMaHoaDon(Long maHoaDon);
 
 
-    List<HoaDon> findByMaHoaDonAndTrangThaiAndXoaIsFalse(Long maHoaDon,Integer trangThai);
+    List<HoaDon> findByMaHoaDonAndTrangThaiAndXoaIsFalse(Pageable pageable,Long maHoaDon,Integer trangThai);
 
     @Transactional
     @Modifying
@@ -71,7 +71,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
             "AND nd.xoa = false " +
             "AND nd.trangThai = :trangThai " +
             "ORDER BY nd.ngayTao DESC")
-    List<HoaDon> searchByHoTen(@Param("keyword") String keyword, @Param("trangThai") Integer trangThai);
+    List<HoaDon> searchByHoTen(Pageable pageable,@Param("keyword") String keyword, @Param("trangThai") Integer trangThai);
 
 
 }
