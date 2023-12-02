@@ -23,7 +23,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -556,9 +558,15 @@ public class HoaDonServiceIpml implements HoaDonService {
         if(thuocTinh.equals("tenNguoiDung")){
           hoaDonList = hoaDonRepository.searchByHoTen(pageable,value,trangThai);
         }
-        HoaDonResponse dto = new HoaDonResponse();
+        if(thuocTinh.equals("ngayTao")){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd");
+            LocalDate dateTime = LocalDate.parse(value, formatter);
+            hoaDonList = hoaDonRepository.searchByNgayTao(pageable,dateTime,trangThai);
+        }
+
         for (HoaDon hoaDon:
                 hoaDonList) {
+            HoaDonResponse dto = new HoaDonResponse();
             dto.setMaHoaDon(hoaDon.getMaHoaDon());
             dto.setTongTien(hoaDon.getTongTien());
             dto.setTrangThai(hoaDon.getTrangThai());
