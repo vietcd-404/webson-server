@@ -245,8 +245,8 @@ public class HoaDonApi {
     }
 
     @GetMapping("/admin/order/search")
-    public ResponseEntity<?> searchHoaDon(@RequestParam String thuocTinh,@RequestParam String value,Integer trangThai){
-        return ResponseEntity.ok(hoaDonService.findHoaDon(thuocTinh,value,trangThai));
+    public ResponseEntity<?> searchHoaDon(Pageable pageable,@RequestParam String thuocTinh,@RequestParam String value,Integer trangThai){
+        return ResponseEntity.ok(hoaDonService.findHoaDon(pageable,thuocTinh,value,trangThai));
     }
 
 

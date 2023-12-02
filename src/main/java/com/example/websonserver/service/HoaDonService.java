@@ -7,6 +7,7 @@ import com.example.websonserver.dto.response.HoaDonResponse;
 import com.example.websonserver.entity.HoaDon;
 import com.example.websonserver.entity.HoaDonChiTiet;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Pageable;
 
 import java.security.Principal;
 import java.util.List;
@@ -27,5 +28,5 @@ public interface HoaDonService {
 
     HoaDon hoaDonSession(HttpSession session, NguoiDungSessionRequest request);
 
-    List<HoaDonResponse> findHoaDon(String thuocTinh,String value,Integer trangThai);
+    List<HoaDonResponse> findHoaDon(Pageable pageable, String thuocTinh, String value, Integer trangThai);
 }

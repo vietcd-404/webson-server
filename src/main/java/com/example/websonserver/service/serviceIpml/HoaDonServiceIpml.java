@@ -23,7 +23,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -553,15 +555,21 @@ public class HoaDonServiceIpml implements HoaDonService {
     }
 
     @Override
-    public List<HoaDonResponse> findHoaDon(String thuocTinh, String value,Integer trangThai) {
+    public List<HoaDonResponse> findHoaDon(Pageable pageable,String thuocTinh, String value,Integer trangThai) {
         List<HoaDonResponse> hoaDonResponseList = new ArrayList<>();
         List<HoaDon> hoaDonList = new ArrayList<>();
         if(thuocTinh.equals("maHoaDon")){
-           hoaDonList = hoaDonRepository.findByMaHoaDonAndTrangThaiAndXoaIsFalse(Long.parseLong((value)),trangThai);
+           hoaDonList = hoaDonRepository.findByMaHoaDonAndTrangThaiAndXoaIsFalse(pageable,Long.parseLong((value)),trangThai);
         }
         if(thuocTinh.equals("tenNguoiDung")){
-          hoaDonList = hoaDonRepository.searchByHoTen(value,trangThai);
+          hoaDonList = hoaDonRepository.searchByHoTen(pageable,value,trangThai);
         }
+        if(thuocTinh.equals("ngayTao")){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd");
+            LocalDate dateTime = LocalDate.parse(value, formatter);
+            hoaDonList = hoaDonRepository.searchByNgayTao(pageable,dateTime,trangThai);
+        }
+
         for (HoaDon hoaDon:
                 hoaDonList) {
             HoaDonResponse dto = new HoaDonResponse();

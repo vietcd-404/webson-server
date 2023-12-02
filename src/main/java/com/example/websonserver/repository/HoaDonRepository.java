@@ -16,6 +16,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +40,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
     List<HoaDon> findByMaHoaDon(Long maHoaDon);
 
 
-    List<HoaDon> findByMaHoaDonAndTrangThaiAndXoaIsFalse(Long maHoaDon,Integer trangThai);
+    List<HoaDon> findByMaHoaDonAndTrangThaiAndXoaIsFalse(Pageable pageable,Long maHoaDon,Integer trangThai);
 
     @Transactional
     @Modifying
@@ -64,14 +67,22 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
             "ORDER BY totalOrders DESC ")
     List<Object[]> findTop4Buyers();
 
-    @Query("SELECT nd FROM HoaDon nd WHERE " +
+    @Query("SELECT DISTINCT  nd FROM HoaDon nd WHERE " +
             "(nd.nguoiDung.ho LIKE %:keyword% OR " +
             "nd.nguoiDung.ten LIKE %:keyword% OR " +
             "nd.nguoiDung.tenDem LIKE %:keyword%) " +
             "AND nd.xoa = false " +
             "AND nd.trangThai = :trangThai " +
             "ORDER BY nd.ngayTao DESC")
-    List<HoaDon> searchByHoTen(@Param("keyword") String keyword, @Param("trangThai") Integer trangThai);
+    List<HoaDon> searchByHoTen(Pageable pageable,@Param("keyword") String keyword, @Param("trangThai") Integer trangThai);
+
+
+    @Query(value = "SELECT DISTINCT  * FROM hoa_don nd WHERE " +
+            "DATE(nd.ngay_tao)= :keyword " +
+            "AND nd.xoa = false " +
+            "AND nd.trang_thai = :trangThai " +
+            "ORDER BY nd.ngay_tao DESC",nativeQuery = true)
+    List<HoaDon> searchByNgayTao(Pageable pageable, @Param("keyword") LocalDate keyword, @Param("trangThai") Integer trangThai);
 
 
 }
