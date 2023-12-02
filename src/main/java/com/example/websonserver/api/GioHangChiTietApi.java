@@ -35,6 +35,19 @@ public class GioHangChiTietApi {
         }
     }
 
+    @PostMapping("/staff/gio-hang-chi-tiet/add")
+    public ResponseEntity<?> addSanPhamVaoGioHang(
+            @RequestParam("SPCTId") String SPCTId,
+            @RequestParam("soLuong") Integer soLuong) {
+        try {
+            GioHangChiTietResponse ghct = gioHangChiTietService.addProductToCart(SPCTId, soLuong);
+            return ResponseEntity.ok(ghct);
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
     @PutMapping("/user/gio-hang-chi-tiet/update-product-quantity")
     public ResponseEntity<?> updateProductQuantity(
             @RequestParam("SPCTId") String SPCTId,
