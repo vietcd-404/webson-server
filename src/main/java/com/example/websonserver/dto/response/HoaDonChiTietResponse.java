@@ -24,6 +24,8 @@ public class HoaDonChiTietResponse {
 
     private String tenNguoiNhan;
 
+    private String tenMau;
+
     private Integer soLuong;
 
     private Integer soLuongTon;

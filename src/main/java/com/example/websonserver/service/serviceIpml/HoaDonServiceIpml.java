@@ -147,6 +147,22 @@ public class HoaDonServiceIpml implements HoaDonService {
         return hoaDonRepository.save(hoaDon);
     }
 
+    public HoaDon taoHoaDonTaiQuay(HoaDonRequest request){
+        HoaDon hoaDon = new HoaDon();
+        hoaDon.setThanhToan(Constants.STATUS_PAYMENT.HOA_DON_CHO_THANH_TOAN_TAI_QUAY);
+        hoaDon.setTrangThai(Constants.STATUS_ORDER.HOA_TAI_QUAY);
+        hoaDon.setXoa(true);
+        return hoaDonRepository.save(hoaDon);
+    }
+
+    public List<HoaDon> getAllHoaDonTaiQuay(){
+        List<HoaDon> list = hoaDonRepository.findByTrangThai(Constants.STATUS_ORDER.HOA_TAI_QUAY);
+        if(list.size()>0){
+             list.get(0);
+        }
+        return list;
+    }
+
     public HoaDon thanhToanGuest(HoaDonRequest request, List<Long> maSanPhamCtList) {
         PhuongThucThanhToan phuongThucThanhToan = phuongThucThanhToanRepository.findByTenPhuongThuc(request.getTenPhuongThuc());
         HoaDon hoaDon = new HoaDon();
@@ -411,7 +427,6 @@ public class HoaDonServiceIpml implements HoaDonService {
         List<HoaDon> orderList = hoaDonRepository.findByMaHoaDon(maHoaDon);
         List<HoaDonChiTietResponse> hoaDonChiTietResponses = new ArrayList<>();
         for (HoaDon hoaDon : orderList) {
-
             List<HoaDonChiTiet> hoaDonChiTietList = this.hoaDonChiTietRepository.findByHoaDon(hoaDon);
             List<VoucherChiTiet> voucherChiTiets = hoaDon.getVoucherChiTiets();
             if (voucherChiTiets != null && !voucherChiTiets.isEmpty()) {
@@ -458,6 +473,31 @@ public class HoaDonServiceIpml implements HoaDonService {
             }
 
 
+        }
+        return hoaDonChiTietResponses;
+    }
+
+    public List<HoaDonChiTietResponse> getOrdersDetai(Long maHoaDon) {
+//        NguoiDung nguoiDung = nguoiDungService.findByUsername(principal.getName());
+        List<HoaDon> orderList = hoaDonRepository.findByMaHoaDon(maHoaDon);
+        List<HoaDonChiTietResponse> hoaDonChiTietResponses = new ArrayList<>();
+        for (HoaDon hoaDon : orderList) {
+            List<HoaDonChiTiet> hoaDonChiTietList = this.hoaDonChiTietRepository.findByHoaDon(hoaDon);
+                for (HoaDonChiTiet hoaDonChiTiet : hoaDonChiTietList) {
+                    HoaDonChiTietResponse dto = new HoaDonChiTietResponse();
+                    dto.setTenSanPham(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
+                    dto.setSoLuong(hoaDonChiTiet.getSoLuong());
+                    dto.setGiaBan(hoaDonChiTiet.getDonGia());
+                    dto.setTenMau(hoaDonChiTiet.getSanPhamChiTiet().getMauSac().getTenMau());
+                    dto.setPhanTramGiam(hoaDonChiTiet.getSanPhamChiTiet().getPhanTramGiam());
+                    dto.setSoLuongTon(hoaDonChiTiet.getSanPhamChiTiet().getSoLuongTon());
+                    dto.setMaHoaDonCT(hoaDonChiTiet.getMaHDCT());
+                    dto.setMaHoaDon(hoaDon.getMaHoaDon());
+                    dto.setTrangThai(hoaDon.getTrangThai());
+                    dto.setMaSanPhamCT(hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT());
+                    dto.setTienGiam(hoaDon.getTienGiam());
+                    hoaDonChiTietResponses.add(dto);
+                }
         }
         return hoaDonChiTietResponses;
     }

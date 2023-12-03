@@ -47,6 +47,18 @@ public class GioHangChiTietApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
     }
+    @PutMapping("/staff/gio-hang-chi-tiet/update-product-quantity")
+    public ResponseEntity<?> updateTaiQuay(
+            @RequestParam("SPCTId") String SPCTId,
+            @RequestParam("soLuong") String soLuong) {
+        try {
+            GioHangChiTietResponse ghct = gioHangChiTietService.updateProductQuantityInCart(SPCTId, soLuong);
+            return ResponseEntity.ok(ghct);
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
 
     @PutMapping("/user/gio-hang-chi-tiet/update-product-quantity")
     public ResponseEntity<?> updateProductQuantity(
@@ -80,6 +92,10 @@ public class GioHangChiTietApi {
     public ResponseEntity<?> getGioHangUser(Principal principal) {
         return ResponseEntity.ok(gioHangChiTietService.gioHangUser(principal));
     }
+    @GetMapping("/staff/gio-hang-chi-tiet/all")
+    public ResponseEntity<?> getGioHangStaff(Principal principal) {
+        return ResponseEntity.ok(gioHangChiTietService.gioHangUser(principal));
+    }
 
     @DeleteMapping("/user/gio-hang-chi-tiet/delete-all")
     public ResponseEntity<?> deleteAll(Principal principal) {
@@ -89,6 +105,12 @@ public class GioHangChiTietApi {
 
     @DeleteMapping("/user/gio-hang-chi-tiet/delete-gio-hang")
     public ResponseEntity<?> delete(@RequestParam("maGioHangCT") Long ma) {
+        gioHangChiTietService.deleteGioHang(ma);
+        return ResponseEntity.ok(new MessageResponse("Xóa giỏ hàng thành công"));
+    }
+
+    @DeleteMapping("/staff/gio-hang-chi-tiet/delete-gio-hang")
+    public ResponseEntity<?> deleteTaiQuay(@RequestParam("maGioHangCT") Long ma) {
         gioHangChiTietService.deleteGioHang(ma);
         return ResponseEntity.ok(new MessageResponse("Xóa giỏ hàng thành công"));
     }
