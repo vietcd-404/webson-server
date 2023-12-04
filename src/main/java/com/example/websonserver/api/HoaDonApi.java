@@ -2,10 +2,7 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.config.socket.NewOrder;
 import com.example.websonserver.config.socket.UpdateStatus;
-import com.example.websonserver.dto.request.HoaDonRequest;
-import com.example.websonserver.dto.request.NguoiDungSessionRequest;
-import com.example.websonserver.dto.request.SanPhamHoaDonRequest;
-import com.example.websonserver.dto.request.UpdateHoaDonRequest;
+import com.example.websonserver.dto.request.*;
 import com.example.websonserver.dto.response.GioHangChiTietResponse;
 import com.example.websonserver.dto.response.HoaDonResponse;
 import com.example.websonserver.dto.response.MessageResponse;
@@ -300,8 +297,30 @@ public class HoaDonApi {
                                            @RequestParam Long maHoaDonCT,
                                            @RequestParam Long maHoaDon) {
         try {
-            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT, soLuong, maHoaDon));
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDonTaiQuay(maHoaDonCT, soLuong, maHoaDon));
 
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @DeleteMapping("/staff/order/delete")
+    public ResponseEntity<?> xoaHoaDonTaiQuay(
+            @RequestParam("maHoaDonCT") Long maHDCT) {
+        hoaDonService.deleteHDCT(maHDCT);
+        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
+    }
+
+    @PutMapping("/staff/order/update")
+    public ResponseEntity<?> updateHoaDonTaiQuay(@RequestBody HoaDonTaiQuayResquest request, @RequestParam Long maHoaDon) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maHoaDon).orElse(null);
+
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        try {
+            return ResponseEntity.ok(hoaDonService.orderTaiQuay(request, maHoaDon));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
