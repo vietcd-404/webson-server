@@ -1125,6 +1125,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
+        PhuongThucThanhToan phuongThucThanhToan = phuongThucThanhToanRepository.findByTenPhuongThuc(request.getPhuongThucThanhToan());
         return optional.map(o -> {
 //            if (o.getTrangThai() == 0) {
 
@@ -1134,6 +1135,17 @@ public class HoaDonServiceIpml implements HoaDonService {
             } else {
                 o.setNguoiDung(null);
             }
+
+            o.setThanhToan(request.getThanhToan());
+            if(request.getThanhToan()==1) {
+                o.setNgayThanhToan(LocalDateTime.now());
+            }else if(request.getThanhToan()==0){
+                o.setNgayTao(LocalDateTime.now());
+            }
+            o.setTinh(request.getTinh());
+            o.setXa(request.getXa());
+            o.setHuyen(request.getHuyen());
+            o.setPhuongThucThanhToan(phuongThucThanhToan);
             o.setThanhToan(request.getThanhToan());
             o.setTrangThai(request.getTrangThai());
             o.setXoa(request.getXoa());

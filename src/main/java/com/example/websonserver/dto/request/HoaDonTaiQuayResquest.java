@@ -14,6 +14,7 @@ public class HoaDonTaiQuayResquest {
     private Long maHoaDon;
     private Long maHoaDonCT;
     private Long maNguoiDung;
+    private String phuongThucThanhToan;
     private String huyen;
     private String tinh;
     private String xa;

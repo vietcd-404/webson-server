@@ -18,7 +18,7 @@ import java.util.Map;
 public class NguoiDungApi {
     @Autowired
     private NguoiDungServiceImpl nguoiDungService;
-    @GetMapping
+    @GetMapping("/admin/nguoi-dung")
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(nguoiDungService.getAll());
     }
