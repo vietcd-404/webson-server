@@ -337,7 +337,7 @@ public class HoaDonApi {
         }
     }
 
-    @DeleteMapping("/adim/order/delete")
+    @DeleteMapping("/admin/order/delete")
     public ResponseEntity<?> xoaSPByAdmin(
             @RequestParam("maHoaDonCT") Long maHDCT) {
         hoaDonService.deleteHDCT(maHDCT);

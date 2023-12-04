@@ -87,8 +87,13 @@ public class HoaDonServiceIpml implements HoaDonService {
             SanPhamChiTiet spct = sanPhamChiTietService.findById(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT().toString());
             HoaDonChiTiet chiTiet1 = new HoaDonChiTiet();
             chiTiet1.setHoaDon(hoaDon);
-            chiTiet1.setDonGia(gioHangChiTiet.getDonGia());
-            chiTiet1.setSanPhamChiTiet(gioHangChiTiet.getSanPhamChiTiet());
+            if (spct.getPhanTramGiam() > 0) {
+                BigDecimal giaSauGiam=  spct.getGiaBan()
+                        .multiply(BigDecimal.valueOf(100 - spct.getPhanTramGiam()).divide(BigDecimal.valueOf(100)));
+                chiTiet1.setDonGia(giaSauGiam);
+            }else {
+                chiTiet1.setDonGia(spct.getGiaBan());
+            }            chiTiet1.setSanPhamChiTiet(gioHangChiTiet.getSanPhamChiTiet());
             chiTiet1.setSoLuong(gioHangChiTiet.getSoLuong());
             chiTiet1.setTrangThai(gioHangChiTiet.getTrangThai());
             hoaDonChiTietList.add(chiTiet1);
@@ -190,7 +195,13 @@ public class HoaDonServiceIpml implements HoaDonService {
             if (spct != null) {
                 HoaDonChiTiet chiTiet = new HoaDonChiTiet();
                 chiTiet.setHoaDon(hoaDon);
-                chiTiet.setDonGia(spct.getGiaBan());
+                if (spct.getPhanTramGiam() > 0) {
+                    BigDecimal giaSauGiam=  spct.getGiaBan()
+                            .multiply(BigDecimal.valueOf(100 - spct.getPhanTramGiam()).divide(BigDecimal.valueOf(100)));
+                    chiTiet.setDonGia(giaSauGiam);
+                }else {
+                    chiTiet.setDonGia(spct.getGiaBan());
+                }
                 chiTiet.setSanPhamChiTiet(spct);
 
                 // Use the quantity from the request for each product
@@ -436,6 +447,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                         dto.setAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
                         dto.setTenSanPham(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
                         dto.setSoLuong(hoaDonChiTiet.getSoLuong());
+                        dto.setDonGia(hoaDonChiTiet.getDonGia());
                         dto.setTenPhuongThucThanhToan(hoaDonChiTiet.getHoaDon().getPhuongThucThanhToan().getTenPhuongThuc());
                         dto.setGiaBan(hoaDonChiTiet.getDonGia());
                         dto.setPhanTramGiam(hoaDonChiTiet.getSanPhamChiTiet().getPhanTramGiam());
@@ -457,6 +469,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                     dto.setAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
                     dto.setTenSanPham("["+ hoaDonChiTiet.getSanPhamChiTiet().getMauSac().getTenMau()+"]"+ " "+hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
                     dto.setSoLuong(hoaDonChiTiet.getSoLuong());
+                    dto.setDonGia(hoaDonChiTiet.getDonGia());
                     dto.setTenPhuongThucThanhToan(hoaDonChiTiet.getHoaDon().getPhuongThucThanhToan().getTenPhuongThuc());
                     dto.setGiaBan(hoaDonChiTiet.getDonGia());
                     dto.setPhanTramGiam(hoaDonChiTiet.getSanPhamChiTiet().getPhanTramGiam());
@@ -486,7 +499,8 @@ public class HoaDonServiceIpml implements HoaDonService {
                     HoaDonChiTietResponse dto = new HoaDonChiTietResponse();
                     dto.setTenSanPham(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
                     dto.setSoLuong(hoaDonChiTiet.getSoLuong());
-                    dto.setGiaBan(hoaDonChiTiet.getDonGia());
+                    dto.setDonGia(hoaDonChiTiet.getDonGia());
+                    dto.setGiaBan(hoaDonChiTiet.getSanPhamChiTiet().getGiaBan());
                     dto.setTenMau(hoaDonChiTiet.getSanPhamChiTiet().getMauSac().getTenMau());
                     dto.setPhanTramGiam(hoaDonChiTiet.getSanPhamChiTiet().getPhanTramGiam());
                     dto.setSoLuongTon(hoaDonChiTiet.getSanPhamChiTiet().getSoLuongTon());
