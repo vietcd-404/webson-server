@@ -15,10 +15,12 @@ public class Constants {
         public static final int DANG_GIAO = 2;
         public static final int HOAN_THANH = 3;
         public static final int DA_HUY = 4;
+        public static final int HOA_TAI_QUAY = 5;
     }
     public static class STATUS_PAYMENT{
         public static final int CHUA_THANH_TOAN = 0;
         public static final int DA_THANH_TOAN = 1;
+        public static final int HOA_DON_CHO_THANH_TOAN_TAI_QUAY = 2;
     }
     public static class VnPayConstant {
         public static String vnp_Version = "2.1.0";

@@ -54,7 +54,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeHttpRequests()
                 .requestMatchers("/api/admin/**").hasAnyAuthority(VaiTroNguoiDung.ROLE_ADMIN.name())
-                .requestMatchers("/api/user/**").hasAnyAuthority(VaiTroNguoiDung.ROLE_USER.name(),VaiTroNguoiDung.ROLE_ADMIN.name())
+                .requestMatchers("/api/user/**").hasAnyAuthority(VaiTroNguoiDung.ROLE_USER.name(),VaiTroNguoiDung.ROLE_ADMIN.name(),VaiTroNguoiDung.ROLE_STAFF.name())
                 .requestMatchers("/api/staff/**").hasAnyAuthority(VaiTroNguoiDung.ROLE_STAFF.name(),VaiTroNguoiDung.ROLE_ADMIN.name())
                 .requestMatchers("/api/auth/**").permitAll() //cho phép vào không cần đăng nhập
                 .requestMatchers("/api/account/**").permitAll()

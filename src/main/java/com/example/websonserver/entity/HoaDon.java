@@ -65,6 +65,9 @@ public class HoaDon extends BaseEntity{
     @JoinColumn(name = "ma_nguoi_dung")
     private NguoiDung nguoiDung;
 
+    @Column(name = "nhan_vien")
+    private String nhanVien;
+
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();

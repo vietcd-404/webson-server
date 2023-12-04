@@ -268,6 +268,46 @@ public class HoaDonApi {
         }
     }
 
+    @PostMapping("/staff/order")
+    public ResponseEntity<?> taoHoaDonTaiQuay(@RequestBody HoaDonRequest request) {
+        return ResponseEntity.ok(hoaDonService.taoHoaDonTaiQuay(request));
+    }
+
+    @GetMapping("/staff/get-all")
+    public ResponseEntity<?> hienHoaDonTaiQuay() {
+        return ResponseEntity.ok(hoaDonService.getAllHoaDonTaiQuay());
+    }
+
+    @GetMapping("/staff/order/get-hoadon")
+    public ResponseEntity<?> getSanPham(@RequestParam Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetai(maHoaDon));
+    }
+
+    @PostMapping("/staff/order/them-san-pham-vao-hoa-don")
+    public ResponseEntity<?> themSanPhamVaoHoaDonTaiQuay(@RequestParam Long maSPCT,
+                                                  @RequestParam int soLuong,
+                                                  @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @PostMapping("/staff/order/update-so-luong")
+    public ResponseEntity<?> updateSoLuongHoaDonTaiQuay(@RequestParam Integer soLuong,
+                                           @RequestParam Long maHoaDonCT,
+                                           @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT, soLuong, maHoaDon));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
 
     @PutMapping("/admin/order/update/{maDonHang}")
     public ResponseEntity<?> updateHoaDonByAdmin(@RequestBody UpdateHoaDonRequest request, @PathVariable Long maDonHang) {
