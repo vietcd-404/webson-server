@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/admin/nguoi-dung")
+@RequestMapping("/api")
 public class NguoiDungApi {
     @Autowired
     private NguoiDungServiceImpl nguoiDungService;
@@ -22,11 +22,11 @@ public class NguoiDungApi {
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(nguoiDungService.getAll());
     }
-    @GetMapping("/{ma}")
+    @GetMapping("/admin/nguoi-dung/{ma}")
     public ResponseEntity<?> getById(@PathVariable String ma) {
         return ResponseEntity.ok(nguoiDungService.findById(ma));
     }
-    @PostMapping("/add")
+    @PostMapping("/admin/nguoi-dung/add")
     public ResponseEntity<?> save(@Valid @RequestBody NguoiDungRequest request, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -40,7 +40,7 @@ public class NguoiDungApi {
         return ResponseEntity.ok(nguoiDungService.create(request));
     }
 
-    @PutMapping("/update/{ma}")
+    @PutMapping("/admin/nguoi-dung/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody NguoiDungRequest request, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -48,20 +48,24 @@ public class NguoiDungApi {
         return ResponseEntity.ok(nguoiDungService.update(request, ma));
     }
 
-    @DeleteMapping("/delete/{ma}")
+    @DeleteMapping("/admin/nguoi-dung/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         nguoiDungService.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @GetMapping("/timKiem/{keyword}")
+    @GetMapping("/admin/nguoi-dung/timKiem/{keyword}")
     public ResponseEntity<?> searchByKeyword(@PathVariable String keyword) {
         return ResponseEntity.ok(nguoiDungService.searchByKeyword(keyword));
     }
 
-    @PutMapping("/sua/{ma}")
+    @PutMapping("/admin/nguoi-dung/sua/{ma}")
     public ResponseEntity updateStatus(@RequestBody UpdateTrangThai trangThai, @PathVariable Long ma) {
         return ResponseEntity.ok(nguoiDungService.updateStatus(trangThai, ma));
     }
 
+    @GetMapping("/staff/nguoi-dung/khach-hang")
+    public ResponseEntity<?> getKhachHang() {
+        return ResponseEntity.ok(nguoiDungService.getKhachHang());
+    }
 }

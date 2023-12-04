@@ -3,6 +3,7 @@ package com.example.websonserver.service.serviceIpml;
 import com.example.websonserver.dto.request.MatKhauNguoiDungRequest;
 import com.example.websonserver.dto.request.NguoiDungRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
+import com.example.websonserver.dto.response.KhachHangResponse;
 import com.example.websonserver.dto.response.NguoiDungResponse;
 import com.example.websonserver.entity.NguoiDung;
 import com.example.websonserver.entity.VaiTro;
@@ -188,5 +189,17 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     public boolean deleteUser(Long id) {
         nguoiDungRepository.deleteById(id);
         return true;
+    }
+
+    public List<KhachHangResponse> getKhachHang(){
+        List<NguoiDung> nguoiDungList= nguoiDungRepository.findByVaiTro_TenVaiTro(VaiTroNguoiDung.ROLE_USER);
+        List<KhachHangResponse> nguoiDungResponses = new ArrayList<>();
+        for (NguoiDung nguoiDung : nguoiDungList){
+            KhachHangResponse response = new KhachHangResponse();
+            response.setMaNguoiDung(nguoiDung.getMaNguoiDung());
+            response.setTenKhachHang( nguoiDung.getHo() + " " + nguoiDung.getTenDem() + " " + nguoiDung.getTen());
+            nguoiDungResponses.add(response);
+        }
+        return nguoiDungResponses;
     }
 }
