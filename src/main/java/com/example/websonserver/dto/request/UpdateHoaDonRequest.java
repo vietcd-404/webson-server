@@ -23,5 +23,6 @@ public class UpdateHoaDonRequest {
     private Integer trangThai;
     private BigDecimal tongTien;
     private String diaChi;
+    private String email;
     private List<HoaDonChiTietRequest> hoaDonChiTietList;
 }

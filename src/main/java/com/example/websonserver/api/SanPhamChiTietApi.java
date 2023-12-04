@@ -76,6 +76,12 @@ public class SanPhamChiTietApi {
     public ResponseEntity<?> getLoc() {
         return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
     }
+
+    @GetMapping("/admin/san-pham/get-all/loc")
+    public ResponseEntity<?> getLocByAdmin() {
+        return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
+    }
+
     @GetMapping("/guest/san-pham/get-thuong-hieu")
     public ResponseEntity<?> getThuongHieu(@RequestParam String tenThuongHieu) {
         return ResponseEntity.ok(sanPhamChiTietService.getSanPhamByThuongHieu(tenThuongHieu));

@@ -374,12 +374,10 @@ public class HoaDonServiceIpml implements HoaDonService {
             response.setTenNguoiNhan(hoaDon.getTenNguoiNhan());
             response.setSdt(hoaDon.getSdt());
             response.setTinh(hoaDon.getTinh());
-            response.setDiaChi(hoaDon.getDiaChi());
             response.setNguoiDung(hoaDon.getNguoiDung());
             if (hoaDon.getEmail() == null) {
                 if (hoaDon.getNguoiDung() != null) {
                     response.setEmail(hoaDon.getNguoiDung().getEmail());
-
                 } else {
                     response.setEmail("123@gmail.com");
                 }
@@ -388,6 +386,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             }
             response.setDiaChiChiTiet(hoaDon.getDiaChi() + ", " + hoaDon.getXa() + ", " + hoaDon.getHuyen() + ", " + hoaDon.getTinh());
             response.setTongTien(hoaDon.getTongTien());
+            response.setDiaChi(hoaDon.getDiaChi());
             response.setTenPhuongThucThanhToan(hoaDon.getPhuongThucThanhToan().getTenPhuongThuc());
             response.setHuyen(hoaDon.getHuyen());
             response.setXa(hoaDon.getXa());
@@ -441,7 +440,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                     HoaDonChiTietResponse dto = new HoaDonChiTietResponse();
                     SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT()).orElse(null);
                     dto.setAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
-                    dto.setTenSanPham(hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
+                    dto.setTenSanPham("["+ hoaDonChiTiet.getSanPhamChiTiet().getMauSac().getTenMau()+"]"+ " "+hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTenSanPham());
                     dto.setSoLuong(hoaDonChiTiet.getSoLuong());
                     dto.setTenPhuongThucThanhToan(hoaDonChiTiet.getHoaDon().getPhuongThucThanhToan().getTenPhuongThuc());
                     dto.setGiaBan(hoaDonChiTiet.getDonGia());
@@ -609,6 +608,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                 o.setHuyen(request.getHuyen());
                 o.setXa(request.getXa());
                 o.setDiaChi(request.getDiaChi());
+                o.setEmail(request.getEmail());
 //                List<HoaDonChiTiet> hoaDonChiTiets = o.getHoaDonChiTietList();
 //                BigDecimal tongTien = BigDecimal.ZERO;
 //                if (hoaDonChiTiets != null && !hoaDonChiTiets.isEmpty()) {
@@ -853,21 +853,21 @@ public class HoaDonServiceIpml implements HoaDonService {
     }
 
 
-    private void updateSanPhamChiTietQuantity(HoaDonChiTiet hoaDonChiTiet) {
-        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository
-                .findById(hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT())
-                .orElseThrow(() -> new EntityNotFoundException("SanPhamChiTiet not found with ID: "
-                        + hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT()));
-
-        log.debug("Previous quantity: {}, Added quantity: {}", sanPhamChiTiet.getSoLuongTon(), hoaDonChiTiet.getSoLuong());
-
-        // Update the quantity
-        Integer newQuantity = sanPhamChiTiet.getSoLuongTon() + hoaDonChiTiet.getSoLuong();
-        sanPhamChiTiet.setSoLuongTon(newQuantity);
-
-        // Save the updated SanPhamChiTiet
-        sanPhamChiTietRepository.save(sanPhamChiTiet);
-    }
+//    private void updateSanPhamChiTietQuantity(HoaDonChiTiet hoaDonChiTiet) {
+//        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository
+//                .findById(hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT())
+//                .orElseThrow(() -> new EntityNotFoundException("SanPhamChiTiet not found with ID: "
+//                        + hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT()));
+//
+//        log.debug("Previous quantity: {}, Added quantity: {}", sanPhamChiTiet.getSoLuongTon(), hoaDonChiTiet.getSoLuong());
+//
+//        // Update the quantity
+//        Integer newQuantity = sanPhamChiTiet.getSoLuongTon() + hoaDonChiTiet.getSoLuong();
+//        sanPhamChiTiet.setSoLuongTon(newQuantity);
+//
+//        // Save the updated SanPhamChiTiet
+//        sanPhamChiTietRepository.save(sanPhamChiTiet);
+//    }
 
     public HoaDon updatePaid(Integer thanhToan, Long maHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);

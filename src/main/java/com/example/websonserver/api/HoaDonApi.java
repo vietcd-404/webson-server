@@ -269,5 +269,38 @@ public class HoaDonApi {
     }
 
 
+    @PutMapping("/admin/order/update/{maDonHang}")
+    public ResponseEntity<?> updateHoaDonByAdmin(@RequestBody UpdateHoaDonRequest request, @PathVariable Long maDonHang) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
 
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        try {
+            return ResponseEntity.ok(hoaDonService.updateOrder(request, maDonHang));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+
+    @PostMapping("/admin/order/add-productHd")
+    public ResponseEntity<?> themSanPhamHDByAdmin(@RequestParam Long maSPCT,
+    @RequestParam int soLuong,
+    @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @DeleteMapping("/adim/order/delete")
+    public ResponseEntity<?> xoaSPByAdmin(
+            @RequestParam("maHoaDonCT") Long maHDCT) {
+        hoaDonService.deleteHDCT(maHDCT);
+        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
+    }
 }
