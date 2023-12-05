@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class KhachHangResponse {
     private Long maNguoiDung;
     private String tenKhachHang;
+    private String sdt;
 }

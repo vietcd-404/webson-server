@@ -23,7 +23,7 @@ public class HoaDonTaiQuayResquest {
     private Integer soLuong;
     private Integer trangThai = 3;
     private Integer thanhToan;
-    private String nhanVien;
+    private Long nhanVien;
     private Boolean xoa = false;
     private BigDecimal tongTien;
     private String diaChi;

@@ -154,13 +154,13 @@ public class HoaDonServiceIpml implements HoaDonService {
     public HoaDon taoHoaDonTaiQuay(HoaDonRequest request) {
         HoaDon hoaDon = new HoaDon();
         hoaDon.setThanhToan(Constants.STATUS_PAYMENT.HOA_DON_CHO_THANH_TOAN_TAI_QUAY);
-        hoaDon.setTrangThai(Constants.STATUS_ORDER.HOA_TAI_QUAY);
+        hoaDon.setTrangThai(Constants.STATUS_ORDER.HOA_DON_TAI_QUAY);
         hoaDon.setXoa(true);
         return hoaDonRepository.save(hoaDon);
     }
 
     public List<HoaDon> getAllHoaDonTaiQuay() {
-        List<HoaDon> list = hoaDonRepository.findByTrangThai(Constants.STATUS_ORDER.HOA_TAI_QUAY);
+        List<HoaDon> list = hoaDonRepository.findByTrangThai(Constants.STATUS_ORDER.HOA_DON_TAI_QUAY);
         if (list.size() > 0) {
             list.get(0);
         }
@@ -1129,7 +1129,8 @@ public class HoaDonServiceIpml implements HoaDonService {
         return optional.map(o -> {
 //            if (o.getTrangThai() == 0) {
 
-            o.setNhanVien(nguoiDung.getHo() + " " + nguoiDung.getTenDem() + " " + nguoiDung.getTen());
+//            o.setNhanVien(nguoiDung.getHo() + " " + nguoiDung.getTenDem() + " " + nguoiDung.getTen());
+            o.setNhanVien(nguoiDung.getMaNguoiDung());
             if (request.getMaNguoiDung() != null) {
                 o.setNguoiDung(NguoiDung.builder().maNguoiDung(Long.valueOf(request.getMaNguoiDung())).build());
             } else {
@@ -1147,7 +1148,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             o.setHuyen(request.getHuyen());
             o.setPhuongThucThanhToan(phuongThucThanhToan);
             o.setThanhToan(request.getThanhToan());
-            o.setTrangThai(request.getTrangThai());
+            o.setTrangThai(Constants.STATUS_ORDER.HOA_DON_TAI_QUAY);
             o.setXoa(request.getXoa());
             o.setTinh(request.getTinh());
             o.setSdt((request.getSdt()));

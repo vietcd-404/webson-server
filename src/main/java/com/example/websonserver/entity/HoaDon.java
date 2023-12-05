@@ -66,7 +66,7 @@ public class HoaDon extends BaseEntity{
     private NguoiDung nguoiDung;
 
     @Column(name = "nhan_vien")
-    private String nhanVien;
+    private Long nhanVien;
 
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

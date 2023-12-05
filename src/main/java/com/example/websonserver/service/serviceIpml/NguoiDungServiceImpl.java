@@ -198,6 +198,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             KhachHangResponse response = new KhachHangResponse();
             response.setMaNguoiDung(nguoiDung.getMaNguoiDung());
             response.setTenKhachHang( nguoiDung.getHo() + " " + nguoiDung.getTenDem() + " " + nguoiDung.getTen());
+            response.setSdt(nguoiDung.getSdt());
             nguoiDungResponses.add(response);
         }
         return nguoiDungResponses;
