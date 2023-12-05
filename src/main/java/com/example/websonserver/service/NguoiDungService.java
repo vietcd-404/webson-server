@@ -30,6 +30,7 @@ public interface NguoiDungService {
     NguoiDung updateStatus(UpdateTrangThai trangThai, Long maNguoiDung);
     NguoiDung changePass(MatKhauNguoiDungRequest nguoiDungRequest, Long maNguoiDung);
     List<NguoiDung> searchByHoTen(String keyword);
+    public List<NguoiDungResponse> searchNguoiDung(Pageable pageable,String keyword);
 }
 
 

@@ -359,7 +359,12 @@ public class HoaDonApi {
     @DeleteMapping("/admin/order/delete")
     public ResponseEntity<?> xoaSPByAdmin(
             @RequestParam("maHoaDonCT") Long maHDCT) {
-        hoaDonService.deleteHDCT(maHDCT);
-        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
+        try {
+            return ResponseEntity.ok(hoaDonService.deleteHDCTByAdmin(maHDCT));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
     }
 }

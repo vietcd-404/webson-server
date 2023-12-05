@@ -52,4 +52,15 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung,Long> {
             "OR nd.tenDem LIKE %:keyword%")
     List<NguoiDung> searchByHoTen(String keyword);
 
+
+    @Query("SELECT nd FROM NguoiDung nd WHERE nd.ho LIKE %:keyword% " +
+            "OR nd.ten LIKE %:keyword%" +
+            "OR nd.tenDem LIKE %:keyword%" +
+            "OR nd.username LIKE %:keyword%" +
+            "OR nd.email LIKE %:keyword%" +
+            "OR nd.sdt LIKE %:keyword%" +
+            "AND nd.xoa = false " +
+            "ORDER BY nd.ngayTao desc")
+    public Page<NguoiDung> searchNguoiDung(Pageable pageable,@Param("keyword") String keyword);
+
 }

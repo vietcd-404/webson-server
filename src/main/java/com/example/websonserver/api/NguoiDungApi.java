@@ -6,6 +6,7 @@ import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.service.serviceIpml.NguoiDungServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +68,10 @@ public class NguoiDungApi {
     @GetMapping("/staff/nguoi-dung/khach-hang")
     public ResponseEntity<?> getKhachHang() {
         return ResponseEntity.ok(nguoiDungService.getKhachHang());
+    }
+
+    @GetMapping("/admin/nguoi-dung/search-all")
+    public ResponseEntity<?> searchNguoiDung(Pageable pageable, @RequestParam("keyword") String keyword) {
+        return ResponseEntity.ok(nguoiDungService.searchNguoiDung(pageable,keyword));
     }
 }
