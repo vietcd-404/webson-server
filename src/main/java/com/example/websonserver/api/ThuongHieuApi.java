@@ -19,7 +19,7 @@ public class ThuongHieuApi {
     @Autowired
     private ThuongHieuServiceImpl thuongHieuServiceImpl;
 
-    @GetMapping("/admin/thuong-hieu")
+    @GetMapping("/staff/thuong-hieu")
     public ResponseEntity<?> getAll(Pageable pageable) {
         return ResponseEntity.ok(thuongHieuServiceImpl.getAll(pageable).getContent());
     }
@@ -29,7 +29,7 @@ public class ThuongHieuApi {
         return ResponseEntity.ok(thuongHieuServiceImpl.fillComboSpct());
     }
 
-    @PostMapping("/admin/thuong-hieu/add")
+    @PostMapping("/staff/thuong-hieu/add")
     public ResponseEntity<?> saveLoai(@Valid @RequestBody ThuongHieuRequest thuongHieu, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -37,7 +37,7 @@ public class ThuongHieuApi {
         return ResponseEntity.ok(thuongHieuServiceImpl.create(thuongHieu));
     }
 
-    @PutMapping("/admin/thuong-hieu/update/{ma}")
+    @PutMapping("/staff/thuong-hieu/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody ThuongHieuRequest thuongHieu, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -45,13 +45,13 @@ public class ThuongHieuApi {
         return ResponseEntity.ok(thuongHieuServiceImpl.update(thuongHieu, ma));
     }
 
-    @DeleteMapping("/admin/thuong-hieu/delete/{ma}")
+    @DeleteMapping("/staff/thuong-hieu/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         thuongHieuServiceImpl.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @PutMapping("/admin/thuong-hieu/sua/{ma}")
+    @PutMapping("/staff/thuong-hieu/sua/{ma}")
     public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -59,7 +59,7 @@ public class ThuongHieuApi {
         return ResponseEntity.ok(thuongHieuServiceImpl.updateStatus(trangThai, ma));
     }
 
-    @GetMapping("/admin/thuong-hieu/load-thuong-hieu")
+    @GetMapping("/staff/thuong-hieu/load-thuong-hieu")
     public ResponseEntity<?> loadThuongHieu() {
         return ResponseEntity.ok(thuongHieuServiceImpl.fillComboSpct());
     }

@@ -32,6 +32,9 @@ public class HoaDonChiTietResponse {
 
     private BigDecimal giaBan;
 
+    private BigDecimal donGia;
+
+
     private String tenSanPham;
 
     private BigDecimal tongTien;

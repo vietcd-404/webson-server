@@ -11,6 +11,8 @@ import com.example.websonserver.entity.VaiTroNguoiDung;
 import com.example.websonserver.service.NguoiDungService;
 import com.example.websonserver.repository.NguoiDungRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -175,6 +177,30 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Override
     public List<NguoiDung> searchByHoTen(String keyword) {
         return nguoiDungRepository.searchByHoTen(keyword);
+    }
+
+    @Override
+    public List<NguoiDungResponse> searchNguoiDung(Pageable pageable, String keyword) {
+        Page<NguoiDung> nguoiDungPage = nguoiDungRepository.searchNguoiDung(pageable,keyword);
+        List<NguoiDungResponse> list = new ArrayList<>();
+        for (NguoiDung nguoiDung:
+             nguoiDungPage.getContent()) {
+            NguoiDungResponse response = new NguoiDungResponse();
+            response.setMaNguoiDung(nguoiDung.getMaNguoiDung());
+            response.setNgaySinh(nguoiDung.getNgaySinh());
+            response.setPassword(nguoiDung.getPassword());
+            response.setEmail(nguoiDung.getEmail());
+            response.setUsername(nguoiDung.getUsername());
+            response.setSdt(nguoiDung.getSdt());
+            response.setHo(nguoiDung.getHo());
+            response.setTenDem(nguoiDung.getTenDem());
+            response.setTen(nguoiDung.getTen());
+            response.setGioiTinh(nguoiDung.getGioiTinh());
+            response.setTrangThai(nguoiDung.getTrangThai());
+            response.setVaiTro(String.valueOf(nguoiDung.getVaiTro().getMaVaiTro()));
+            list.add(response);
+        }
+        return list;
     }
 
     public NguoiDung findByEmail(String email) {

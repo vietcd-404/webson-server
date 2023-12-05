@@ -76,6 +76,12 @@ public class SanPhamChiTietApi {
     public ResponseEntity<?> getLoc() {
         return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
     }
+
+    @GetMapping("/staff/san-pham/get-all/loc")
+    public ResponseEntity<?> getLocByAdmin() {
+        return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
+    }
+
     @GetMapping("/guest/san-pham/get-thuong-hieu")
     public ResponseEntity<?> getThuongHieu(@RequestParam String tenThuongHieu) {
         return ResponseEntity.ok(sanPhamChiTietService.getSanPhamByThuongHieu(tenThuongHieu));
@@ -88,24 +94,24 @@ public class SanPhamChiTietApi {
         return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
 
-    @GetMapping("/admin/san-pham-chi-tiet")
+    @GetMapping("/staff/san-pham-chi-tiet")
     public ResponseEntity<?> getAll(Pageable pageable) {
         return ResponseEntity.ok(sanPhamChiTietService.getAll(pageable).getContent());
     }
 
-    @GetMapping("/admin/san-pham-chi-tiet/all")
+    @GetMapping("/staff/san-pham-chi-tiet/all")
     public ResponseEntity<List<SanPhamChiTietResponse>> getAllSanPhamChiTietWithImages() {
         List<SanPhamChiTietResponse> sanPhamChiTietDtos = sanPhamChiTietService.getAllCT();
         return new ResponseEntity<>(sanPhamChiTietDtos, HttpStatus.OK);
     }
 
 
-    @GetMapping("/admin/san-pham-chi-tiet/{ma}")
+    @GetMapping("/staff/san-pham-chi-tiet/{ma}")
     public ResponseEntity<?> getById(@PathVariable String ma) {
         return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
     }
 
-    @PostMapping("/admin/san-pham-chi-tiet/add")
+    @PostMapping("/staff/san-pham-chi-tiet/add")
     public ResponseEntity<?> save(@Valid @RequestBody SanPhamChiTietRequest request, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -113,7 +119,7 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.createOne(request));
 
     }
-    @PostMapping("/admin/san-pham-chi-tiet/{productId}/images")
+    @PostMapping("/staff/san-pham-chi-tiet/{productId}/images")
     public ResponseEntity<String> addImagesToProductChiTiet(
             @PathVariable Long productId,
             @RequestBody List<Long> imageIds) {
@@ -121,7 +127,7 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok("Đã thêm ảnh vào sản phẩm chi tiết thành công.");
     }
 
-    @PostMapping("/admin/san-pham-chi-tiet/add-all")
+    @PostMapping("/staff/san-pham-chi-tiet/add-all")
     public ResponseEntity<?> saveAll(@Valid @RequestBody List<SanPhamChiTietRequest> listRequest, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -148,7 +154,7 @@ public class SanPhamChiTietApi {
         }
     }
 
-    @PutMapping("/admin/san-pham-chi-tiet/update/{ma}")
+    @PutMapping("/staff/san-pham-chi-tiet/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody SanPhamChiTietRequest request, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -156,19 +162,19 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.update(request, ma));
     }
 
-    @DeleteMapping("/admin/san-pham-chi-tiet/delete/{ma}")
+    @DeleteMapping("/staff/san-pham-chi-tiet/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         sanPhamChiTietService.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @GetMapping("/admin/san-pham-chi-tiet/{maSanPhamCT}/images")
+    @GetMapping("/staff/san-pham-chi-tiet/{maSanPhamCT}/images")
     public ResponseEntity<List<AnhSanPham>> getImages(@PathVariable Long maSanPhamCT) {
         List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
         return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
 
-    @PutMapping("/admin/san-pham-chi-tiet/sua/{ma}")
+    @PutMapping("/staff/san-pham-chi-tiet/sua/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody UpdateTrangThai request, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());

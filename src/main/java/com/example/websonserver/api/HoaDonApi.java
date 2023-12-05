@@ -113,7 +113,7 @@ public class HoaDonApi {
     }
 
 
-    @PutMapping("/admin/order/thaydoiTrangThai")
+    @PutMapping("/staff/order/thaydoiTrangThai")
     @ResponseBody
     public ResponseEntity<?> capNhapTrangThaiHoaDonByAdmin(
             @RequestParam("maHD") String maHD, @RequestParam("trangThai") Integer trangThai) {
@@ -205,7 +205,7 @@ public class HoaDonApi {
 
     }
 
-    @PutMapping("/admin/order/update-status/{maDonHang}")
+    @PutMapping("/staff/order/update-status/{maDonHang}")
     public ResponseEntity<?> updateStatus(@RequestBody HoaDonRequest request, @PathVariable Long maDonHang) {
         HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
 
@@ -215,39 +215,39 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.statusHoaDon(request, maDonHang));
     }
 
-    @GetMapping("/admin/order/all")
+    @GetMapping("/staff/order/all")
     public ResponseEntity<?> getAllOrder(Pageable pageable) {
         return ResponseEntity.ok(hoaDonService.findAllHd(pageable));
     }
 
-    @GetMapping("/admin/order/getAll")
+    @GetMapping("/staff/order/getAll")
     public ResponseEntity<?> getAllOrderByAdmin(Pageable pageable, @RequestParam("trangThai") Integer trangThai) {
         return ResponseEntity.ok(hoaDonService.getAllOrderByAdmin(pageable, trangThai));
     }
 
-    @GetMapping("/admin/order/get-hoadon/detail/{maHoaDon}")
+    @GetMapping("/staff/order/get-hoadon/detail/{maHoaDon}")
     public ResponseEntity<?> getHoaDonDetailAd(@PathVariable Long maHoaDon) {
         return ResponseEntity.ok(hoaDonService.orderDetail(maHoaDon));
     }
 
-    @GetMapping("/admin/order/get-hoadon/{maHoaDon}")
+    @GetMapping("/staff/order/get-hoadon/{maHoaDon}")
     public ResponseEntity<?> getHoaDonAllAd(@PathVariable Long maHoaDon) {
         return ResponseEntity.ok(hoaDonService.getOrdersDetail(maHoaDon));
     }
 
-    @PutMapping("/admin/order/huy-hoa-don")
+    @PutMapping("/staff/order/huy-hoa-don")
     public ResponseEntity<?> huyHoaDonByAdmin(
             @RequestParam("maHD") String maHD) {
         return ResponseEntity.ok(hoaDonService.huyHoaDon(Long.parseLong(maHD)));
     }
 
-    @GetMapping("/admin/order/search")
+    @GetMapping("/staff/order/search")
     public ResponseEntity<?> searchHoaDon(Pageable pageable,@RequestParam String thuocTinh,@RequestParam String value,Integer trangThai){
         return ResponseEntity.ok(hoaDonService.findHoaDon(pageable,thuocTinh,value,trangThai));
     }
 
 
-    @PutMapping("/admin/order/thanhToan")
+    @PutMapping("/staff/order/thanhToan")
     public ResponseEntity<?> capNhapThanhToanHoaDonByAdmin(
             @RequestParam("maHD") String maHD, @RequestParam("thanhToan") Integer thanhToan) {
         return ResponseEntity.ok(hoaDonService.updatePaid(thanhToan, Long.parseLong(maHD)));
@@ -265,22 +265,22 @@ public class HoaDonApi {
         }
     }
 
-    @PostMapping("/staff/order")
+    @PostMapping("/staff/order-tai-quay")
     public ResponseEntity<?> taoHoaDonTaiQuay(@RequestBody HoaDonRequest request) {
         return ResponseEntity.ok(hoaDonService.taoHoaDonTaiQuay(request));
     }
 
-    @GetMapping("/staff/get-all")
+    @GetMapping("/staff/get-all/tai-quay")
     public ResponseEntity<?> hienHoaDonTaiQuay() {
         return ResponseEntity.ok(hoaDonService.getAllHoaDonTaiQuay());
     }
 
-    @GetMapping("/staff/order/get-hoadon")
+    @GetMapping("/staff/order-tai-quay/get-hoadon")
     public ResponseEntity<?> getSanPham(@RequestParam Long maHoaDon) {
         return ResponseEntity.ok(hoaDonService.getOrdersDetai(maHoaDon));
     }
 
-    @PostMapping("/staff/order/them-san-pham-vao-hoa-don")
+    @PostMapping("/staff/order-tai-quay/them-san-pham-vao-hoa-don")
     public ResponseEntity<?> themSanPhamVaoHoaDonTaiQuay(@RequestParam Long maSPCT,
                                                   @RequestParam int soLuong,
                                                   @RequestParam Long maHoaDon) {
@@ -292,7 +292,7 @@ public class HoaDonApi {
         }
     }
 
-    @PostMapping("/staff/order/update-so-luong")
+    @PostMapping("/staff/order-tai-quay/update-so-luong")
     public ResponseEntity<?> updateSoLuongHoaDonTaiQuay(@RequestParam Integer soLuong,
                                            @RequestParam Long maHoaDonCT,
                                            @RequestParam Long maHoaDon) {
@@ -305,14 +305,14 @@ public class HoaDonApi {
         }
     }
 
-    @DeleteMapping("/staff/order/delete")
+    @DeleteMapping("/staff/order-tai-quay/delete")
     public ResponseEntity<?> xoaHoaDonTaiQuay(
             @RequestParam("maHoaDonCT") Long maHDCT) {
         hoaDonService.deleteHDCT(maHDCT);
         return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
     }
 
-    @PutMapping("/staff/order/update")
+    @PutMapping("/staff/order-tai-quay/update")
     public ResponseEntity<?> updateHoaDonTaiQuay(@RequestBody HoaDonTaiQuayResquest request, @RequestParam Long maHoaDon) {
         HoaDon hoaDon1 = hoaDonRepository.findById(maHoaDon).orElse(null);
 
@@ -328,5 +328,55 @@ public class HoaDonApi {
     }
 
 
+    @PutMapping("/staff/order/update/{maDonHang}")
+    public ResponseEntity<?> updateHoaDonByAdmin(@RequestBody UpdateHoaDonRequest request, @PathVariable Long maDonHang) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
 
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        try {
+            return ResponseEntity.ok(hoaDonService.updateOrder(request, maDonHang));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+
+    @PostMapping("/staff/order/add-productHd")
+    public ResponseEntity<?> themSanPhamHDByAdmin(@RequestParam Long maSPCT,
+    @RequestParam int soLuong,
+    @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @DeleteMapping("/staff/order/delete")
+    public ResponseEntity<?> xoaSPByAdmin(
+            @RequestParam("maHoaDonCT") Long maHDCT) {
+        try {
+            return ResponseEntity.ok(hoaDonService.deleteHDCTByAdmin(maHDCT));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+    @PutMapping("/staff/order/update-so-luong")
+    public ResponseEntity<?> updateSoLuongByAdmin(@RequestParam Integer soLuong,
+                                           @RequestParam Long maHoaDonCT,
+                                           @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT, soLuong, maHoaDon));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
 }

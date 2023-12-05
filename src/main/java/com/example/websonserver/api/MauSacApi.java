@@ -19,7 +19,7 @@ public class MauSacApi {
     @Autowired
     private MauSacServiceImpl mauSacServiceImpl;
 
-    @GetMapping("/admin/mau-sac")
+    @GetMapping("/staff/mau-sac")
     public ResponseEntity<?> getAll(Pageable pageable) {
         return ResponseEntity.ok(mauSacServiceImpl.getAll(pageable).getContent());
     }
@@ -29,7 +29,7 @@ public class MauSacApi {
         return ResponseEntity.ok(mauSacServiceImpl.fillComboSpctByNMau());
     }
 
-    @PostMapping("/admin/mau-sac/add")
+    @PostMapping("/staff/mau-sac/add")
     public ResponseEntity<?> saveMauSac(@Valid @RequestBody MauSacRequest mauSac, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -37,7 +37,7 @@ public class MauSacApi {
         return ResponseEntity.ok(mauSacServiceImpl.create(mauSac));
     }
 
-    @PutMapping("/admin/mau-sac/update/{ma}")
+    @PutMapping("/staff/mau-sac/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody MauSacRequest mauSac, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -45,13 +45,13 @@ public class MauSacApi {
         return ResponseEntity.ok(mauSacServiceImpl.update(mauSac, ma));
     }
 
-    @DeleteMapping("/admin/mau-sac/delete/{ma}")
+    @DeleteMapping("/staff/mau-sac/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         mauSacServiceImpl.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @PutMapping("/admin/mau-sac/sua/{ma}")
+    @PutMapping("/staff/mau-sac/sua/{ma}")
     public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -59,7 +59,7 @@ public class MauSacApi {
         return ResponseEntity.ok(mauSacServiceImpl.updateStatus(trangThai, ma));
     }
 
-    @GetMapping("/admin/mau-sac/load-mau")
+    @GetMapping("/staff/mau-sac/load-mau")
     public ResponseEntity<?> loadMau() {
         return ResponseEntity.ok(mauSacServiceImpl.fillComboSpctByNMau());
     }

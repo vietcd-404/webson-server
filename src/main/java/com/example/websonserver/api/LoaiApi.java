@@ -17,7 +17,7 @@ public class LoaiApi {
     @Autowired
     private LoaiServiceIpml loaiServiceIpml;
 
-    @GetMapping("/admin/loai")
+    @GetMapping("/staff/loai")
     public ResponseEntity<?> getAll(Pageable pageable) {
             return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
     }
@@ -29,7 +29,7 @@ public class LoaiApi {
 
 
 
-    @PostMapping("/admin/loai/add")
+    @PostMapping("/staff/loai/add")
     public ResponseEntity<?> saveLoai(@Valid @RequestBody LoaiResquest loai, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -37,7 +37,7 @@ public class LoaiApi {
         return ResponseEntity.ok(loaiServiceIpml.create(loai));
     }
 
-    @PutMapping("/admin/loai/update/{ma}")
+    @PutMapping("/staff/loai/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody LoaiResquest loai, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -45,13 +45,13 @@ public class LoaiApi {
         return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
     }
 
-    @DeleteMapping("/admin/loai/delete/{ma}")
+    @DeleteMapping("/staff/loai/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         loaiServiceIpml.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @PutMapping("/admin/loai/sua/{ma}")
+    @PutMapping("/staff/loai/sua/{ma}")
     public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -59,7 +59,7 @@ public class LoaiApi {
         return ResponseEntity.ok(loaiServiceIpml.updateStatusLoai(trangThai, ma));
     }
 
-    @GetMapping("/admin/loai/load-loai")
+    @GetMapping("/staff/loai/load-loai")
     public ResponseEntity<?> loadAll() {
         return ResponseEntity.ok(loaiServiceIpml.fillComboSpct());
     }
