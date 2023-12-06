@@ -1268,7 +1268,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         return true;
     }
 
-    public Boolean suaSoLuongVaoHoaDonKhachHang(Long maHoaDonChiTiet, Integer soLuong, Long maHoaDon) {
+    public HoaDonChiTiet suaSoLuongVaoHoaDonKhachHang(Long maHoaDonChiTiet, Integer soLuong, Long maHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
 
         HoaDonChiTiet hoaDonChiTiet = this.hoaDonChiTietRepository.findById(maHoaDonChiTiet).orElse(null);
@@ -1334,7 +1334,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             for (VoucherChiTiet voucherChiTiet : voucherChiTiets) {
                 Voucher voucher = voucherChiTiet.getVoucher();
                 if (voucher != null) {
-                    if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
+//                    if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
                         BigDecimal phanTramGiam = voucher.getGiaTriGiam();
                         BigDecimal giamToiDa = voucher.getGiamToiDa();
                         BigDecimal giamGia = tongTien.multiply(phanTramGiam.divide(BigDecimal.valueOf(100)));
@@ -1344,25 +1344,23 @@ public class HoaDonServiceIpml implements HoaDonService {
                         tongTienSauGiamGia = tongTien.subtract(giamGia);
                         hoaDon.setTienGiam(giamGia);
                         hoaDon.setTongTien(tongTienSauGiamGia);
-                    } else {
-                        String errorMessage = "Không đủ điều kiện hợp lệ";
-                        throw new RuntimeException(errorMessage);
-
-                    }
-                } else {
-                    hoaDon.setTongTien(tongTien);
+//                    } else {
+//                        String errorMessage = "Không đủ điều kiện hợp lệ";
+//                        throw new RuntimeException(errorMessage);
+//
+//                    }
                 }
             }
         } else {
             hoaDon.setTongTien(tongTien);
         }
 
-            hoaDon.setTongTien(tongTien);
+//            hoaDon.setTongTien(tongTien);
             hoaDon.setVoucherChiTiets(voucherChiTiets);
             hoaDonRepository.save(hoaDon);
 
-//            return hoaDonChiTiet;
-           return true;
+            return hoaDonChiTiet;
+
     }
 
 }
