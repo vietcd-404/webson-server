@@ -169,8 +169,15 @@ public class HoaDonApi {
     @DeleteMapping("/user/order/delete")
     public ResponseEntity<?> xoaHoaDon(
             @RequestParam("maHoaDonCT") Long maHDCT) {
-        hoaDonService.deleteHDCT(maHDCT);
-        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
+        try {
+            return ResponseEntity.ok(hoaDonService.deleteHDCT(maHDCT));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+
+//        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
     }
     //TODO: Update hóa đơn theo trạng thái là 0: User update đc
     //TODO: Update hóa đơn theo trạng thái là 1: ADMIN update đc
