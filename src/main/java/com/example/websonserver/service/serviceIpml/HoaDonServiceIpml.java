@@ -798,6 +798,10 @@ public class HoaDonServiceIpml implements HoaDonService {
             String errorMessage = "Không tìm thấy sản phẩm chi tiết trong hóa đơn chi tiết";
             throw new RuntimeException(errorMessage);
         }
+        if(hoaDon.getThanhToan()==1){
+            String errorMessage = "Hóa đơn đã thanh toán không thể cập nhập";
+            throw new RuntimeException(errorMessage);
+        }
         int soLuongTon = sanPhamChiTiet.getSoLuongTon();
         if (soLuong <= 0) {
             String errorMessage = "Số lượng cập nhật không hợp lệ";
@@ -807,13 +811,14 @@ public class HoaDonServiceIpml implements HoaDonService {
             String errorMessage = "Số lượng cập nhật vượt quá số lượng tồn kho";
             throw new RuntimeException(errorMessage);
         } else {
-
+            BigDecimal tongTienTruoc = BigDecimal.ZERO;
+            BigDecimal tongTien = BigDecimal.ZERO;
             List<VoucherChiTiet> voucherChiTiets = hoaDon.getVoucherChiTiets();
             if (voucherChiTiets != null && !voucherChiTiets.isEmpty()) {
                 for (VoucherChiTiet voucherChiTiet : voucherChiTiets) {
-                    BigDecimal tongTienTruoc = BigDecimal.ZERO;
+
                     BigDecimal tienSauGiam = BigDecimal.ZERO;
-                    if (hoaDonChiTiet.getSoLuong() < soLuong) {
+                    if(hoaDonChiTiet.getSoLuong() < soLuong){
                         tienSauGiam = hoaDonChiTiet.getDonGia().multiply(BigDecimal.valueOf(soLuong - hoaDonChiTiet.getSoLuong()));
                         tongTienTruoc = hoaDon.getTongTien().add(tienSauGiam).add(hoaDon.getTienGiam());
                     }
@@ -830,7 +835,6 @@ public class HoaDonServiceIpml implements HoaDonService {
             }
 
             List<HoaDonChiTiet> hoaDonChiTiets = hoaDon.getHoaDonChiTietList();
-            BigDecimal tongTien = BigDecimal.ZERO;
             if (hoaDonChiTiets != null && !hoaDonChiTiets.isEmpty()) {
                 for (HoaDonChiTiet hoaDonChiTieta : hoaDonChiTiets) {
                     if (hoaDonChiTiet.getSoLuong() < soLuong) {
@@ -844,14 +848,16 @@ public class HoaDonServiceIpml implements HoaDonService {
                     sanPhamChiTietRepository.save(sanPhamChiTiet);
                     hoaDonChiTiet.setSoLuong(soLuong);
                     hoaDonChiTietRepository.save(hoaDonChiTiet);
-                    BigDecimal giaBan = hoaDonChiTieta.getSanPhamChiTiet().getGiaBan()
-                            .multiply((BigDecimal.valueOf(100 - hoaDonChiTieta.getSanPhamChiTiet().getPhanTramGiam())).divide(BigDecimal.valueOf(100)));
+                    BigDecimal giaBan = hoaDonChiTieta.getDonGia();
                     tongTien = tongTien.add(giaBan.multiply(BigDecimal.valueOf(hoaDonChiTieta.getSoLuong()))
                     );
                 }
             }
-
-            hoaDon.setTongTien(tongTien);
+            if(tongTienTruoc.compareTo(BigDecimal.ZERO)>0){
+                hoaDon.setTongTien(tongTienTruoc.subtract(hoaDon.getTienGiam()));
+            }else{
+                hoaDon.setTongTien(tongTien);
+            }
             hoaDon.setVoucherChiTiets(voucherChiTiets);
             hoaDonRepository.save(hoaDon);
 
@@ -995,7 +1001,10 @@ public class HoaDonServiceIpml implements HoaDonService {
 
     public HoaDon themSanPhamVaoHoaDon(Long maSPCT, Integer soLuong, Long maHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
-
+        if(hoaDon.getThanhToan()==1){
+            String errorMessage = "Hóa đơn đã thanh toán không thể cập nhập";
+            throw new RuntimeException(errorMessage);
+        }
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(maSPCT).orElse(null);
         if (sanPhamChiTiet == null) {
             throw new RuntimeException("Không tìm thấy sản phẩm chi tiết");
@@ -1198,6 +1207,10 @@ public class HoaDonServiceIpml implements HoaDonService {
         HoaDonChiTiet hoaDonChiTiet = this.hoaDonChiTietRepository.findById(maHDCT).orElse(null);
 
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonChiTiet.getHoaDon().getMaHoaDon()).orElse(null);
+        if(hoaDon.getThanhToan()==1){
+            String errorMessage = "Hóa đơn đã thanh toán không thể cập nhập";
+            throw new RuntimeException(errorMessage);
+        }
         SanPhamChiTiet sanPhamChiTiet = hoaDonChiTiet.getSanPhamChiTiet();
         List<HoaDonChiTiet> hoaDonChiTiets = hoaDon.getHoaDonChiTietList();
         List<VoucherChiTiet> voucherChiTiets = hoaDon.getVoucherChiTiets();

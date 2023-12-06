@@ -18,6 +18,7 @@ public class GioHangDetailResponse {
     private Long maSanPhamCT;
     private List<String> anh;
     private String tenSanPham;
+    private String tenMau;
     private BigDecimal giaBan;
     private Integer soLuong;
 }

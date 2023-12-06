@@ -153,6 +153,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
                 SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT()).orElse(null);
 
                 GioHangDetailResponse dto = new GioHangDetailResponse();
+                dto.setTenMau(sanPhamChiTiet.getMauSac().getTenMau());
                 dto.setMaGioHang(gioHangChiTiet.getMaGHCT());
                 dto.setMaGH(gioHangChiTiet.getGioHang().getMaGioHang());
                 dto.setMaSanPhamCT(gioHangChiTiet.getSanPhamChiTiet().getMaSanPhamCT());
