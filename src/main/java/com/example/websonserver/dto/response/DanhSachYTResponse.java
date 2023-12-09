@@ -25,7 +25,7 @@ public class DanhSachYTResponse {
 
     private String tenThuongHieu;
 
-    private String tenMauSac;
+    private String tenMau;
 
     private String anh;
 }

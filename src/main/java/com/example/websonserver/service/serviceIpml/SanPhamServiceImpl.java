@@ -32,6 +32,8 @@ public class SanPhamServiceImpl implements SanPhamService {
         Optional<SanPham> optional = sanPhamRepository.findById(id);
         return optional.map(o->{
             o.setTenSanPham(sanPham.getTenSanPham());
+            o.setDoLi(sanPham.getDoLi());
+            o.setDoBong(sanPham.getDoBong());
             return sanPhamRepository.save(o);
         }).orElse(null);
     }

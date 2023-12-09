@@ -62,7 +62,7 @@ public class DanhSachYeuThichServiceImpl implements DanhSachYeuThichService {
                     .tenLoai(item.getSanPhamChiTiet().getLoai().getTenLoai())
                     .donGia(item.getSanPhamChiTiet().getGiaBan())
                     .phanTramGiam(item.getSanPhamChiTiet().getPhanTramGiam())
-                    .tenMauSac(item.getSanPhamChiTiet().getMauSac().getTenMau())
+                    .tenMau(item.getSanPhamChiTiet().getMauSac().getTenMau())
                     .tenSanPham(item.getSanPhamChiTiet().getSanPham().getTenSanPham())
                     .tenThuongHieu(item.getSanPhamChiTiet().getThuongHieu().getTenThuongHieu())
                     .anh(item.getSanPhamChiTiet().getAnhSanPhamList().get(0).getAnh())

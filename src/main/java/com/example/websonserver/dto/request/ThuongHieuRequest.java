@@ -14,7 +14,7 @@ public class ThuongHieuRequest {
 
     private Boolean xoa = false;
 
-    private Integer trangThai=0;
+    private Integer trangThai=1;
 
 
     public ThuongHieu map(ThuongHieu thuongHieu){
