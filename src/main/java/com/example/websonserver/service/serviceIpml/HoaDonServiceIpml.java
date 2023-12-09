@@ -369,6 +369,8 @@ public class HoaDonServiceIpml implements HoaDonService {
             dto.setTongTien(hoaDon.getTongTien());
             dto.setTrangThai(hoaDon.getTrangThai());
             dto.setNgayTao(hoaDon.getNgayTao());
+            dto.setNgayThanhToan(hoaDon.getNgayThanhToan());
+            dto.setThanhToan(hoaDon.getThanhToan());
             orderResponses.add(dto);
         }
 //        messagingTemplate.convertAndSend("/topic/orders", orderResponses);
@@ -470,6 +472,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                         dto.setTongTien(hoaDon.getTongTien());
                         dto.setTienGiam(hoaDon.getTienGiam());
                         dto.setDieuKien(voucherChiTiet.getVoucher().getDieuKien());
+                        dto.setPhiShip(hoaDon.getPhiShip() == null ? BigDecimal.ZERO : hoaDon.getPhiShip());
                         hoaDonChiTietResponses.add(dto);
                     }
                 }
@@ -535,7 +538,7 @@ public class HoaDonServiceIpml implements HoaDonService {
     @Override
     public String huyHoaDon(Long maHD) {
         HoaDon hd = hoaDonRepository.findById(maHD).orElse(null);
-        if (hd.getTrangThai() == 0 || hd.getTrangThai() == 1) {
+        if (hd.getTrangThai() == 0 && hd.getThanhToan()==0) {
 
             hd.setTrangThai(Constants.STATUS_ORDER.DA_HUY);
             hoaDonRepository.save(hd);
@@ -580,7 +583,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             }
             return "Bạn đã hủy hóa đơn thành công.";
         } else {
-            return "Bạn đơn hàng của bạn đã được xác nhận hoặc không có nên không thể hủy";
+            return " Đơn hàng của bạn không thể hủy";
         }
     }
 
@@ -928,7 +931,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         if (trangThai == 3) {
             hoaDon.setNgayNhan(LocalDateTime.now());
         }
-        if (trangThai == 4) {
+        if (trangThai == 4 && hoaDon.getThanhToan()==0) {
 //            List<HoaDonChiTiet> hoaDonChiTietList = hoaDonChiTietRepository.findByHoaDon(hoaDon);
             List<HoaDonChiTiet> hoaDonChiTietList = this.hoaDonChiTietRepository.findByHoaDon_MaHoaDon(maHoaDon);
 //            HoaDonChiTiet hoaDonChiTieta = hoaDonChiTietList.size() == 1 ? hoaDonChiTietList.get(0) : null;
