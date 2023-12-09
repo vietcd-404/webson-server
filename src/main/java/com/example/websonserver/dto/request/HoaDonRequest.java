@@ -26,6 +26,7 @@ public class HoaDonRequest {
     private Long maGioHang;
     public Long tongTien1;
     public String moTa = "  ";
+    private BigDecimal phiShip;
 
     @NotBlank(message = "Không bỏ trong tên người nhận")
     private String tenNguoiNhan;

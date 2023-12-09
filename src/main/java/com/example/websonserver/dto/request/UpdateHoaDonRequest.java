@@ -16,6 +16,7 @@ public class UpdateHoaDonRequest {
     private  Long maHoaDonCT;
     private String huyen;
     private String tinh;
+    private BigDecimal phiShip;
     private String xa;
     private String sdt;
     private String tenNguoiNhan;

@@ -61,5 +61,7 @@ public class HoaDonChiTietResponse {
 
     private Integer thanhToan; //Trạng thái thanh toán
 
+    private BigDecimal phiShip;
+
     private Boolean xoa;
 }
