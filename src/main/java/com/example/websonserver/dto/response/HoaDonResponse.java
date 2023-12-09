@@ -36,6 +36,8 @@ public class HoaDonResponse {
 
     private BigDecimal tienGiam;
 
+    private BigDecimal phiShip;
+
     private BigDecimal tongTien;
 
     private String diaChi;
