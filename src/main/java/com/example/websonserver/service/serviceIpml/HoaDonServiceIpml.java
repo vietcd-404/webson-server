@@ -670,7 +670,7 @@ public class HoaDonServiceIpml implements HoaDonService {
     public HoaDon updateOrder(UpdateHoaDonRequest request, Long maHoaDon) {
         Optional<HoaDon> optional = hoaDonRepository.findById(maHoaDon);
         return optional.map(o -> {
-            if (o.getTrangThai() == 0) {
+            if (o.getTrangThai() == 0&&o.getThanhToan() == 0) {
                 o.setTenNguoiNhan(request.getTenNguoiNhan());
                 o.setTinh(request.getTinh());
                 o.setSdt((request.getSdt()));
@@ -719,7 +719,7 @@ public class HoaDonServiceIpml implements HoaDonService {
 //                }
 
             } else {
-                String errorMessage = "Lỗi thực hiện!";
+                String errorMessage = "Không thể cập nhập hóa đơn đã thành toán/staff/order/add-productHd!";
                  throw new RuntimeException(errorMessage);
             }
             return hoaDonRepository.save(o);
@@ -830,7 +830,6 @@ public class HoaDonServiceIpml implements HoaDonService {
             List<VoucherChiTiet> voucherChiTiets = hoaDon.getVoucherChiTiets();
             if (voucherChiTiets != null && !voucherChiTiets.isEmpty()) {
                 for (VoucherChiTiet voucherChiTiet : voucherChiTiets) {
-
                     BigDecimal tienSauGiam = BigDecimal.ZERO;
                     if(hoaDonChiTiet.getSoLuong() < soLuong){
                         tienSauGiam = hoaDonChiTiet.getDonGia().multiply(BigDecimal.valueOf(soLuong - hoaDonChiTiet.getSoLuong()));
@@ -843,6 +842,12 @@ public class HoaDonServiceIpml implements HoaDonService {
                             String errorMessage = "Không đạt điều kiện voucher!";
                             throw new RuntimeException(errorMessage);
                         }
+                    }
+                    BigDecimal tongTienMoi = (voucherChiTiet.getVoucher().getGiaTriGiam().divide(BigDecimal.valueOf(100))).multiply(tongTienTruoc);
+                    if(tongTienMoi.compareTo(voucherChiTiet.getVoucher().getGiamToiDa())>=0){
+                        hoaDon.setTienGiam(voucherChiTiet.getVoucher().getGiamToiDa());
+                    }else{
+                        hoaDon.setTienGiam(tongTienMoi);
                     }
 
                 }
