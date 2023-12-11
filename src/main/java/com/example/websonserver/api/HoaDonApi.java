@@ -265,7 +265,7 @@ public class HoaDonApi {
                                            @RequestParam int soLuong,
                                            @RequestParam Long maHoaDon) {
         try {
-            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDonOnline(maSPCT, soLuong, maHoaDon));
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
@@ -356,7 +356,7 @@ public class HoaDonApi {
     @RequestParam int soLuong,
     @RequestParam Long maHoaDon) {
         try {
-            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDonOnline(maSPCT, soLuong, maHoaDon));
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
