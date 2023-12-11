@@ -426,7 +426,11 @@ public class HoaDonServiceIpml implements HoaDonService {
             }
             response.setDiaChiChiTiet(hoaDon.getDiaChi() + ", " + hoaDon.getXa() + ", " + hoaDon.getHuyen() + ", " + hoaDon.getTinh());
             response.setTongTien(hoaDon.getTongTien());
-            response.setTenPhuongThucThanhToan(hoaDon.getPhuongThucThanhToan().getTenPhuongThuc());
+            if(hoaDon.getPhuongThucThanhToan().getTenPhuongThuc().equals("MONEY")) {
+                response.setTenPhuongThucThanhToan("Tiền mặt");
+            }else{
+                response.setTenPhuongThucThanhToan("Chuyển khoản");
+            }
             response.setHuyen(hoaDon.getHuyen());
             response.setXa(hoaDon.getXa());
             response.setPhiShip(hoaDon.getPhiShip());
@@ -439,6 +443,14 @@ public class HoaDonServiceIpml implements HoaDonService {
             }
             response.setTenNguoiDung(fullName);
             response.setTrangThai(hoaDon.getTrangThai());
+            response.setThanhToan(hoaDon.getThanhToan());
+            if(hoaDon.getNhanVien()!=null){
+                NguoiDung nguoiDung = nguoiDungService.findById(hoaDon.getNhanVien());
+                response.setTenNhanVien(nguoiDung.getHo()+" "+nguoiDung.getTenDem()+" "+nguoiDung.getTen());
+
+            }else{
+                response.setTenNhanVien("");
+            }
             hoaDonResponses.add(response);
         }
         return hoaDonResponses;
@@ -494,6 +506,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                     dto.setMaSanPhamCT(hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT());
                     dto.setTongTien(hoaDon.getTongTien());
                     dto.setTienGiam(hoaDon.getTienGiam());
+                    dto.setPhiShip(hoaDon.getPhiShip() == null ? BigDecimal.ZERO : hoaDon.getPhiShip());
                     hoaDonChiTietResponses.add(dto);
                 }
             }
@@ -678,48 +691,9 @@ public class HoaDonServiceIpml implements HoaDonService {
                 o.setXa(request.getXa());
                 o.setDiaChi(request.getDiaChi());
                 o.setPhiShip(request.getPhiShip());
-                List<HoaDonChiTiet> hoaDonChiTiets = o.getHoaDonChiTietList();
-                BigDecimal tongTien = BigDecimal.ZERO;
-                if (hoaDonChiTiets != null && !hoaDonChiTiets.isEmpty()) {
-                    for (HoaDonChiTiet hoaDonChiTieta : hoaDonChiTiets) {
-                        BigDecimal giaBan = hoaDonChiTieta.getSanPhamChiTiet().getGiaBan()
-                                .multiply((BigDecimal.valueOf(100 - hoaDonChiTieta.getSanPhamChiTiet().getPhanTramGiam())).divide(BigDecimal.valueOf(100)));
-                        tongTien = tongTien.add(giaBan.multiply(BigDecimal.valueOf(hoaDonChiTieta.getSoLuong()))
-                        );
-                    }
-                }
-                BigDecimal total = tongTien.add(request.getPhiShip());
-                o.setTongTien(tongTien);
-//                BigDecimal tongTienSauGiamGia = BigDecimal.ZERO;
-//                List<VoucherChiTiet> voucherChiTiets = o.getVoucherChiTiets();
-//
-//                if (voucherChiTiets != null && !voucherChiTiets.isEmpty()) {
-//                    for (VoucherChiTiet voucherChiTiet : voucherChiTiets) {
-//                        Voucher voucher = voucherChiTiet.getVoucher();
-//
-//                        if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
-//                            BigDecimal phanTramGiam = voucher.getGiaTriGiam();
-//                            BigDecimal giamToiDa = voucher.getGiamToiDa();
-//
-//                            BigDecimal giamGia = tongTien.multiply(phanTramGiam.divide(BigDecimal.valueOf(100)));
-//
-//                            if (giamGia.compareTo(giamToiDa) > 0) {
-//                                giamGia = giamToiDa;
-//                            }
-//                            tongTienSauGiamGia = tongTien.subtract(giamGia);
-//                            o.setTienGiam(giamGia);
-//                        }else {
-//                            String errorMessage = "Không đủ điểu kiện hợp lệ";
-//                            throw new RuntimeException(errorMessage);
-//                        }
-//                    }
-//                    o.setTongTien(tongTienSauGiamGia);
-//                }else {
-//                    o.setTongTien(tongTien);
-//                }
 
             } else {
-                String errorMessage = "Không thể cập nhập hóa đơn đã thành toán/staff/order/add-productHd!";
+                String errorMessage = "Không thể cập nhập hóa đơn đã thành toán!";
                  throw new RuntimeException(errorMessage);
             }
             return hoaDonRepository.save(o);
@@ -898,7 +872,6 @@ public class HoaDonServiceIpml implements HoaDonService {
             String errorMessage = "Không tìm thấy sản phẩm chi tiết trong hóa đơn chi tiết";
             throw new RuntimeException(errorMessage);
         }
-        int soLuongTon = sanPhamChiTiet.getSoLuongTon();
 //        if (soLuongTon <= 0) {
 //            String errorMessage = "Số lượng cập nhật vượt quá số lượng tồn kho";
 //            throw new RuntimeException(errorMessage);
@@ -907,16 +880,12 @@ public class HoaDonServiceIpml implements HoaDonService {
         BigDecimal tongTien = BigDecimal.ZERO;
         if (hoaDonChiTiets != null && !hoaDonChiTiets.isEmpty()) {
             for (HoaDonChiTiet hoaDonChiTieta : hoaDonChiTiets) {
-                sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() + hoaDonChiTiet.getSoLuong());
-                sanPhamChiTietRepository.save(sanPhamChiTiet);
                 hoaDonChiTiet.setSoLuong(soLuong);
                 hoaDonChiTietRepository.save(hoaDonChiTiet);
                 BigDecimal giaBan = hoaDonChiTieta.getSanPhamChiTiet().getGiaBan()
                         .multiply((BigDecimal.valueOf(100 - hoaDonChiTieta.getSanPhamChiTiet().getPhanTramGiam())).divide(BigDecimal.valueOf(100)));
                 tongTien = tongTien.add(giaBan.multiply(BigDecimal.valueOf(hoaDonChiTieta.getSoLuong()))
                 );
-                sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() - soLuong);
-                sanPhamChiTietRepository.save(sanPhamChiTiet);
             }
         }
         BigDecimal tongTienSauGiamGia = BigDecimal.ZERO;
@@ -1041,8 +1010,6 @@ public class HoaDonServiceIpml implements HoaDonService {
                 .findFirst();
 
         if (existingChiTiet.isPresent()) {
-            sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() - soLuong);
-            sanPhamChiTietRepository.save(sanPhamChiTiet);
             HoaDonChiTiet chiTietToUpdate = existingChiTiet.get();
             chiTietToUpdate.setSoLuong(chiTietToUpdate.getSoLuong() + soLuong);
         } else {
@@ -1059,8 +1026,6 @@ public class HoaDonServiceIpml implements HoaDonService {
             newHoaDonChiTiet.setSoLuong(soLuong);
             newHoaDonChiTiet.setTrangThai(0);
             newHoaDonChiTiet.setXoa(Boolean.FALSE);
-            sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() - soLuong);
-            sanPhamChiTietRepository.save(sanPhamChiTiet);
             hoaDonChiTietList.add(newHoaDonChiTiet);
         }
 
@@ -1187,9 +1152,18 @@ public class HoaDonServiceIpml implements HoaDonService {
         NguoiDung nguoiDung = nguoiDungRepository.findByUsername(username);
         PhuongThucThanhToan phuongThucThanhToan = phuongThucThanhToanRepository.findByTenPhuongThuc(request.getPhuongThucThanhToan());
         return optional.map(o -> {
-//            if (o.getTrangThai() == 0) {
-
-//            o.setNhanVien(nguoiDung.getHo() + " " + nguoiDung.getTenDem() + " " + nguoiDung.getTen());
+            List<HoaDonChiTiet> hdct = o.getHoaDonChiTietList();
+            for (HoaDonChiTiet hoaDonChiTiet:
+                 hdct) {
+                SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(hoaDonChiTiet.getSanPhamChiTiet().getMaSanPhamCT()).orElse(null);;
+                if(sanPhamChiTiet.getSoLuongTon()<=0||sanPhamChiTiet.getSoLuongTon()-hoaDonChiTiet.getSoLuong()<0) {
+                    String errorMessage = "Số lượng trong kho không đủ";
+                    throw new RuntimeException(errorMessage);
+                }else {
+                    sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon() - hoaDonChiTiet.getSoLuong());
+                    sanPhamChiTietRepository.save(sanPhamChiTiet);
+                }
+            }
             o.setNhanVien(nguoiDung.getMaNguoiDung());
             if (request.getMaNguoiDung() != null) {
                 o.setNguoiDung(NguoiDung.builder().maNguoiDung(Long.valueOf(request.getMaNguoiDung())).build());
@@ -1215,9 +1189,6 @@ public class HoaDonServiceIpml implements HoaDonService {
             o.setHuyen(request.getHuyen());
             o.setXa(request.getXa());
             o.setDiaChi(request.getDiaChi());
-//            } else {
-//                return null;
-//            }
             return hoaDonRepository.save(o);
         }).orElse(null);
     }
