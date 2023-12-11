@@ -46,12 +46,7 @@ public class VoucherApi {
         if(result.hasErrors()){
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        LocalDateTime now = LocalDateTime.now();
-        if (voucherRequest.getThoiGianBatDau() != null && voucherRequest.getThoiGianBatDau().isAfter(now)) {
-            voucherRequest.setTrangThai(0);
-        } else {
-            voucherRequest.setTrangThai(1);
-        }
+
         if (voucherService.update(ma, voucherRequest) != null) {
                 return ResponseEntity.ok("Sửa thành công");
             } else {
