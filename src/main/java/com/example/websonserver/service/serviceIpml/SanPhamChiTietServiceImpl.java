@@ -329,8 +329,10 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             dto.setTrangThai(sanPhamChiTiet.getTrangThai());
             List<SanPhamTheoThuongHieuResponse> sanPhamChiTietThuongHieu = new ArrayList<>();
             List<SanPhamChiTiet> sanPhamChiTietList1=sanPhamChiTietRepository.findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(sanPhamChiTiet.getThuongHieu().getTenThuongHieu(),1);
+            Set<Long> uniqueProductIdsSet = new HashSet<>();
             for (SanPhamChiTiet sanPhamChiTiet1 : sanPhamChiTietList1){
                 SanPhamTheoThuongHieuResponse response = new SanPhamTheoThuongHieuResponse();
+                String uniqueKey = response.getTenSanPham() + "-" + response.getTenMau();
                 response.setMaSanPhamCT(sanPhamChiTiet1.getMaSanPhamCT());
                 response.setGiaBan(sanPhamChiTiet1.getGiaBan());
                 response.setPhanTramGiam(sanPhamChiTiet1.getPhanTramGiam());
@@ -360,6 +362,9 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 response.setDanhSachAnh(imageUrlsa);
                 response.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet1.getMaSanPhamCT()));
                 response.setTrangThai(sanPhamChiTiet1.getTrangThai());
+                if (maSanPhamCT.equals(sanPhamChiTiet1.getMaSanPhamCT())) {
+                    continue; // Nếu trùng mã sản phẩm, bỏ qua và không thêm vào danh sách thương hiệu
+                }
                 sanPhamChiTietThuongHieu.add(response);
             }
             dto.setThuongHieuList(sanPhamChiTietThuongHieu);
@@ -368,6 +373,15 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         }
 
         return sanPhamChiTietDtos;
+    }
+
+    private boolean isDuplicateProduct(List<SanPhamChiTietResponse> sanPhamChiTietDtos, SanPhamTheoThuongHieuResponse response) {
+        for (SanPhamChiTietResponse dto : sanPhamChiTietDtos) {
+            if (dto.getTenSanPham().equals(response.getTenSanPham()) && dto.getTenMau().equals(response.getTenMau())) {
+                return false; // Sản phẩm trùng lặp, không thêm vào danh sách
+            }
+        }
+        return true; // Không có sản phẩm trùng lặp
     }
 
     @Override
