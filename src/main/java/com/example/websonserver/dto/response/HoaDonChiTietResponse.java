@@ -63,5 +63,7 @@ public class HoaDonChiTietResponse {
 
     private BigDecimal phiShip;
 
+    private String tenNhanVien;
+
     private Boolean xoa;
 }

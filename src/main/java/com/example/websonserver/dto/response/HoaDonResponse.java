@@ -66,5 +66,7 @@ public class HoaDonResponse {
 
     private Boolean xoa;
 
+    private String tenNhanVien;
+
     private List<HoaDonChiTietResponse> hoaDonChiTiet;
 }
