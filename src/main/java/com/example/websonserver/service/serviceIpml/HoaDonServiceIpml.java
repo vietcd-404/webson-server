@@ -1030,7 +1030,10 @@ public class HoaDonServiceIpml implements HoaDonService {
             hoaDonChiTietList.add(newHoaDonChiTiet);
         }
 
-
+        if(hoaDon.getTrangThai()==0){
+            sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon()-1);
+            sanPhamChiTietRepository.save(sanPhamChiTiet);
+        }
         updateTotalAmount(hoaDon);
 //        hoaDonChiTietRepository.save(hoaDonChiTietList);
 
@@ -1357,9 +1360,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         } else {
             hoaDon.setTongTien(tongTien);
         }
-
-//            hoaDon.setTongTien(tongTien);
-            hoaDon.setVoucherChiTiets(voucherChiTiets);
+         hoaDon.setVoucherChiTiets(voucherChiTiets);
             hoaDonRepository.save(hoaDon);
             return hoaDonChiTiet;
 
