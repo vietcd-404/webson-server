@@ -247,7 +247,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         String phiShip = "Phí ship: " + request.getPhiShip() + "\n\n\n";
         String tongTien = "Tổng tiền: " + request.getTongTien() + " VND";
 
-        String message = otp + tenNguoiNhan + diaChiNha + email + sdt + phiShip + sanPham + tongTien;
+        String message = otp + tenNguoiNhan + diaChiNha + email + sdt +  sanPham + phiShip+ tongTien;
 
 
         emailService.sendKhachdatHang(request.getEmail(), message);
@@ -579,8 +579,8 @@ public class HoaDonServiceIpml implements HoaDonService {
                 for (HoaDon hoaDon1 : orderList) {
                     sanPhamInfo.append("Tên người nhận: ").append(hoaDon1.getTenNguoiNhan()).append("\n");
                     sanPhamInfo.append("Email: ").append(hoaDon1.getEmail()).append("\n");
-                    sanPhamInfo.append("Địa chỉ nhà: ").append(hoaDon1.getDiaChi()).append(" ").append(hoaDon1.getXa())
-                            .append(hoaDon1.getHuyen()).append(hoaDon1.getTinh()).append("\n");
+                    sanPhamInfo.append("Địa chỉ nhà: ").append(hoaDon1.getDiaChi()).append(", ").append(hoaDon1.getXa()).append(", ")
+                            .append(hoaDon1.getHuyen()).append(", ").append(hoaDon1.getTinh()).append("\n");
                     sanPhamInfo.append("Số điện thoại: ").append(hoaDon1.getSdt()).append("\n\n");
                     sanPhamInfo.append("Danh sách sản phẩm đã mua:\n\n");
                     List<HoaDonChiTiet> hoaDonChiTietList = this.hoaDonChiTietRepository.findByHoaDon(hd);
@@ -766,6 +766,11 @@ public class HoaDonServiceIpml implements HoaDonService {
 
     }
 
+    public Boolean xoaHDCT(Long maHoaDonCT){
+         hoaDonChiTietRepository.deleteById(maHoaDonCT);
+         return true;
+    }
+
     public HoaDonChiTiet suaSoLuongVaoHoaDon(Long maHoaDonChiTiet, Integer soLuong, Long maHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
 
@@ -936,6 +941,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                     sanPhamInfo.append("\n-----------------\n");
 
                 }
+                sanPhamInfo.append("Phí ship: ").append(hoaDon1.getPhiShip()).append("\n");
                 sanPhamInfo.append("Tổng tiền: ").append(hoaDon1.getTongTien()).append("\n");
             }
             String thongBao = null;

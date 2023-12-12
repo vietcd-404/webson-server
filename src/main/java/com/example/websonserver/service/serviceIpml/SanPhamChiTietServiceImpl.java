@@ -329,8 +329,10 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             dto.setTrangThai(sanPhamChiTiet.getTrangThai());
             List<SanPhamTheoThuongHieuResponse> sanPhamChiTietThuongHieu = new ArrayList<>();
             List<SanPhamChiTiet> sanPhamChiTietList1=sanPhamChiTietRepository.findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(sanPhamChiTiet.getThuongHieu().getTenThuongHieu(),1);
+            Set<Long> uniqueProductIdsSet = new HashSet<>();
             for (SanPhamChiTiet sanPhamChiTiet1 : sanPhamChiTietList1){
                 SanPhamTheoThuongHieuResponse response = new SanPhamTheoThuongHieuResponse();
+                String uniqueKey = response.getTenSanPham() + "-" + response.getTenMau();
                 response.setMaSanPhamCT(sanPhamChiTiet1.getMaSanPhamCT());
                 response.setGiaBan(sanPhamChiTiet1.getGiaBan());
                 response.setPhanTramGiam(sanPhamChiTiet1.getPhanTramGiam());
@@ -360,6 +362,9 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 response.setDanhSachAnh(imageUrlsa);
                 response.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet1.getMaSanPhamCT()));
                 response.setTrangThai(sanPhamChiTiet1.getTrangThai());
+                if (maSanPhamCT.equals(sanPhamChiTiet1.getMaSanPhamCT())) {
+                    continue; // Nếu trùng mã sản phẩm, bỏ qua và không thêm vào danh sách thương hiệu
+                }
                 sanPhamChiTietThuongHieu.add(response);
             }
             dto.setThuongHieuList(sanPhamChiTietThuongHieu);
@@ -368,6 +373,15 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         }
 
         return sanPhamChiTietDtos;
+    }
+
+    private boolean isDuplicateProduct(List<SanPhamChiTietResponse> sanPhamChiTietDtos, SanPhamTheoThuongHieuResponse response) {
+        for (SanPhamChiTietResponse dto : sanPhamChiTietDtos) {
+            if (dto.getTenSanPham().equals(response.getTenSanPham()) && dto.getTenMau().equals(response.getTenMau())) {
+                return false; // Sản phẩm trùng lặp, không thêm vào danh sách
+            }
+        }
+        return true; // Không có sản phẩm trùng lặp
     }
 
     @Override
@@ -511,6 +525,44 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             }
             dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
             dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
+    }
+
+    public List<SanPhamChiTietRes> hienTatCaTaiQuay(){
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThai(1);
+        List<SanPhamChiTietRes> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            SanPhamChiTietRes dto = new SanPhamChiTietRes();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            dto.setDanhSachAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
             dto.setTrangThai(sanPhamChiTiet.getTrangThai());
             sanPhamChiTietDtos.add(dto);
         }

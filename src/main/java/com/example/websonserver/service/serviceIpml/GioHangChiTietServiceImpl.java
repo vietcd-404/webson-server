@@ -256,15 +256,9 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
             throw new RuntimeException(errorMessage);
         }
         if (ghctWithIdSPCT != null){
-//            spct.setSoLuongTon(spct.getSoLuongTon()+ ghctWithIdSPCT.getSoLuong());
-            // Cập nhật thông tin vào cơ sở dữ liệu
-//            sanPhamChiTietRepository.save(spct);
             if (quantity > 0 && quantity<= spct.getSoLuongTon()){
                 ghctWithIdSPCT.setSoLuong(quantity);
-//                spct.setSoLuongTon(spct.getSoLuongTon()-quantity);
-                // Cập nhật thông tin vào cơ sở dữ liệu
                 gioHangChiTietRepository.save(ghctWithIdSPCT);
-//                sanPhamChiTietRepository.save(spct);
             }else {
                 String errorMessage = "Số lượng vượt giới hạn.";
                 throw new RuntimeException(errorMessage);
