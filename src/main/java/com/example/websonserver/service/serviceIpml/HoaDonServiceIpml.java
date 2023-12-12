@@ -772,6 +772,11 @@ public class HoaDonServiceIpml implements HoaDonService {
 
     }
 
+    public Boolean xoaHDCT(Long maHoaDonCT){
+         hoaDonChiTietRepository.deleteById(maHoaDonCT);
+         return true;
+    }
+
     public HoaDonChiTiet suaSoLuongVaoHoaDon(Long maHoaDonChiTiet, Integer soLuong, Long maHoaDon) {
         HoaDon hoaDon = hoaDonRepository.findById(maHoaDon).orElse(null);
 

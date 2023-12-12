@@ -315,7 +315,7 @@ public class HoaDonApi {
     @DeleteMapping("/staff/order-tai-quay/delete")
     public ResponseEntity<?> xoaHoaDonTaiQuay(
             @RequestParam("maHoaDonCT") Long maHDCT) {
-        hoaDonService.deleteHDCT(maHDCT);
+        hoaDonService.xoaHDCT(maHDCT);
         return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
     }
 
