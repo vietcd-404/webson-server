@@ -77,6 +77,11 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
     }
 
+    @GetMapping("/staff/san-pham/get-all")
+    public ResponseEntity<?> getSanPhamTaiQuay() {
+        return ResponseEntity.ok(sanPhamChiTietService.hienTatCaTaiQuay());
+    }
+
     @GetMapping("/staff/san-pham/get-all/loc")
     public ResponseEntity<?> getLocByAdmin() {
         return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());

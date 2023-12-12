@@ -49,6 +49,9 @@ public class SanPhamChiTiet extends BaseEntity {
     @ToString.Exclude
     private List<AnhSanPham> anhSanPhamList;
 
+    @Column(name = "mo_ta")
+    private String moTa;
+
     @Column(name = "trang_thai")
     private Integer trangThai;
 

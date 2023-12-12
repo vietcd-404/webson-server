@@ -531,4 +531,42 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
         return sanPhamChiTietDtos;
     }
+
+    public List<SanPhamChiTietRes> hienTatCaTaiQuay(){
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThai(1);
+        List<SanPhamChiTietRes> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            SanPhamChiTietRes dto = new SanPhamChiTietRes();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            dto.setDanhSachAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
+    }
 }
