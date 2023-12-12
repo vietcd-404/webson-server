@@ -232,11 +232,13 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.getAllOrderByAdmin(pageable, trangThai));
     }
 
+//    Địa chỉ trong hóa đơn
     @GetMapping("/staff/order/get-hoadon/detail/{maHoaDon}")
     public ResponseEntity<?> getHoaDonDetailAd(@PathVariable Long maHoaDon) {
         return ResponseEntity.ok(hoaDonService.orderDetail(maHoaDon));
     }
 
+//    Sản phẩm trong hóa đơn
     @GetMapping("/staff/order/get-hoadon/{maHoaDon}")
     public ResponseEntity<?> getHoaDonAllAd(@PathVariable Long maHoaDon) {
         return ResponseEntity.ok(hoaDonService.getOrdersDetail(maHoaDon));
