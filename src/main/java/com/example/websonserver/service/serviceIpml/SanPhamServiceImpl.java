@@ -43,6 +43,10 @@ public class SanPhamServiceImpl implements SanPhamService {
         return sanPhamRepository.findAllByXoaFalseOrderByNgayTaoDesc(pageable);
     }
 
+    public Boolean existsByTenSanPham(String username) {
+        return sanPhamRepository.existsByTenSanPhamAndXoaFalse(username);
+    }
+
     @Override
     @Transient
     public void delete(Long id) {

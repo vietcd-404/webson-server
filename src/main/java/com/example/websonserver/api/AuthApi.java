@@ -71,10 +71,10 @@ public class AuthApi {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
-            if (customUserDetail.getTrangThai() == 0) {
-                // Tài khoản chưa kích hoạt, trả về phản hồi tài khoản chưa kích hoạt
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Tài khoản chưa kích hoạt"));
-            }
+//            if (customUserDetail.getTrangThai() == 0) {
+//                // Tài khoản chưa kích hoạt, trả về phản hồi tài khoản chưa kích hoạt
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Tài khoản chưa kích hoạt"));
+//            }
             //Sinh ra JWT trả vê client
             String token = jwtTokenProvider.genToken(customUserDetail);
 
@@ -84,7 +84,7 @@ public class AuthApi {
             return ResponseEntity.ok(new JwtResponse(token,customUserDetail.getId(),customUserDetail.getUsername(), customUserDetail.getPassword(),customUserDetail.getSdt(),
                     customUserDetail.getEmail(), role, customUserDetail.getHo(),
                     customUserDetail.getTenDem(), customUserDetail.getTen(),
-                    customUserDetail.getNgaySinh(), customUserDetail.getGioiTinh()));
+                    customUserDetail.getNgaySinh(), customUserDetail.getGioiTinh(),customUserDetail.getTrangThai()));
         } catch (AuthenticationException e) {
             // Xử lý trường hợp sai tài khoản hoặc mật khẩu
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Sai tài khoản hoặc mật khẩu"));
