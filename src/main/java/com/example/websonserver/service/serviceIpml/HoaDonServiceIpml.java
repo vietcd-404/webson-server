@@ -378,7 +378,7 @@ public class HoaDonServiceIpml implements HoaDonService {
     }
 
     public Page<HoaDonResponse> getAllOrderByAdmin(Pageable pageable, Integer trangThai) {
-        Page<HoaDon> orderList = hoaDonRepository.findAllByXoaFalseAndTrangThaiOrderByNgayTaoDesc(trangThai, pageable);
+        Page<HoaDon> orderList = hoaDonRepository.findAllByXoaFalseAndTrangThaiOrderByNgaySuaDesc(trangThai, pageable);
 
         return orderList.map(hoaDon -> {
             HoaDonResponse dto = new HoaDonResponse();
@@ -794,7 +794,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             String errorMessage = "Số lượng cập nhật không hợp lệ";
             throw new RuntimeException(errorMessage);
         }
-        if (soLuong > soLuongTon) {
+        if ((soLuong-hoaDonChiTiet.getSoLuong()) > soLuongTon) {
             String errorMessage = "Số lượng cập nhật vượt quá số lượng tồn kho";
             throw new RuntimeException(errorMessage);
         } else {
@@ -999,7 +999,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         }
 
         int soLuongTon = sanPhamChiTiet.getSoLuongTon();
-        if (soLuong > soLuongTon) {
+        if (soLuong> soLuongTon) {
             throw new RuntimeException("Số lượng cập nhật vượt quá số lượng tồn kho");
         }
 
@@ -1011,8 +1011,16 @@ public class HoaDonServiceIpml implements HoaDonService {
 
         if (existingChiTiet.isPresent()) {
             HoaDonChiTiet chiTietToUpdate = existingChiTiet.get();
-            chiTietToUpdate.setSoLuong(chiTietToUpdate.getSoLuong() + soLuong);
-        } else {
+            if(hoaDon.getTrangThai()==5&&hoaDon.getXoa()==true) {
+                if(chiTietToUpdate.getSoLuong()>=sanPhamChiTiet.getSoLuongTon()){
+                    throw new RuntimeException("Số lượng cập nhật vượt quá số lượng tồn kho");
+                }else{
+                    chiTietToUpdate.setSoLuong(chiTietToUpdate.getSoLuong() + soLuong);
+                }
+            }else {
+                chiTietToUpdate.setSoLuong(chiTietToUpdate.getSoLuong() + soLuong);
+            }
+            } else {
             HoaDonChiTiet newHoaDonChiTiet = new HoaDonChiTiet();
             newHoaDonChiTiet.setHoaDon(hoaDon);
             if (sanPhamChiTiet.getPhanTramGiam() > 0) {
@@ -1029,7 +1037,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             hoaDonChiTietList.add(newHoaDonChiTiet);
         }
 
-        if(hoaDon.getTrangThai()==0||(hoaDon.getTrangThai()==5&&hoaDon.getXoa()==false)){
+        if(hoaDon.getTrangThai()==0||hoaDon.getTrangThai()==1||(hoaDon.getTrangThai()==5&&hoaDon.getXoa()==false)){
             sanPhamChiTiet.setSoLuongTon(sanPhamChiTiet.getSoLuongTon()-1);
             sanPhamChiTietRepository.save(sanPhamChiTiet);
         }
@@ -1083,7 +1091,7 @@ public class HoaDonServiceIpml implements HoaDonService {
 
 
     public Page<HoaDonResponse> findAllHd(Pageable pageable) {
-        Page<HoaDon> orderList = hoaDonRepository.findAllByXoaFalseOrderByNgayTaoDesc(pageable);
+        Page<HoaDon> orderList = hoaDonRepository.findAllByXoaFalseOrderByNgaySuaDesc(pageable);
 
         return orderList.map(hoaDon -> {
             HoaDonResponse dto = new HoaDonResponse();

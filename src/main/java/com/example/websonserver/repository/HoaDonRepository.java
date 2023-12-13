@@ -25,9 +25,9 @@ import java.util.Optional;
 
 @Repository
 public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
-    Page<HoaDon> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
+    Page<HoaDon> findAllByXoaFalseOrderByNgaySuaDesc(Pageable pageable);
 
-    Page<HoaDon> findAllByXoaFalseAndTrangThaiOrderByNgayTaoDesc(Integer status, Pageable pageable);
+    Page<HoaDon> findAllByXoaFalseAndTrangThaiOrderByNgaySuaDesc(Integer status, Pageable pageable);
 
     List<HoaDon> findByNguoiDungAndTrangThai(NguoiDung nguoiDung, Integer trangThai);
 
