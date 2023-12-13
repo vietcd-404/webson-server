@@ -17,6 +17,7 @@ public class JwtResponse {
     private String ten;
     private Date ngaySinh;
     private Integer gioiTinh;
+    private Integer trangThai;
 
 
 
@@ -33,7 +34,7 @@ public class JwtResponse {
 
     public JwtResponse(String token, Long id,String username, String password,
                        String email, String sdt, String vaiTro, String ho, String tenDem,
-                       String ten, Date ngaySinh, Integer gioiTinh) {
+                       String ten, Date ngaySinh, Integer gioiTinh,Integer trangThai) {
         this.id = id;
         this.token = token;
         this.type = type;
@@ -47,6 +48,7 @@ public class JwtResponse {
         this.ten = ten;
         this.ngaySinh = ngaySinh;
         this.gioiTinh = gioiTinh;
+        this.trangThai = trangThai;
     }
 
     public String getType() {
@@ -151,5 +153,13 @@ public class JwtResponse {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(Integer trangThai) {
+        this.trangThai = trangThai;
     }
 }

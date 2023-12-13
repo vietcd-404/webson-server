@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
     public Page<SanPham> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
-
+    Boolean existsByTenSanPhamAndXoaFalse(String tenSanPham);
     @Transactional
     @Modifying
     @Query("UPDATE SanPham a " +
