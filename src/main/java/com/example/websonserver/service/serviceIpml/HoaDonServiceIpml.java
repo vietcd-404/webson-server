@@ -688,7 +688,7 @@ public class HoaDonServiceIpml implements HoaDonService {
     public HoaDon updateOrder(UpdateHoaDonRequest request, Long maHoaDon) {
         Optional<HoaDon> optional = hoaDonRepository.findById(maHoaDon);
         return optional.map(o -> {
-            if (o.getTrangThai() == 0&&o.getThanhToan() == 0) {
+            if (o.getTrangThai() == 0|| o.getTrangThai()==1|| o.getTrangThai()==5&&o.getThanhToan() == 0) {
                 o.setTenNguoiNhan(request.getTenNguoiNhan());
                 o.setTinh(request.getTinh());
                 o.setSdt((request.getSdt()));
@@ -696,7 +696,7 @@ public class HoaDonServiceIpml implements HoaDonService {
                 o.setXa(request.getXa());
                 o.setDiaChi(request.getDiaChi());
                 o.setPhiShip(request.getPhiShip());
-
+                o.setEmail((request.getEmail()));
             } else {
                 String errorMessage = "Không thể cập nhập hóa đơn đã thành toán!";
                  throw new RuntimeException(errorMessage);
