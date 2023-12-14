@@ -22,8 +22,6 @@ public class VoucherRequest {
     @DecimalMin(value = "0", message = "Không thể giảm dưới 0")
     private BigDecimal giaTriGiam;
 
-//    private String kieuGiamGia;
-
     private String tenVoucher;
 
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
@@ -45,7 +43,7 @@ public class VoucherRequest {
 
     public boolean isValidDateRange() {
         if (thoiGianBatDau == null || thoiGianKetThuc == null) {
-            return false; // Trường hợp bất thường, không thể kiểm tra
+            return false;
         }
 
         if (thoiGianBatDau.isAfter(thoiGianKetThuc)) {
