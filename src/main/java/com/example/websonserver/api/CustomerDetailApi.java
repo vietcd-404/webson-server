@@ -46,20 +46,21 @@ public class CustomerDetailApi {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
         NguoiDung  nguoiDung = nguoiDungService.findById(ma);
-        if (nguoiDungRequest.getOldpassword() == null || ("").equals(nguoiDungRequest.getOldpassword()) ||
-                nguoiDungRequest.getNewpass() == null || ("").equals(nguoiDungRequest.getNewpass()) ||
-                nguoiDungRequest.getRepass() == null || ("").equals(nguoiDungRequest.getRepass())) {
+        if (nguoiDungRequest.getOldpassword().trim().length() == 0 || ("").equals(nguoiDungRequest.getOldpassword()) ||
+                nguoiDungRequest.getNewpass().trim().length() == 0 || ("").equals(nguoiDungRequest.getNewpass()) ||
+                nguoiDungRequest.getRepass().trim().length() == 0  || ("").equals(nguoiDungRequest.getRepass())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Không được bỏ trống mật khẩu"));
         }
 
-        // Kiểm tra xem mật khẩu cũ có trùng khớp với mật khẩu trong cơ sở dữ liệu hay không
         if (!passwordEncoder.matches(nguoiDungRequest.getOldpassword(), nguoiDung.getPassword())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Sai mật khẩu cũ"));
         }
 
-        // Kiểm tra xem mật khẩu mới và nhắc lại mật khẩu có trùng khớp nhau hay không
         if (!nguoiDungRequest.getNewpass().equals(nguoiDungRequest.getRepass())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Sai nhắc lại mật khẩu"));
+        }
+        if (nguoiDungRequest.getNewpass().contains(" ") || nguoiDungRequest.getRepass().contains(" ")) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mật khẩu không được chứa dấu cách"));
         }
 
         return ResponseEntity.ok(nguoiDungService.changePass(nguoiDungRequest, ma));
