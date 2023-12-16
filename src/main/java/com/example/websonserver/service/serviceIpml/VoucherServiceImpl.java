@@ -60,8 +60,12 @@ public class VoucherServiceImpl implements VoucherService {
         return optional.map(o->{
             o.setTenVoucher(vcr.getTenVoucher());
             o.setGiaTriGiam(vcr.getGiaTriGiam());
-            o.setThoiGianBatDau(vcr.getThoiGianBatDau());
-            o.setThoiGianKetThuc(vcr.getThoiGianKetThuc());
+            LocalDateTime newThoiGianBatDau = vcr.getThoiGianBatDau().withHour(o.getThoiGianBatDau().getHour()).withMinute(o.getThoiGianBatDau().getMinute())
+                    .withSecond(o.getThoiGianBatDau().getSecond());
+            o.setThoiGianBatDau(newThoiGianBatDau);
+            LocalDateTime newThoiGianKetThuc = vcr.getThoiGianKetThuc().withHour(o.getThoiGianKetThuc().getHour()).withMinute(o.getThoiGianKetThuc().getMinute())
+                    .withSecond(o.getThoiGianKetThuc().getSecond());
+            o.setThoiGianKetThuc(newThoiGianKetThuc);
             o.setSoLuong(vcr.getSoLuong());
             o.setMoTa(vcr.getMoTa());
             o.setTrangThai(vcr.getTrangThai());
@@ -87,6 +91,7 @@ public class VoucherServiceImpl implements VoucherService {
             voucherRepository.save(x);
         }
     }
+
     @Scheduled(cron = "0 0 0 * * *") // Chạy mỗi ngày lúc 00:00:00
     public void scheduledUpdateStatus() {
         updateStatus();

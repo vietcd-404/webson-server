@@ -340,8 +340,9 @@ public class HoaDonServiceIpml implements HoaDonService {
 
     @Override
     public List<HoaDonResponse> getOrdersByUser(Principal principal, Integer trangThai) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "ngayTao");
         NguoiDung nguoiDung = nguoiDungService.findByUsername(principal.getName());
-        List<HoaDon> orderList = trangThai != null ? hoaDonRepository.findByNguoiDungAndTrangThai(nguoiDung, trangThai) : hoaDonRepository.findAll();
+        List<HoaDon> orderList = trangThai != null ? hoaDonRepository.findByNguoiDungAndTrangThai(nguoiDung, trangThai,sort) : hoaDonRepository.findAll();
 
         List<HoaDonResponse> orderResponses = new ArrayList<>();
         for (HoaDon hoaDon : orderList) {
@@ -355,6 +356,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             dto.setDiaChi(hoaDon.getDiaChi());
             dto.setTenNguoiNhan(hoaDon.getTenNguoiNhan());
             dto.setSdt(hoaDon.getSdt());
+            dto.setPhiShip(hoaDon.getPhiShip());
             dto.setTrangThai(hoaDon.getTrangThai());
             dto.setTongTien(hoaDon.getTongTien());
             dto.setTienGiam(hoaDon.getTienGiam());
@@ -378,6 +380,7 @@ public class HoaDonServiceIpml implements HoaDonService {
             dto.setNgayTao(hoaDon.getNgayTao());
             dto.setNgayThanhToan(hoaDon.getNgayThanhToan());
             dto.setThanhToan(hoaDon.getThanhToan());
+            dto.setPhiShip(hoaDon.getPhiShip());
             orderResponses.add(dto);
         }
 //        messagingTemplate.convertAndSend("/topic/orders", orderResponses);

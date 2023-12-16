@@ -29,7 +29,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
 
     Page<HoaDon> findAllByXoaFalseAndTrangThaiOrderByNgaySuaDesc(Integer status, Pageable pageable);
 
-    List<HoaDon> findByNguoiDungAndTrangThai(NguoiDung nguoiDung, Integer trangThai);
+    List<HoaDon> findByNguoiDungAndTrangThai(NguoiDung nguoiDung, Integer trangThai , Sort sort);
 
     List<HoaDon> findByTrangThai(Integer trangThai);
 
