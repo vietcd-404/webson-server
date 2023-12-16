@@ -3,6 +3,9 @@ package com.example.websonserver.api;
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.ThuongHieuRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
+import com.example.websonserver.dto.response.MessageResponse;
+import com.example.websonserver.entity.SanPham;
+import com.example.websonserver.entity.ThuongHieu;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
 import com.example.websonserver.service.serviceIpml.ThuongHieuServiceImpl;
 import jakarta.validation.Valid;
@@ -32,15 +35,25 @@ public class ThuongHieuApi {
     @PostMapping("/staff/thuong-hieu/add")
     public ResponseEntity<?> saveLoai(@Valid @RequestBody ThuongHieuRequest thuongHieu, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if (thuongHieuServiceImpl.existsByTenSanPham(thuongHieu.getTenThuongHieu().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên thương hiệu đã tồn tại"));
         }
         return ResponseEntity.ok(thuongHieuServiceImpl.create(thuongHieu));
     }
 
     @PutMapping("/staff/thuong-hieu/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody ThuongHieuRequest thuongHieu, @PathVariable Long ma, BindingResult result) {
+        ThuongHieu thuongHieu1 = thuongHieuServiceImpl.getById(ma);
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if(thuongHieu1.getTenThuongHieu().equals(thuongHieu.getTenThuongHieu().trim())){
+            return ResponseEntity.ok(thuongHieuServiceImpl.update(thuongHieu, ma));
+        }
+        if (thuongHieuServiceImpl.existsByTenSanPham(thuongHieu.getTenThuongHieu().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên thương hiệu đã tồn tại"));
         }
         return ResponseEntity.ok(thuongHieuServiceImpl.update(thuongHieu, ma));
     }

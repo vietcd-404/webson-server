@@ -18,7 +18,7 @@ import java.util.List;
 @Repository
 public interface ThuongHieuRepository extends JpaRepository<ThuongHieu, Long> {
     public Page<ThuongHieu> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
-
+    Boolean existsByTenThuongHieuAndXoaFalse(String tenThuongHieu);
 
 
 

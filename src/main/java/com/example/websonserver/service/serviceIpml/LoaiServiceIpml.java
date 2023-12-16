@@ -3,6 +3,7 @@ package com.example.websonserver.service.serviceIpml;
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.entity.Loai;
+import com.example.websonserver.entity.SanPham;
 import com.example.websonserver.repository.LoaiRepository;
 import com.example.websonserver.service.LoaiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,12 @@ public class LoaiServiceIpml implements LoaiService {
         Loai loai1 = loai.map(new Loai());
         return loaiRepository.save(loai1);
     }
-
+    public Boolean existsByTenSanPham(String username) {
+        return loaiRepository.existsByTenLoaiAndXoaFalse(username);
+    }
+    public Loai getById(Long ma){
+        return loaiRepository.findById(ma).orElse(null);
+    }
     @Override
     public Loai update(LoaiResquest loai,Long id) {
         Optional<Loai> optional = loaiRepository.findById(id);

@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface MauSacRepository extends JpaRepository<MauSac,Long> {
     public Page<MauSac> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
-
+    Boolean existsByTenMauAndXoaFalse(String tenMau);
     @Transactional
     @Modifying
     @Query("UPDATE MauSac a " +

@@ -2,6 +2,9 @@ package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
+import com.example.websonserver.dto.response.MessageResponse;
+import com.example.websonserver.entity.Loai;
+import com.example.websonserver.entity.MauSac;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +35,25 @@ public class LoaiApi {
     @PostMapping("/staff/loai/add")
     public ResponseEntity<?> saveLoai(@Valid @RequestBody LoaiResquest loai, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if (loaiServiceIpml.existsByTenSanPham(loai.getTenLoai().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên loại đã tồn tại"));
         }
         return ResponseEntity.ok(loaiServiceIpml.create(loai));
     }
 
     @PutMapping("/staff/loai/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody LoaiResquest loai, @PathVariable Long ma, BindingResult result) {
+        Loai loai1 = loaiServiceIpml.getById(ma);
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if(loai1.getTenLoai().equals(loai.getTenLoai().trim())){
+            return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
+        }
+        if (loaiServiceIpml.existsByTenSanPham(loai.getTenLoai().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên loại đã tồn tại"));
         }
         return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
     }

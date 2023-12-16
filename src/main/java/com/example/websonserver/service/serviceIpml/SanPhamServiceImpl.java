@@ -67,6 +67,10 @@ public class SanPhamServiceImpl implements SanPhamService {
         }).orElse(null);
     }
 
+    public SanPham getById(Long ma){
+        return sanPhamRepository.findById(ma).orElse(null);
+    }
+
     @Override
     public List<SanPham> fillComboSpctBySanPham() {
         return sanPhamRepository.fillComboSpctBySanPham();

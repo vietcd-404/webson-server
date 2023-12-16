@@ -3,6 +3,9 @@ package com.example.websonserver.api;
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.MauSacRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
+import com.example.websonserver.dto.response.MessageResponse;
+import com.example.websonserver.entity.MauSac;
+import com.example.websonserver.entity.ThuongHieu;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
 import com.example.websonserver.service.serviceIpml.MauSacServiceImpl;
 import jakarta.validation.Valid;
@@ -32,15 +35,25 @@ public class MauSacApi {
     @PostMapping("/staff/mau-sac/add")
     public ResponseEntity<?> saveMauSac(@Valid @RequestBody MauSacRequest mauSac, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if (mauSacServiceImpl.existsByTenSanPham(mauSac.getTenMau().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên màu đã tồn tại"));
         }
         return ResponseEntity.ok(mauSacServiceImpl.create(mauSac));
     }
 
     @PutMapping("/staff/mau-sac/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody MauSacRequest mauSac, @PathVariable Long ma, BindingResult result) {
+        MauSac mauSac1 = mauSacServiceImpl.getById(ma);
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if(mauSac1.getTenMau().equals(mauSac.getTenMau().trim())){
+            return ResponseEntity.ok(mauSacServiceImpl.update(mauSac, ma));
+        }
+        if (mauSacServiceImpl.existsByTenSanPham(mauSac.getTenMau().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên màu đã tồn tại"));
         }
         return ResponseEntity.ok(mauSacServiceImpl.update(mauSac, ma));
     }

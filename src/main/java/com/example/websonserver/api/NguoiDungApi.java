@@ -33,11 +33,14 @@ public class NguoiDungApi {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        if (nguoiDungService.existByUsername(request.getUsername())) {
+        if (nguoiDungService.existByUsername(request.getUsername().trim())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username đã tồn tại"));
         }
-        if (nguoiDungService.existByEmail(request.getEmail())) {
+        if (nguoiDungService.existByEmail(request.getEmail().trim())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
+        }
+        if (nguoiDungService.existBySdt(request.getSdt().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Số điện thoại đã tồn tại"));
         }
         return ResponseEntity.ok(nguoiDungService.create(request));
     }

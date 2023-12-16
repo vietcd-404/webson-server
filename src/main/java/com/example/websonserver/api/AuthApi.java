@@ -98,11 +98,15 @@ public class AuthApi {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        if (nguoiDungService.existByUsername(signupRequest.getUsername())) {
+        if (nguoiDungService.existByUsername(signupRequest.getUsername().trim())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username đã tồn tại"));
         }
-        if (nguoiDungService.existByEmail(signupRequest.getEmail())) {
+        if (nguoiDungService.existByEmail(signupRequest.getEmail().trim())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
+        }
+
+        if (nguoiDungService.existBySdt(signupRequest.getSdt().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Số điện thoại đã tồn tại"));
         }
         NguoiDung users = new NguoiDung();
         users.setUsername(signupRequest.getUsername());

@@ -4,6 +4,7 @@ import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.ThuongHieuRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.entity.Loai;
+import com.example.websonserver.entity.SanPham;
 import com.example.websonserver.entity.ThuongHieu;
 import com.example.websonserver.repository.LoaiRepository;
 import com.example.websonserver.repository.ThuongHieuRepository;
@@ -29,6 +30,10 @@ public class ThuongHieuServiceImpl implements ThuongHieuService {
         return thuongHieuRepository.save(thuongHieu1);
     }
 
+    public Boolean existsByTenSanPham(String username) {
+        return thuongHieuRepository.existsByTenThuongHieuAndXoaFalse(username);
+    }
+
     @Override
     public ThuongHieu update(ThuongHieuRequest thuongHieu,Long id) {
         Optional<ThuongHieu> optional = thuongHieuRepository.findById(id);
@@ -36,6 +41,10 @@ public class ThuongHieuServiceImpl implements ThuongHieuService {
             o.setTenThuongHieu(thuongHieu.getTenThuongHieu());
             return thuongHieuRepository.save(o);
         }).orElse(null);
+    }
+
+    public ThuongHieu getById(Long ma){
+        return thuongHieuRepository.findById(ma).orElse(null);
     }
 
     @Override

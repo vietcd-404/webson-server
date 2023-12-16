@@ -35,6 +35,8 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung,Long> {
     NguoiDung findByEmail(String email);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+    Boolean existsBySdt(String sdt);
+
     List<NguoiDung> findByTrangThaiAndAndNgayTaoBefore(int trangThai, LocalDateTime cutoffTime);
 
     @Transactional

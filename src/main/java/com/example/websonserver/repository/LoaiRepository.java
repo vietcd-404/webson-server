@@ -18,6 +18,7 @@ import java.util.List;
 public interface LoaiRepository extends JpaRepository<Loai,Long> {
 
     public Page<Loai> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
+    Boolean existsByTenLoaiAndXoaFalse(String tenLoai);
 
     @Query("SELECT sp FROM Loai sp WHERE sp.xoa = false and sp.trangThai =1  order by  sp.ngayTao desc ")
     public List<Loai> fillComboSpct();

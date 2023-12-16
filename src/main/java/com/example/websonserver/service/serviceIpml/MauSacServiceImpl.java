@@ -5,6 +5,7 @@ import com.example.websonserver.dto.request.MauSacRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.entity.Loai;
 import com.example.websonserver.entity.MauSac;
+import com.example.websonserver.entity.SanPham;
 import com.example.websonserver.repository.LoaiRepository;
 import com.example.websonserver.repository.MauSacRepository;
 import com.example.websonserver.service.LoaiService;
@@ -28,7 +29,13 @@ public class MauSacServiceImpl implements MauSacService {
         MauSac mauSac1 = mauSac.map(new MauSac());
         return mauSacRepository.save(mauSac1);
     }
+    public Boolean existsByTenSanPham(String username) {
+        return mauSacRepository.existsByTenMauAndXoaFalse(username);
+    }
 
+    public MauSac getById(Long ma){
+        return mauSacRepository.findById(ma).orElse(null);
+    }
     @Override
     public MauSac update(MauSacRequest mauSac,Long id) {
         Optional<MauSac> optional = mauSacRepository.findById(id);

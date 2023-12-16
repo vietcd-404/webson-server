@@ -151,6 +151,10 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         return nguoiDungRepository.existsByEmail(email);
     }
 
+    public Boolean existBySdt(String sdt) {
+        return nguoiDungRepository.existsBySdt(sdt);
+    }
+
     @Override
     public NguoiDung saveOrUpdate(NguoiDung nguoiDung) {
         return nguoiDungRepository.save(nguoiDung);
