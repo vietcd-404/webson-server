@@ -107,8 +107,15 @@ public class HoaDonServiceIpml implements HoaDonService {
                     .multiply(BigDecimal.valueOf(100 - gioHangChiTiet.getSanPhamChiTiet().getPhanTramGiam()).divide(BigDecimal.valueOf(100)));
             tongTien = tongTien.add(giaBan.multiply(BigDecimal.valueOf(chiTiet1.getSoLuong())));
             //trừ số lượng tồn
-            spct.setSoLuongTon(spct.getSoLuongTon() - gioHangChiTiet.getSoLuong());
-            sanPhamChiTietRepository.save(spct);
+//            spct.setSoLuongTon(spct.getSoLuongTon() - gioHangChiTiet.getSoLuong());
+//            sanPhamChiTietRepository.save(spct);
+            if (spct.getSoLuongTon() - gioHangChiTiet.getSoLuong() >= 0) {
+                spct.setSoLuongTon(spct.getSoLuongTon() - gioHangChiTiet.getSoLuong());
+                sanPhamChiTietRepository.save(spct);
+            } else {
+                String errorMessage = "Sản phẩm đã hết hàng.";
+                throw new RuntimeException(errorMessage);
+            }
         }
         Voucher voucher = null;
         if (request.getTenVoucher() != null) {
@@ -206,7 +213,6 @@ public class HoaDonServiceIpml implements HoaDonService {
         for (int i = 0; i < maSanPhamCtList.size(); i++) {
             Long maSanPhamCt = maSanPhamCtList.get(i);
             SanPhamChiTiet spct = sanPhamChiTietRepository.findById(maSanPhamCt).orElse(null);
-
             if (spct != null) {
                 HoaDonChiTiet chiTiet = new HoaDonChiTiet();
                 chiTiet.setHoaDon(hoaDon);
@@ -222,20 +228,22 @@ public class HoaDonServiceIpml implements HoaDonService {
                 // Use the quantity from the request for each product
                 int soLuong = request.getSoLuongList().get(i);
 
+                if (spct.getSoLuongTon() - soLuong >= 0) {
+                    spct.setSoLuongTon(spct.getSoLuongTon() - soLuong);
+                    sanPhamChiTietRepository.save(spct);
+                } else {
+                    String errorMessage = "Sản phẩm đã hết hàng.";
+                    throw new RuntimeException(errorMessage);
+                }
                 chiTiet.setSoLuong(soLuong);
+//                spct.setSoLuongTon(spct.getSoLuongTon()-soLuong);
+//                sanPhamChiTietRepository.save(spct);
 
 //                if (soLuong > spct.getSoLuongTon()) {
 //                    String errorMessage = "Số lượng sản phẩm vượt giới hạn.";
 //                    throw new RuntimeException(errorMessage);
 //                }
 
-//                if (spct.getSoLuongTon() - soLuong >= 0) {
-//                    spct.setSoLuongTon(spct.getSoLuongTon() - soLuong);
-//                    sanPhamChiTietRepository.save(spct);
-//                } else {
-//                    String errorMessage = "Số lượng vượt giới hạn.";
-//                    throw new RuntimeException(errorMessage);
-//                }
 
                 hoaDonChiTietList.add(chiTiet);
 
