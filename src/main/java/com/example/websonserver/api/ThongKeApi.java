@@ -38,7 +38,8 @@ public class ThongKeApi {
     @GetMapping("/doanh-thu-theo-nam")
     public ResponseEntity<?> getDoanhThuTheoNam() {
         List<ThongTinThongKe> list = new ArrayList<>();
-        for (int year = 2020; year <= 2023; year++) {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        for (int year = currentYear-4; year <= currentYear; year++) {
             List<Object[]> lst = thongKeRepository.getDoanhThuTheoNam(year);
             ThongTinThongKe data1 = new ThongTinThongKe();
             if (lst.isEmpty()) {
@@ -60,8 +61,8 @@ public class ThongKeApi {
     }
 
     @GetMapping("/doanh-thu-theo-thang")
-    public ResponseEntity<?> getDoanhThuTheoThang(@RequestParam Integer month,@RequestParam Integer year ){
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(month,year);
+    public ResponseEntity<?> getDoanhThuTheoThang(@RequestParam Integer month,@RequestParam Integer year ,@RequestParam String trangThai){
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(month,year,Integer.valueOf(trangThai));
         ThongTinThongKe thongKe = new ThongTinThongKe();
         if(lst.isEmpty()) {
         thongKe.setDoanhThu("0");
@@ -78,11 +79,11 @@ public class ThongKeApi {
         return ResponseEntity.ok(thongKe);
     }
     @GetMapping("/doanh-thu-theo-ngay")
-    public ResponseEntity<?> getDoanhThuTheoNgay(@RequestParam String day) {
+    public ResponseEntity<?> getDoanhThuTheoNgay(@RequestParam String day,@RequestParam String trangThai) {
         ThongTinThongKe thongKe = new ThongTinThongKe();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(day, formatter);
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNgay(date);
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNgay(Integer.valueOf(Integer.valueOf(trangThai)),date);
 
         if (lst.isEmpty()) {
             thongKe.setDoanhThu("0");
@@ -220,5 +221,26 @@ public class ThongKeApi {
     @GetMapping("/status-bill")
     public ResponseEntity<?> getCountStatus(@RequestParam Integer status) {
         return ResponseEntity.ok(thongKeRepository.countByTrangThai(status));
+    }
+
+    @GetMapping("/total-round-time")
+    public ResponseEntity<?> getRoundTime(@RequestParam String ngayBD,@RequestParam String ngayKT,@RequestParam Integer trangThai) {
+        ThongTinThongKe thongKe = new ThongTinThongKe();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate ngayBD1 = LocalDate.parse(ngayBD, formatter);
+        LocalDate ngayKT1 = LocalDate.parse(ngayKT, formatter);
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoKhoangNgay(trangThai,ngayBD1,ngayKT1);
+
+        if (lst.isEmpty()) {
+            thongKe.setDoanhThu("0");
+            thongKe.setSlDaBan("0");
+        }
+        else {
+            Object[] result = lst.get(0);
+            thongKe.setDoanhThu(result[0].toString());
+            thongKe.setSlDaBan(result[1].toString());
+        }
+
+        return ResponseEntity.ok(thongKe);
     }
 }

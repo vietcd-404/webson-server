@@ -19,8 +19,8 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
             "   COALESCE(SUM(DISTINCT h.hoaDon.tongTien), 0)," +
             "   COALESCE(SUM(h.soLuong), 0) " +
             "FROM HoaDonChiTiet h " +
-            "WHERE FUNCTION('YEAR', h.hoaDon.ngayTao) =?1" +
-            "   AND h.hoaDon.trangThai = 3 " +
+            "WHERE FUNCTION('YEAR', h.hoaDon.ngayTao) = ?1 " +
+            "AND (h.hoaDon.trangThai = 3 OR h.hoaDon.trangThai = 5) " +
             "   AND h.hoaDon.ngayThanhToan IS NOT NULL")
     List<Object[]> getDoanhThuTheoNam(Integer year);
 
@@ -32,8 +32,9 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
             "FROM HoaDonChiTiet h " +
             "WHERE FUNCTION('MONTH', h.hoaDon.ngayTao) = ?1 " +
             "AND  FUNCTION('YEAR', h.hoaDon.ngayTao) = ?2 " +
-            "   AND h.hoaDon.trangThai = 3 ")
-    List<Object[]> getDoanhThuTheoThang(Integer month, Integer year);
+            "   AND h.hoaDon.trangThai = ?3 " +
+            "AND h.hoaDon.thanhToan = 1")
+    List<Object[]> getDoanhThuTheoThang(Integer month, Integer year,Integer trangThai);
 
 
     @Query(value = "SELECT " +
@@ -41,8 +42,18 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
             "   COALESCE(SUM(h.so_luong), 0) AS so_luong " +
             "FROM hoa_don_chi_tiet h " +
             "INNER JOIN hoa_don hd ON h.ma_hoa_don = hd.ma_hoa_don " +
-            "WHERE hd.trang_thai = 3 AND DATE (hd.ngay_tao)= ?1 ", nativeQuery = true)
-    List<Object[]> getDoanhThuTheoNgay(LocalDate ngayTao);
+            "WHERE hd.trang_thai = ?1 AND DATE(hd.ngay_tao) = ?2 " +
+            "AND hd.thanh_toan = 1 ", nativeQuery = true)
+    List<Object[]> getDoanhThuTheoNgay(Integer trangThai,LocalDate ngayTao);
+
+    @Query(value = "SELECT " +
+            "   COALESCE(SUM(DISTINCT hd.tong_tien), 0) AS tong_tien," +
+            "   COALESCE(SUM(h.so_luong), 0) AS so_luong " +
+            "FROM hoa_don_chi_tiet h " +
+            "INNER JOIN hoa_don hd ON h.ma_hoa_don = hd.ma_hoa_don " +
+            "WHERE hd.trang_thai = ?1 AND DATE(hd.ngay_tao) >= ?2 AND DATE(hd.ngay_tao) <= ?3 " +
+            "AND hd.thanh_toan = 1 ", nativeQuery = true)
+    List<Object[]> getDoanhThuTheoKhoangNgay(Integer trangThai,LocalDate ngayBd, LocalDate ngayKt);
 
 
 

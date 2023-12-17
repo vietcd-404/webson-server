@@ -59,7 +59,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long> {
             "LIMIT 4;\n", nativeQuery = true)
     List<Object[]> top4BestSeller();
 
-    @Query(value = "select sum(hd.tong_tien) as tongTien from hoa_don hd where hd.trang_thai=3",nativeQuery = true)
+    @Query(value = "select sum(hd.tong_tien) as tongTien from hoa_don hd where  hd.trang_thai = 3 or hd.trang_thai = 5 and hd.thanh_toan = 1",nativeQuery = true)
     BigDecimal sumTotalBill();
 
     @Query(value = "SELECT hd.nguoiDung, COUNT(hd) AS totalOrders " +
