@@ -114,6 +114,9 @@ public class AuthApi {
         users.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         users.setTrangThai(signupRequest.getTrangThai());
         users.setXoa(signupRequest.getXoa());
+        users.setTen(signupRequest.getTen());
+        users.setTenDem(signupRequest.getTenDem());
+        users.setHo(signupRequest.getHo());
         users.setSdt(signupRequest.getSdt());
         LocalDateTime otpExpirationTime = LocalDateTime.now().plus(OTP_TTL_MINUTES, ChronoUnit.MINUTES);
         String otp = otpUtil.generateOtp();

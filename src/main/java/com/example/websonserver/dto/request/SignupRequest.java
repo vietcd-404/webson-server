@@ -22,6 +22,16 @@ public class SignupRequest {
     @NotBlank(message = "Không bỏ trống số điện thoại")
     private String sdt;
 
+    @NotBlank(message = "Không bỏ trống họ")
+    private String ho;
+
+    @NotBlank(message = "Không bỏ trống tên đệm")
+    private String tenDem;
+
+    @NotBlank(message = "Không bỏ trống tên")
+    private String ten;
+
+
     private int trangThai = 0;
     private  Boolean xoa = false;
     private String vaiTro;
