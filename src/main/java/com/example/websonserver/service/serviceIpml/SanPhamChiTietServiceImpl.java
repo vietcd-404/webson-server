@@ -90,6 +90,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                         .loai(loaiService.findByTen(x.getTenLoai()))
                         .thuongHieu(thuongHieuService.findByTen(x.getTenThuongHieu()))
                         .mauSac(mauSacService.findByTen(x.getTenMau()))
+                        .moTa((x.getMoTa()))
 //                        .anhSanPhamList(request.getAnhSanPhamList())
                         .trangThai(x.getTrangThai())
                         .xoa(x.getXoa())
@@ -183,6 +184,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 .img(anhSanPhamService.getImagesBySanPhamChiTiet(spct.getMaSanPhamCT()))
                 .giaBan(spct.getGiaBan())
                 .danhSachAnh(imageUrls)
+                .moTa(spct.getMoTa())
                 .tenSanPham(spct.getSanPham().getTenSanPham())
                 .phanTramGiam(spct.getPhanTramGiam())
                 .soLuongTon(spct.getSoLuongTon())
@@ -323,6 +325,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 String tenMau = mauSac.getTenMau();
                 dto.setTenMau(tenMau);
             }
+            dto.setMoTa(sanPhamChiTiet.getMoTa());
             List<AnhSanPham> imageUrls = anhSanPhamService.getImage(sanPhamChiTiet.getMaSanPhamCT());
             dto.setDanhSachAnh(imageUrls);
             dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));

@@ -42,6 +42,7 @@ public class SanPhamChiTietRequest {
     @NotNull
     private String tenMau;
 
+    private String moTa;
 
     private List<Long> danhSachAnh;
 

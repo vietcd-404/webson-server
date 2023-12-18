@@ -37,6 +37,8 @@ public class SanPhamChiTietResponse {
 
      Integer trangThai;
 
+     String moTa;
+
      List<SanPhamTheoThuongHieuResponse> thuongHieuList;
 
  }
