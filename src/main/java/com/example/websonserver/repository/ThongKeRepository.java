@@ -25,18 +25,16 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
     List<Object[]> getDoanhThuTheoNam(Integer year);
 
 
-
     @Query(value = "SELECT " +
             "   COALESCE(SUM(DISTINCT hd.tong_tien), 0) AS tong_tien," +
             "   COALESCE(SUM(h.so_luong), 0) AS so_luong " +
             "FROM hoa_don_chi_tiet h " +
             "INNER JOIN hoa_don hd ON h.ma_hoa_don = hd.ma_hoa_don " +
             "WHERE (hd.trang_thai = :trangThai OR :trangThai IS NULL) " +
-            "AND FUNCTION('MONTH', hd.ngay_tao) = :month " +
-            "AND FUNCTION('YEAR', hd.ngay_tao) = :year " +
+            "AND MONTH(hd.ngay_tao) = :month " +
+            "AND YEAR(hd.ngay_tao) = :year " +
             "AND hd.thanh_toan = 1 ", nativeQuery = true)
     List<Object[]> getDoanhThuTheoThang(@Param("trangThai") Integer trangThai, @Param("month") Integer month, @Param("year") Integer year);
-
 
 
     @Query(value = "SELECT " +
