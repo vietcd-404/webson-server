@@ -921,7 +921,7 @@ public class HoaDonServiceIpml implements HoaDonService {
         if (trangThai == 3) {
             hoaDon.setNgayNhan(LocalDateTime.now());
         }
-        if (trangThai == 4 && hoaDon.getThanhToan() == 0) {
+        if (trangThai == 4 || trangThai == 7 && hoaDon.getThanhToan() == 0) {
 //            List<HoaDonChiTiet> hoaDonChiTietList = hoaDonChiTietRepository.findByHoaDon(hoaDon);
             List<HoaDonChiTiet> hoaDonChiTietList = this.hoaDonChiTietRepository.findByHoaDon_MaHoaDon(maHoaDon);
 //            HoaDonChiTiet hoaDonChiTieta = hoaDonChiTietList.size() == 1 ? hoaDonChiTietList.get(0) : null;

@@ -31,11 +31,11 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public List<Voucher> getAllVoucher() {
-        return voucherRepository.findAllByXoaFalse();
+        return voucherRepository.findAllByXoaFalseOrderByNgayTaoDesc();
     }
 
     public List<Voucher> getAllVoucherUser() {
-        return voucherRepository.findAllByXoaFalseAndTrangThai(0);
+        return voucherRepository.findAllByXoaFalseAndTrangThaiOrderByNgaySuaDesc(0);
     }
 
     @Override
