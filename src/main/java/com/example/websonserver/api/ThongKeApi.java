@@ -62,7 +62,15 @@ public class ThongKeApi {
 
     @GetMapping("/doanh-thu-theo-thang")
     public ResponseEntity<?> getDoanhThuTheoThang(@RequestParam Integer month,@RequestParam Integer year ,@RequestParam String trangThai){
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(month,year,Integer.valueOf(trangThai));
+        Integer trangThaiValue = null;
+        if (trangThai != null && !trangThai.isEmpty()) {
+            try {
+                trangThaiValue = Integer.valueOf(trangThai);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(month,year,trangThaiValue);
         ThongTinThongKe thongKe = new ThongTinThongKe();
         if(lst.isEmpty()) {
         thongKe.setDoanhThu("0");
@@ -83,7 +91,15 @@ public class ThongKeApi {
         ThongTinThongKe thongKe = new ThongTinThongKe();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(day, formatter);
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNgay(Integer.valueOf(Integer.valueOf(trangThai)),date);
+        Integer trangThaiValue = null;
+        if (trangThai != null && !trangThai.isEmpty()) {
+            try {
+                trangThaiValue = Integer.valueOf(trangThai);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoNgay(trangThaiValue,date);
 
         if (lst.isEmpty()) {
             thongKe.setDoanhThu("0");

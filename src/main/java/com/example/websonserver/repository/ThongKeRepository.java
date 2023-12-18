@@ -26,15 +26,17 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
 
 
 
-    @Query("SELECT " +
-            "   COALESCE(SUM(DISTINCT h.hoaDon.tongTien), 0)," +
-            "   COALESCE(SUM(h.soLuong), 0) " +
-            "FROM HoaDonChiTiet h " +
-            "WHERE FUNCTION('MONTH', h.hoaDon.ngayTao) = ?1 " +
-            "AND  FUNCTION('YEAR', h.hoaDon.ngayTao) = ?2 " +
-            "   AND h.hoaDon.trangThai = ?3 " +
-            "AND h.hoaDon.thanhToan = 1")
-    List<Object[]> getDoanhThuTheoThang(Integer month, Integer year,Integer trangThai);
+    @Query(value = "SELECT " +
+            "   COALESCE(SUM(DISTINCT hd.tong_tien), 0) AS tong_tien," +
+            "   COALESCE(SUM(h.so_luong), 0) AS so_luong " +
+            "FROM hoa_don_chi_tiet h " +
+            "INNER JOIN hoa_don hd ON h.ma_hoa_don = hd.ma_hoa_don " +
+            "WHERE (hd.trang_thai = :trangThai OR :trangThai IS NULL) " +
+            "AND FUNCTION('MONTH', hd.ngay_tao) = :month " +
+            "AND FUNCTION('YEAR', hd.ngay_tao) = :year " +
+            "AND hd.thanh_toan = 1 ", nativeQuery = true)
+    List<Object[]> getDoanhThuTheoThang(@Param("trangThai") Integer trangThai, @Param("month") Integer month, @Param("year") Integer year);
+
 
 
     @Query(value = "SELECT " +
@@ -42,18 +44,23 @@ public interface ThongKeRepository extends JpaRepository<HoaDonChiTiet,Long> {
             "   COALESCE(SUM(h.so_luong), 0) AS so_luong " +
             "FROM hoa_don_chi_tiet h " +
             "INNER JOIN hoa_don hd ON h.ma_hoa_don = hd.ma_hoa_don " +
-            "WHERE hd.trang_thai = ?1 AND DATE(hd.ngay_tao) = ?2 " +
+            "WHERE (hd.trang_thai = :trangThai OR :trangThai IS NULL) " +
+            "AND DATE(hd.ngay_tao) = :ngayTao " +
             "AND hd.thanh_toan = 1 ", nativeQuery = true)
-    List<Object[]> getDoanhThuTheoNgay(Integer trangThai,LocalDate ngayTao);
+    List<Object[]> getDoanhThuTheoNgay(@Param("trangThai") Integer trangThai, @Param("ngayTao") LocalDate ngayTao);
+
+
 
     @Query(value = "SELECT " +
             "   COALESCE(SUM(DISTINCT hd.tong_tien), 0) AS tong_tien," +
             "   COALESCE(SUM(h.so_luong), 0) AS so_luong " +
             "FROM hoa_don_chi_tiet h " +
             "INNER JOIN hoa_don hd ON h.ma_hoa_don = hd.ma_hoa_don " +
-            "WHERE hd.trang_thai = ?1 AND DATE(hd.ngay_tao) >= ?2 AND DATE(hd.ngay_tao) <= ?3 " +
+            "WHERE (hd.trang_thai = ?1 OR ?1 IS NULL) " +
+            "AND DATE(hd.ngay_tao) >= ?2 AND DATE(hd.ngay_tao) <= ?3 " +
             "AND hd.thanh_toan = 1 ", nativeQuery = true)
-    List<Object[]> getDoanhThuTheoKhoangNgay(Integer trangThai,LocalDate ngayBd, LocalDate ngayKt);
+    List<Object[]> getDoanhThuTheoKhoangNgay(Integer trangThai, LocalDate ngayBd, LocalDate ngayKt);
+
 
 
 
