@@ -26,10 +26,10 @@ public class HoaDonResponse {
 
     private LocalDateTime ngayNhan;
 
-    @JsonFormat(pattern = "hh:mm:ss dd-MM-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a")
     private LocalDateTime ngayTao;
 
-    @JsonFormat(pattern = "hh:mm:ss dd-MM-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a")
     private LocalDateTime ngayThanhToan;
 
     private String tenNguoiNhan;
