@@ -70,7 +70,7 @@ public class ThongKeApi {
                 e.printStackTrace();
             }
         }
-        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(month,year,trangThaiValue);
+        List<Object[]> lst = thongKeRepository.getDoanhThuTheoThang(trangThaiValue,month,year);
         ThongTinThongKe thongKe = new ThongTinThongKe();
         if(lst.isEmpty()) {
         thongKe.setDoanhThu("0");

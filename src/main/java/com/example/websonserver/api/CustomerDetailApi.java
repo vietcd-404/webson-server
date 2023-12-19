@@ -31,7 +31,19 @@ public class CustomerDetailApi {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(nguoiDungService.update(nguoiDungRequest, ma));
+        NguoiDung nguoiDung = nguoiDungService.findById(ma);
+        if(!nguoiDungRequest.getEmail().equals(nguoiDung.getEmail())){
+        if(nguoiDungService.existByEmail(nguoiDungRequest.getEmail())){
+            return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
+        }
+        }
+        if(!nguoiDungRequest.getSdt().equals(nguoiDung.getSdt())) {
+            if (nguoiDungService.existBySdt(nguoiDungRequest.getSdt())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Số điện thoại đã tồn tại"));
+            }
+        }
+
+            return ResponseEntity.ok(nguoiDungService.update(nguoiDungRequest, ma));
     }
 
     @PutMapping("/sua/{ma}")
@@ -62,7 +74,6 @@ public class CustomerDetailApi {
         if (nguoiDungRequest.getNewpass().contains(" ") || nguoiDungRequest.getRepass().contains(" ")) {
             return ResponseEntity.badRequest().body(new MessageResponse("Mật khẩu không được chứa dấu cách"));
         }
-
         return ResponseEntity.ok(nguoiDungService.changePass(nguoiDungRequest, ma));
     }
 }

@@ -107,6 +107,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(id);
         return optional.map(o -> {
             o.setGiaBan(request.getGiaBan());
+            o.setMoTa(request.getMoTa());
             o.setPhanTramGiam(request.getPhanTramGiam());
             o.setSoLuongTon((request.getSoLuongTon()));
             o.setSanPham(sanPhamService.findByTen(request.getTenSanPham()));
@@ -156,6 +157,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             List<AnhSanPham> imageUrls = anhSanPhamService.getImage(sanPhamChiTiet.getMaSanPhamCT());
             dto.setDanhSachAnh(imageUrls);
             dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            if(sanPhamChiTiet.getMoTa()!=null) {
+                dto.setMoTa(sanPhamChiTiet.getMoTa());
+            }else{
+                dto.setMoTa("");
+            }
             sanPhamChiTietDtos.add(dto);
         }
 

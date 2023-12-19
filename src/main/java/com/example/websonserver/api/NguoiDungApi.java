@@ -3,6 +3,7 @@ package com.example.websonserver.api;
 import com.example.websonserver.dto.request.NguoiDungRequest;
 import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.MessageResponse;
+import com.example.websonserver.entity.NguoiDung;
 import com.example.websonserver.service.serviceIpml.NguoiDungServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,17 @@ public class NguoiDungApi {
     public ResponseEntity<?> update(@Valid @RequestBody NguoiDungRequest request, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        NguoiDung nguoiDung = nguoiDungService.findById(ma);
+        if(!request.getEmail().equals(nguoiDung.getEmail())){
+            if(nguoiDungService.existByEmail(request.getEmail())){
+                return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
+            }
+        }
+        if(!request.getSdt().equals(nguoiDung.getSdt())) {
+            if (nguoiDungService.existBySdt(request.getSdt())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Số điện thoại đã tồn tại"));
+            }
         }
         return ResponseEntity.ok(nguoiDungService.update(request, ma));
     }
