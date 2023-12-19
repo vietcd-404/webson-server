@@ -128,6 +128,10 @@ public class HoaDonServiceIpml implements HoaDonService {
                 String errorMessage = "Voucher đã hết!";
                 throw new RuntimeException(errorMessage);
             }
+            if(voucher.getTrangThai()==1){
+                String errorMessage = "Voucher không hoạt động!";
+                throw new RuntimeException(errorMessage);
+            }
             if (tongTien.compareTo(voucher.getDieuKien()) >= 0) {
                 // Điều kiện đủ để áp dụng voucher
 
