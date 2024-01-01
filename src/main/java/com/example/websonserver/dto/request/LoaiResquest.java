@@ -19,7 +19,7 @@ public class LoaiResquest  {
 
     private Boolean xoa = false;
 
-    private Integer trangThai=0;
+    private Integer trangThai=1;
 
 
     public Loai map(Loai loai){

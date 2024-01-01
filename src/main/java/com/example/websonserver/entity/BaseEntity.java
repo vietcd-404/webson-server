@@ -23,16 +23,16 @@ import java.util.Date;
 public class BaseEntity {
 
     @Column(name = "ngay_tao")
-    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @CreationTimestamp
-    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     protected LocalDateTime ngayTao;
 
     @Column(name = "ngay_sua")
     @LastModifiedDate
-    @DateTimeFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @UpdateTimestamp
-    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @Transient
     protected LocalDateTime ngaySua;
 

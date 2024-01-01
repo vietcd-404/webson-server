@@ -13,13 +13,14 @@ public class Constants {
         public static final int CHO_XAC_NHAN = 0;
         public static final int XAC_NHAN = 1;
         public static final int DANG_GIAO = 2;
-        public static final int DA_GIAO = 3;
-        public static final int HOAN_THANH = 4;
-        public static final int DA_HUY = 5;
+        public static final int HOAN_THANH = 3;
+        public static final int DA_HUY = 4;
+        public static final int HOA_DON_TAI_QUAY = 5;
     }
     public static class STATUS_PAYMENT{
         public static final int CHUA_THANH_TOAN = 0;
         public static final int DA_THANH_TOAN = 1;
+        public static final int HOA_DON_CHO_THANH_TOAN_TAI_QUAY = 2;
     }
     public static class VnPayConstant {
         public static String vnp_Version = "2.1.0";
@@ -30,7 +31,11 @@ public class Constants {
         public static String vnp_BankCode = "NCB";
         public static String vnp_CurrCode = "VND";
         public static String vnp_Locale = "vn";
-        public static String vnp_ReturnUrl = "http://localhost:8000/api/auth/ok";
+        public static String vnp_ReturnUrl = "http://localhost:8000/api/vnpay/callback";
 
+    }
+    public static class STATUS_VOUCHER{
+        public static final int HOAT_DONG = 0;
+        public static final int KHONG_HOAT_DONG = 1;
     }
 }

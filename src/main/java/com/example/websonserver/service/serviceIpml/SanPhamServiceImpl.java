@@ -2,6 +2,7 @@ package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.SanPhamRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.entity.Loai;
 import com.example.websonserver.entity.SanPham;
 import com.example.websonserver.repository.LoaiRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class SanPhamServiceImpl implements SanPhamService {
@@ -30,13 +32,19 @@ public class SanPhamServiceImpl implements SanPhamService {
         Optional<SanPham> optional = sanPhamRepository.findById(id);
         return optional.map(o->{
             o.setTenSanPham(sanPham.getTenSanPham());
+            o.setDoLi(sanPham.getDoLi());
+            o.setDoBong(sanPham.getDoBong());
             return sanPhamRepository.save(o);
         }).orElse(null);
     }
 
     @Override
     public Page<SanPham> getAll(Pageable pageable) {
-        return sanPhamRepository.findAllByXoaFalse(pageable);
+        return sanPhamRepository.findAllByXoaFalseOrderByNgayTaoDesc(pageable);
+    }
+
+    public Boolean existsByTenSanPham(String username) {
+        return sanPhamRepository.existsByTenSanPhamAndXoaFalse(username);
     }
 
     @Override
@@ -48,5 +56,23 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Override
     public SanPham findByTen(String tenSP) {
         return sanPhamRepository.findByTen(tenSP);
+    }
+
+    @Override
+    public SanPham updateStatus(UpdateTrangThai trangThai, Long id) {
+        Optional<SanPham> optional = sanPhamRepository.findById(id);
+        return optional.map(o -> {
+            o.setTrangThai(trangThai.getTrangThai());
+            return sanPhamRepository.save(o);
+        }).orElse(null);
+    }
+
+    public SanPham getById(Long ma){
+        return sanPhamRepository.findById(ma).orElse(null);
+    }
+
+    @Override
+    public List<SanPham> fillComboSpctBySanPham() {
+        return sanPhamRepository.fillComboSpctBySanPham();
     }
 }

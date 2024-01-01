@@ -7,6 +7,7 @@ import com.example.websonserver.service.VaiTroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,5 +20,9 @@ public class VaiTroServiceImpl implements VaiTroService {
     @Override
     public Optional<VaiTro> findByRoleName(VaiTroNguoiDung vaiTroNguoiDung) {
         return vaiTroRepository.findByTenVaiTro(vaiTroNguoiDung);
+    }
+
+    public VaiTro findByMaVaiTro(Long maVaiTro){
+        return vaiTroRepository.findById(maVaiTro).orElse(null);
     }
 }

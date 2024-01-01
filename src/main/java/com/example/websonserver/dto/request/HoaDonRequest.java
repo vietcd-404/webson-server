@@ -20,8 +20,13 @@ import java.util.List;
 @NoArgsConstructor
 public class HoaDonRequest {
     private Long maHoaDon;
+    private Long maSanPhamCT;
     private LocalDateTime ngayNhan;
     private LocalDateTime ngayThanhToan;
+    private Long maGioHang;
+    public Long tongTien1;
+    public String moTa = "  ";
+    private BigDecimal phiShip;
 
     @NotBlank(message = "Không bỏ trong tên người nhận")
     private String tenNguoiNhan;
@@ -29,8 +34,16 @@ public class HoaDonRequest {
     private BigDecimal tienGiam;
     private BigDecimal tongTien;
 
+    private String tinh;
+
+    private String huyen;
+
+    private String xa;
+
     @NotBlank(message = "Không bỏ trống địa chỉ")
     private String diaChi;
+
+    private String email;
 
 
     private String nguoiDung;
@@ -38,19 +51,21 @@ public class HoaDonRequest {
     @NotNull(message = "Không bỏ trống phương thức thanh toán")
     private String tenPhuongThuc;
 
-    private Long maVoucher;
+    private String tenVoucher;
 
     @NotNull(message = "Số điện thoại không được để trống")
     private String sdt;
 
     private Integer thanhToan;
 
-    private List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
+    private List<Integer> soLuongList;
+
+    private Integer soLuong;
+    private List<HoaDonChiTiet> hoaDonChiTietList;
+    private List<SanPhamChiTiet> sanPhamChiTiets;
     private List<VoucherChiTiet> voucherChiTiets = new ArrayList<>();
-    private Integer trangThai =0;
+    private Integer trangThai = 0;
     private Boolean xoa = false;
-
-
 
 
 }

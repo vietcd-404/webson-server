@@ -12,8 +12,11 @@ import java.util.Optional;
 
 @Repository
 public interface VoucherRepository extends JpaRepository<Voucher,Long> {
-        List<Voucher> findAllByXoaFalse();
+        List<Voucher> findAllByXoaFalseAndTrangThaiOrderByNgaySuaDesc(Integer trangThai);
+        List<Voucher> findAllByXoaFalseOrderByNgayTaoDesc();
         Optional<Voucher> findByMaVoucher(Long id);
+
+        Voucher findByTenVoucher(String tenVoucher);
 
         @Transactional
         @Modifying

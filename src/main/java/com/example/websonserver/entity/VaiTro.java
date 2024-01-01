@@ -2,6 +2,7 @@ package com.example.websonserver.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class VaiTro extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

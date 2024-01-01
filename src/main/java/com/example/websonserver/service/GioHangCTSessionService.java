@@ -15,7 +15,10 @@ import java.util.Map;
 public class GioHangCTSessionService {
     @Autowired
     SanPhamChiTietService sanPhamChiTietService;
-    public void addToSessionCart(String SPCTId, int quantity, HttpSession session) {
+
+    @Autowired
+    private AnhSanPhamService anhSanPhamService;
+    public boolean addToSessionCart(String SPCTId, int quantity, HttpSession session) {
         // Lấy giỏ hàng từ session
         Map<String, Integer> sessionCart = (Map<String, Integer>) session.getAttribute("sessionCart");
 
@@ -27,21 +30,40 @@ public class GioHangCTSessionService {
         if (sessionCart.containsKey(SPCTId)) {
             int currentQuantity = sessionCart.get(SPCTId);
             int newQuantity = currentQuantity + quantity;
-            sessionCart.put(SPCTId, newQuantity);
+            SanPhamChiTiet spctCheckWithMaSPCTSession = sanPhamChiTietService.findById(SPCTId);
+            if (currentQuantity > 0 && newQuantity <= spctCheckWithMaSPCTSession.getSoLuongTon()){
+                sessionCart.put(SPCTId, newQuantity);
+            } else {
+                String errorMessage = "Số lượng không hợp lệ.";
+                throw new RuntimeException(errorMessage);
+            }
         } else {
             // Nếu sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
-            sessionCart.put(SPCTId, quantity);
+            SanPhamChiTiet spctCheckWithMaSPCTSession = sanPhamChiTietService.findById(SPCTId);
+            if (quantity > 0 && quantity <= spctCheckWithMaSPCTSession.getSoLuongTon()){
+                sessionCart.put(SPCTId, quantity);
+            } else {
+                String errorMessage = "Số lượng không hợp lệ.";
+                throw new RuntimeException(errorMessage);
+            }
         }
 
         // Lưu lại giỏ hàng vào session
         session.setAttribute("sessionCart", sessionCart);
+        return true;
     }
     public void updateQuantityInSessionCart(HttpSession session, String SPCTId, int newQuantity) {
         Map<String, Integer> sessionCart = (Map<String, Integer>) session.getAttribute("sessionCart");
 
         if (sessionCart != null && sessionCart.containsKey(SPCTId)) {
-            sessionCart.put(SPCTId, newQuantity);
-            session.setAttribute("sessionCart", sessionCart);
+            SanPhamChiTiet spctCheckWithMaSPCTSession = sanPhamChiTietService.findById(SPCTId);
+            if (newQuantity > 0 && newQuantity <= spctCheckWithMaSPCTSession.getSoLuongTon()){
+                sessionCart.put(SPCTId, newQuantity);
+                session.setAttribute("sessionCart", sessionCart);
+            } else {
+                String errorMessage = "Số lượng không hợp lệ.";
+                throw new RuntimeException(errorMessage);
+            }
         }
     }
     public void updateProductInSessionCart(HttpSession session, String oldSPCTId, String newSPCTId, int newQuantity) {
@@ -90,6 +112,7 @@ public class GioHangCTSessionService {
                     .phanTramGiam(spct.getPhanTramGiam())
                     .donGia(spct.getGiaBan())
                     .tenLoai(spct.getLoai().getTenLoai())
+                    .anh(anhSanPhamService.getImagesBySanPhamChiTiet(spct.getMaSanPhamCT()))
                     .build();
             lstGHSession.add(ghct);
         }

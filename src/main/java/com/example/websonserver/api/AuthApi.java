@@ -4,6 +4,7 @@ package com.example.websonserver.api;
 import com.example.websonserver.config.email.EmailService;
 import com.example.websonserver.config.sercurity.CustomUserDetail;
 import com.example.websonserver.dto.request.LoginRequest;
+import com.example.websonserver.dto.request.NguoiDungRequest;
 import com.example.websonserver.dto.request.SignupRequest;
 import com.example.websonserver.dto.response.JwtResponse;
 import com.example.websonserver.dto.response.MessageResponse;
@@ -70,18 +71,20 @@ public class AuthApi {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
-            if (customUserDetail.getTrangThai() == 0) {
-                // Tài khoản chưa kích hoạt, trả về phản hồi tài khoản chưa kích hoạt
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Tài khoản chưa kích hoạt"));
-            }
+//            if (customUserDetail.getTrangThai() == 0) {
+//                // Tài khoản chưa kích hoạt, trả về phản hồi tài khoản chưa kích hoạt
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Tài khoản chưa kích hoạt"));
+//            }
             //Sinh ra JWT trả vê client
             String token = jwtTokenProvider.genToken(customUserDetail);
 
             //Lấy các quyền của user
             String role = customUserDetail.getAuthorities().iterator().next().getAuthority();
 
-            return ResponseEntity.ok(new JwtResponse(token, customUserDetail.getUsername(), customUserDetail.getSdt(),
-                    customUserDetail.getEmail(), role));
+            return ResponseEntity.ok(new JwtResponse(token,customUserDetail.getId(),customUserDetail.getUsername(), customUserDetail.getPassword(),customUserDetail.getSdt(),
+                    customUserDetail.getEmail(), role, customUserDetail.getHo(),
+                    customUserDetail.getTenDem(), customUserDetail.getTen(),
+                    customUserDetail.getNgaySinh(), customUserDetail.getGioiTinh(),customUserDetail.getTrangThai()));
         } catch (AuthenticationException e) {
             // Xử lý trường hợp sai tài khoản hoặc mật khẩu
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Sai tài khoản hoặc mật khẩu"));
@@ -95,11 +98,15 @@ public class AuthApi {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        if (nguoiDungService.existByUsername(signupRequest.getUsername())) {
+        if (nguoiDungService.existByUsername(signupRequest.getUsername().trim())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username đã tồn tại"));
         }
-        if (nguoiDungService.existByEmail(signupRequest.getEmail())) {
+        if (nguoiDungService.existByEmail(signupRequest.getEmail().trim())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email đã tồn tại"));
+        }
+
+        if (nguoiDungService.existBySdt(signupRequest.getSdt().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Số điện thoại đã tồn tại"));
         }
         NguoiDung users = new NguoiDung();
         users.setUsername(signupRequest.getUsername());
@@ -107,6 +114,9 @@ public class AuthApi {
         users.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         users.setTrangThai(signupRequest.getTrangThai());
         users.setXoa(signupRequest.getXoa());
+        users.setTen(signupRequest.getTen());
+        users.setTenDem(signupRequest.getTenDem());
+        users.setHo(signupRequest.getHo());
         users.setSdt(signupRequest.getSdt());
         LocalDateTime otpExpirationTime = LocalDateTime.now().plus(OTP_TTL_MINUTES, ChronoUnit.MINUTES);
         String otp = otpUtil.generateOtp();
@@ -129,6 +139,7 @@ public class AuthApi {
             }
         }
         users.setVaiTro(vaiTro);
+        users.setGioiTinh(1);
         nguoiDungService.saveOrUpdate(users);
         return ResponseEntity.ok(new MessageResponse("Đăng kí thành công"));
     }

@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface GioHangChiTietService {
-    GioHangChiTietResponse addProductToCart(String SPCTId, String soLuong);
+    GioHangChiTietResponse addProductToCart(String SPCTId, Integer soLuong);
 
     List<GioHangChiTietResponse> getAllCarts(Pageable pageable);
 

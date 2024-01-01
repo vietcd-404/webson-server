@@ -1,6 +1,10 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.LoaiResquest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
+import com.example.websonserver.dto.response.MessageResponse;
+import com.example.websonserver.entity.Loai;
+import com.example.websonserver.entity.MauSac;
 import com.example.websonserver.service.serviceIpml.LoaiServiceIpml;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,35 +15,65 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/admin/loai")
+@RequestMapping("/api")
 public class LoaiApi {
     @Autowired
     private LoaiServiceIpml loaiServiceIpml;
 
-    @GetMapping
+    @GetMapping("/staff/loai")
     public ResponseEntity<?> getAll(Pageable pageable) {
             return ResponseEntity.ok(loaiServiceIpml.getAll(pageable).getContent());
     }
 
-    @PostMapping("/add")
+    @GetMapping("/guest/filter")
+    public ResponseEntity<?> getAllFill(Pageable pageable) {
+        return ResponseEntity.ok(loaiServiceIpml.fillComboSpct());
+    }
+
+
+
+    @PostMapping("/staff/loai/add")
     public ResponseEntity<?> saveLoai(@Valid @RequestBody LoaiResquest loai, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if (loaiServiceIpml.existsByTenSanPham(loai.getTenLoai().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên loại đã tồn tại"));
         }
         return ResponseEntity.ok(loaiServiceIpml.create(loai));
     }
 
-    @PutMapping("/update/{ma}")
+    @PutMapping("/staff/loai/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody LoaiResquest loai, @PathVariable Long ma, BindingResult result) {
+        Loai loai1 = loaiServiceIpml.getById(ma);
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
+            return ResponseEntity.badRequest().body(new MessageResponse(result.getFieldError().getDefaultMessage()));
+        }
+        if(loai1.getTenLoai().equals(loai.getTenLoai().trim())){
+            return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
+        }
+        if (loaiServiceIpml.existsByTenSanPham(loai.getTenLoai().trim())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Tên loại đã tồn tại"));
         }
         return ResponseEntity.ok(loaiServiceIpml.update(loai, ma));
     }
 
-    @DeleteMapping("/delete/{ma}")
+    @DeleteMapping("/staff/loai/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         loaiServiceIpml.delete(ma);
         return ResponseEntity.ok("oke nha");
+    }
+
+    @PutMapping("/staff/loai/sua/{ma}")
+    public ResponseEntity<?> updateStatus(@Valid @RequestBody UpdateTrangThai trangThai, @PathVariable Long ma, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(loaiServiceIpml.updateStatusLoai(trangThai, ma));
+    }
+
+    @GetMapping("/staff/loai/load-loai")
+    public ResponseEntity<?> loadAll() {
+        return ResponseEntity.ok(loaiServiceIpml.fillComboSpct());
     }
 }

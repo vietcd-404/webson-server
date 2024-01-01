@@ -1,7 +1,9 @@
 package com.example.websonserver.api;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.SanPhamChiTietRequestDemo;
 import com.example.websonserver.dto.request.ThuocTinhRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.AnhSanPham;
@@ -20,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -64,33 +67,64 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.getAllSanPhamUser(request,page,size));
     }
 
-    @GetMapping("/admin/san-pham-chi-tiet")
+    @GetMapping("/guest/san-pham/detail")
+    public ResponseEntity<?> getDetailById(@RequestParam Long maSanPhamCT) {
+        return ResponseEntity.ok(sanPhamChiTietService.sanPhamDetail(maSanPhamCT));
+    }
+
+    @GetMapping("/guest/san-pham/get-all/loc")
+    public ResponseEntity<?> getLoc() {
+        return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
+    }
+
+    @GetMapping("/staff/san-pham/get-all")
+    public ResponseEntity<?> getSanPhamTaiQuay() {
+        return ResponseEntity.ok(sanPhamChiTietService.hienTatCaTaiQuay());
+    }
+
+    @GetMapping("/staff/san-pham/get-all/loc")
+    public ResponseEntity<?> getLocByAdmin() {
+        return ResponseEntity.ok(sanPhamChiTietService.getAllLoc());
+    }
+
+    @GetMapping("/guest/san-pham/get-thuong-hieu")
+    public ResponseEntity<?> getThuongHieu(@RequestParam String tenThuongHieu) {
+        return ResponseEntity.ok(sanPhamChiTietService.getSanPhamByThuongHieu(tenThuongHieu));
+    }
+
+
+    @GetMapping("/guest/san-pham-chi-tiet/{maSanPhamCT}/images")
+    public ResponseEntity<List<AnhSanPham>> getImagesByGuest(@PathVariable Long maSanPhamCT) {
+        List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
+        return new ResponseEntity<>(imageUrls, HttpStatus.OK);
+    }
+
+    @GetMapping("/staff/san-pham-chi-tiet")
     public ResponseEntity<?> getAll(Pageable pageable) {
         return ResponseEntity.ok(sanPhamChiTietService.getAll(pageable).getContent());
     }
 
-    @GetMapping("/admin/san-pham-chi-tiet/all")
+    @GetMapping("/staff/san-pham-chi-tiet/all")
     public ResponseEntity<List<SanPhamChiTietResponse>> getAllSanPhamChiTietWithImages() {
         List<SanPhamChiTietResponse> sanPhamChiTietDtos = sanPhamChiTietService.getAllCT();
         return new ResponseEntity<>(sanPhamChiTietDtos, HttpStatus.OK);
     }
 
 
-    @GetMapping("/admin/san-pham-chi-tiet/{ma}")
+    @GetMapping("/staff/san-pham-chi-tiet/{ma}")
     public ResponseEntity<?> getById(@PathVariable String ma) {
         return ResponseEntity.ok(sanPhamChiTietService.findById(ma));
     }
 
-    @PostMapping("/admin/san-pham-chi-tiet/add")
+    @PostMapping("/staff/san-pham-chi-tiet/add")
     public ResponseEntity<?> save(@Valid @RequestBody SanPhamChiTietRequest request, BindingResult result) {
         if (result.hasErrors()) {
-
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
         return ResponseEntity.ok(sanPhamChiTietService.createOne(request));
 
     }
-    @PostMapping("/admin/san-pham-chi-tiet/{productId}/images")
+    @PostMapping("/staff/san-pham-chi-tiet/{productId}/images")
     public ResponseEntity<String> addImagesToProductChiTiet(
             @PathVariable Long productId,
             @RequestBody List<Long> imageIds) {
@@ -98,15 +132,34 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok("Đã thêm ảnh vào sản phẩm chi tiết thành công.");
     }
 
-    @PostMapping("/admin/san-pham-chi-tiet/add-all")
+    @PostMapping("/staff/san-pham-chi-tiet/add-all")
     public ResponseEntity<?> saveAll(@Valid @RequestBody List<SanPhamChiTietRequest> listRequest, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        return ResponseEntity.ok(sanPhamChiTietService.createList(listRequest));
+        if(listRequest.isEmpty()){
+            return ResponseEntity.ok("");
+        }
+        List<SanPhamChiTietRequest> listSpCTAdd = new ArrayList<>();
+        for (SanPhamChiTietRequest request : listRequest) {
+            SanPhamChiTiet existingChiTiet = sanPhamChiTietService.findDuplicate(request.getTenSanPham(), request.getTenLoai(),request.getTenMau(),request.getTenThuongHieu());
+            if (existingChiTiet != null) {
+                request.setSoLuongTon(existingChiTiet.getSoLuongTon() + request.getSoLuongTon());
+                sanPhamChiTietService.update(request,existingChiTiet.getMaSanPhamCT());
+            }else{
+                listSpCTAdd.add(request);
+            }
+
+        }
+        if(listSpCTAdd.isEmpty()){
+            return ResponseEntity.ok("Đã update hết");
+        }
+        else {
+            return ResponseEntity.ok(sanPhamChiTietService.createList(listSpCTAdd));
+        }
     }
 
-    @PutMapping("/admin/san-pham-chi-tiet/update/{ma}")
+    @PutMapping("/staff/san-pham-chi-tiet/update/{ma}")
     public ResponseEntity<?> update(@Valid @RequestBody SanPhamChiTietRequest request, @PathVariable Long ma, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
@@ -114,17 +167,35 @@ public class SanPhamChiTietApi {
         return ResponseEntity.ok(sanPhamChiTietService.update(request, ma));
     }
 
-    @DeleteMapping("/admin/san-pham-chi-tiet/delete/{ma}")
+    @DeleteMapping("/staff/san-pham-chi-tiet/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         sanPhamChiTietService.delete(ma);
         return ResponseEntity.ok("oke nha");
     }
 
-    @GetMapping("/admin/san-pham-chi-tiet/{maSanPhamCT}/images")
+    @GetMapping("/staff/san-pham-chi-tiet/{maSanPhamCT}/images")
     public ResponseEntity<List<AnhSanPham>> getImages(@PathVariable Long maSanPhamCT) {
         List<AnhSanPham> imageUrls = anhSanPhamService.getImage(maSanPhamCT);
         return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
 
+    @PutMapping("/staff/san-pham-chi-tiet/sua/{ma}")
+    public ResponseEntity<?> update(@Valid @RequestBody UpdateTrangThai request, @PathVariable Long ma, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        return ResponseEntity.ok(sanPhamChiTietService.updateStatus(request, ma));
+    }
 
+    @GetMapping("/auth/san-pham-chi-tiet/top-5-moi-nhat")
+    public ResponseEntity<?> Top5SanPhamMoiNhat(){
+        return ResponseEntity.ok(sanPhamChiTietService.Top5SanPhamMoiNhat());
+    }
+    @GetMapping("/auth/san-pham-chi-tiet/top-4-ban-chay")
+    public ResponseEntity<?> Top4BanChay(){
+        return ResponseEntity.ok(sanPhamChiTietService.findTop4BanChay());
+    }
 }
+
+
+

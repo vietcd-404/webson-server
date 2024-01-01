@@ -19,7 +19,7 @@ public class SanPhamChiTietRequest {
     private BigDecimal giaBan;
 
     @NotNull(message = "Không bỏ phần trăm giảm")
-    @Min(value = 1 ,message = "Phần trăm giảm phải lớn hơn 0")
+    @Min(value = 0 ,message = "Phần trăm giảm không được nhỏ hơn 0")
     private Integer phanTramGiam;
 
     @NotNull(message = "Không bỏ trống giá bán")
@@ -42,6 +42,7 @@ public class SanPhamChiTietRequest {
     @NotNull
     private String tenMau;
 
+    private String moTa;
 
     private List<Long> danhSachAnh;
 

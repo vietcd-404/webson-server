@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/user/dia-chi")
@@ -44,6 +46,11 @@ public class DiaChiApi {
     @DeleteMapping("/delete/{ma}")
     public ResponseEntity<?> delete(@PathVariable Long ma) {
         diaChiService.delete(ma);
-        return ResponseEntity.ok("oke nha");
+        return ResponseEntity.ok("Xóa thành công");
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<?> all(Principal principal) {
+        return ResponseEntity.ok(diaChiService.getDiaChiTheoNguoiDung(principal));
     }
 }

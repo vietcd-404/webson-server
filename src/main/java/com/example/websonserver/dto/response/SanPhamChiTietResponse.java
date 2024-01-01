@@ -2,10 +2,7 @@ package com.example.websonserver.dto.response;
 
 import com.example.websonserver.entity.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,6 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class SanPhamChiTietResponse {
      Long maSanPhamCT;
 
@@ -35,6 +33,12 @@ public class SanPhamChiTietResponse {
 
      List<AnhSanPham> danhSachAnh;
 
+     List<String> img;
+
      Integer trangThai;
+
+     String moTa;
+
+     List<SanPhamTheoThuongHieuResponse> thuongHieuList;
 
  }

@@ -1,13 +1,13 @@
 package com.example.websonserver.api;
 
-import com.example.websonserver.dto.request.HoaDonRequest;
-import com.example.websonserver.dto.request.NguoiDungSessionRequest;
+import com.example.websonserver.config.socket.NewOrder;
+import com.example.websonserver.config.socket.UpdateStatus;
+import com.example.websonserver.dto.request.*;
+import com.example.websonserver.dto.response.GioHangChiTietResponse;
+import com.example.websonserver.dto.response.HoaDonResponse;
 import com.example.websonserver.dto.response.MessageResponse;
 import com.example.websonserver.dto.response.ThanhToanRes;
-import com.example.websonserver.entity.GioHang;
-import com.example.websonserver.entity.GioHangChiTiet;
-import com.example.websonserver.entity.HoaDon;
-import com.example.websonserver.entity.HoaDonChiTiet;
+import com.example.websonserver.entity.*;
 import com.example.websonserver.jwt.JwtTokenProvider;
 import com.example.websonserver.repository.GioHangRepository;
 import com.example.websonserver.repository.HoaDonRepository;
@@ -16,17 +16,25 @@ import com.example.websonserver.repository.VoucherRepository;
 import com.example.websonserver.service.GioHangCTSessionService;
 import com.example.websonserver.service.HoaDonService;
 import com.example.websonserver.service.UserDetailService;
+import com.example.websonserver.service.serviceIpml.HoaDonServiceIpml;
 import com.example.websonserver.service.serviceIpml.VnPayServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,7 +42,8 @@ import java.util.Map;
 @RequestMapping("/api")
 public class HoaDonApi {
     @Autowired
-    private HoaDonService hoaDonService;
+    private HoaDonServiceIpml hoaDonService;
+
     @Autowired
     private HoaDonRepository hoaDonRepository;
 
@@ -53,21 +62,157 @@ public class HoaDonApi {
     @Autowired
     private GioHangCTSessionService gioHangCTSessionService;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @PostMapping("/user/order/place/{maGioHang}")
     public ResponseEntity<?> placeOrder(@RequestBody HoaDonRequest hoaDon, @PathVariable Long maGioHang) {
         GioHang gioHang = gioHangRepository.findById(maGioHang).orElse(null);
+        Voucher voucher = voucherRepository.findByTenVoucher(hoaDon.getTenVoucher());
         try {
             if (gioHang == null) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Giỏ hàng không tồn tại"));
             }
+            NewOrder newOrder = new NewOrder();
+            newOrder.setMaGioHang(maGioHang);
+            newOrder.setRequest(hoaDon);
+
+            this.messagingTemplate.convertAndSend("/topic/orderStatus", newOrder);
             return ResponseEntity.ok(hoaDonService.placeOrder(hoaDon, maGioHang));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+
+    @PutMapping("/user/order/update/{maDonHang}")
+    public ResponseEntity<?> updateHoaDon(@RequestBody UpdateHoaDonRequest request, @PathVariable Long maDonHang) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
+
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        try {
+            return ResponseEntity.ok(hoaDonService.updateOrder(request, maDonHang));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @GetMapping("/user/order/get-hoadon")
+    public ResponseEntity<?> getHoaDon(Principal principal, @RequestParam("trangThai") Integer trangThai) {
+        return ResponseEntity.ok(hoaDonService.getOrdersByUser(principal, trangThai));
+    }
+
+    @GetMapping("/user/order/get-hoadon/all")
+    public ResponseEntity<?> getHoaDonAll(@Payload Principal principal) {
+        List<HoaDonResponse> hoaDon = hoaDonService.getOrdersAllOk(principal);
+        return ResponseEntity.ok(hoaDonService.getOrdersAllOk(principal));
+    }
+
+
+    @PutMapping("/staff/order/thaydoiTrangThai")
+    @ResponseBody
+    public ResponseEntity<?> capNhapTrangThaiHoaDonByAdmin(
+            @RequestParam("maHD") String maHD, @RequestParam("trangThai") Integer trangThai) {
+        UpdateStatus status = new UpdateStatus();
+        status.setMaHoaDon(Long.parseLong(maHD));
+        status.setTrangThai(trangThai);
+        this.messagingTemplate.convertAndSend("/topic/orderStatus", status);
+        return ResponseEntity.ok(hoaDonService.updateStatus(trangThai, Long.parseLong(maHD)));
+    }
+
+
+    @GetMapping("/user/order/get-hoadon/detail/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonDetail(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.orderDetail(maHoaDon));
+    }
+
+    @GetMapping("/user/order/get-hoadon/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonAll(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetail(maHoaDon));
+    }
+
+    @PutMapping("/user/order/update-quantity")
+    public ResponseEntity<?> updateQuantity(
+            @RequestParam("SPCTId") String SPCTId,
+            @RequestParam("soLuong") String soLuong) {
+        HoaDonChiTiet hdct = hoaDonService.updateQuantity(Long.parseLong(SPCTId), Integer.parseInt(soLuong));
+        if (hdct == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Sản phẩm không có trong hóa đơn"));
+        }
+        return ResponseEntity.ok(hdct);
+    }
+
+    @PutMapping("/user/order/huy-hoa-don")
+    public ResponseEntity<?> huyHoaDon(
+            @RequestParam("maHD") String maHD) {
+        return ResponseEntity.ok(hoaDonService.huyHoaDon(Long.parseLong(maHD)));
+    }
+
+    @PostMapping("/guest/order/place")
+    public ResponseEntity<?> taoHoaDonSession(@RequestBody NguoiDungSessionRequest request, HttpSession session) {
+        Map<String, Integer> sessionCart = gioHangCTSessionService.getSessionCart(session);
+        try {
+            if (sessionCart == null) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Bạn chưa chọn sản phẩm nào"));
+            }
+            return ResponseEntity.ok(hoaDonService.hoaDonSession(session, request));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
         }
     }
 
-    @PutMapping("/admin/order/update-status/{maDonHang}")
+    @DeleteMapping("/user/order/delete")
+    public ResponseEntity<?> xoaHoaDon(
+            @RequestParam("maHoaDonCT") Long maHDCT) {
+        try {
+            return ResponseEntity.ok(hoaDonService.deleteHDCT(maHDCT));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+
+//        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
+    }
+    //TODO: Update hóa đơn theo trạng thái là 0: User update đc
+    //TODO: Update hóa đơn theo trạng thái là 1: ADMIN update đc
+    //TODO: Update số lượng sản phẩm, địa chỉ,...
+    //TODO: Làm hủy hóa hóa chuyển thành trạng thái 5
+
+    @PostMapping("/user/order/update-so-luong")
+    public ResponseEntity<?> updateSoLuong(@RequestParam Integer soLuong,
+                                           @RequestParam Long maHoaDonCT,
+                                           @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT, soLuong, maHoaDon));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @PostMapping("/guest/order/thanh-toan")
+    public ResponseEntity<?> thanhToanGuest(@RequestBody HoaDonRequest request, @RequestParam List<Long> ma) {
+        try {
+            NewOrder newOrder = new NewOrder();
+            newOrder.setMa(ma);
+            newOrder.setRequest(request);
+            this.messagingTemplate.convertAndSend("/topic/orderStatus", newOrder);
+            return ResponseEntity.ok(hoaDonService.thanhToanGuest(request, ma));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+
+    }
+
+    @PutMapping("/staff/order/update-status/{maDonHang}")
     public ResponseEntity<?> updateStatus(@RequestBody HoaDonRequest request, @PathVariable Long maDonHang) {
         HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
 
@@ -77,44 +222,184 @@ public class HoaDonApi {
         return ResponseEntity.ok(hoaDonService.statusHoaDon(request, maDonHang));
     }
 
-    @GetMapping("/user/order/get-hoadon")
-    public ResponseEntity<?> getHoaDon(Principal principal, @RequestParam("trangThai") Integer trangThai) {
-        return ResponseEntity.ok(hoaDonService.getOrdersByUser(principal, trangThai));
+    @GetMapping("/staff/order/all")
+    public ResponseEntity<?> getAllOrder(Pageable pageable) {
+        return ResponseEntity.ok(hoaDonService.findAllHd(pageable));
     }
 
-    @PutMapping("/user/order/update-quantity")
-    public ResponseEntity<?> updateQuantity(
-            Principal principal,
-            @RequestParam("SPCTId") String SPCTId,
-            @RequestParam("soLuong") String soLuong) {
-        HoaDonChiTiet hdct = hoaDonService.updateQuantity(principal,Long.parseLong(SPCTId),Integer.parseInt(soLuong));
-        if (hdct == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Sản phẩm không có trong hóa đơn"));
-        }
-        return ResponseEntity.ok(hdct);
+    @GetMapping("/staff/order/getAll")
+    public ResponseEntity<?> getAllOrderByAdmin(Pageable pageable, @RequestParam("trangThai") Integer trangThai) {
+        return ResponseEntity.ok(hoaDonService.getAllOrderByAdmin(pageable, trangThai));
     }
-    @PutMapping("/user/order/huy-hoa-don")
-    public ResponseEntity<?> huyHoaDon(
+
+//    Địa chỉ trong hóa đơn
+    @GetMapping("/staff/order/get-hoadon/detail/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonDetailAd(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.orderDetail(maHoaDon));
+    }
+
+//    Sản phẩm trong hóa đơn
+    @GetMapping("/staff/order/get-hoadon/{maHoaDon}")
+    public ResponseEntity<?> getHoaDonAllAd(@PathVariable Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetail(maHoaDon));
+    }
+
+    @PutMapping("/staff/order/huy-hoa-don")
+    public ResponseEntity<?> huyHoaDonByAdmin(
             @RequestParam("maHD") String maHD) {
-        return ResponseEntity.ok(hoaDonService.HuyHoaDon(Long.parseLong(maHD)));
+        return ResponseEntity.ok(hoaDonService.huyHoaDon(Long.parseLong(maHD)));
     }
-    @PostMapping("/auth/order/place")
-    public ResponseEntity<?> taoHoaDonSession(@RequestBody NguoiDungSessionRequest request, HttpSession session) {
-        Map<String, Integer> sessionCart = gioHangCTSessionService.getSessionCart(session);
+
+    @GetMapping("/staff/order/search")
+    public ResponseEntity<?> searchHoaDon(Pageable pageable,@RequestParam String thuocTinh,@RequestParam String value,Integer trangThai){
+        return ResponseEntity.ok(hoaDonService.findHoaDon(pageable,thuocTinh,value,trangThai));
+    }
+
+
+    @PutMapping("/staff/order/thanhToan")
+    public ResponseEntity<?> capNhapThanhToanHoaDonByAdmin(
+            @RequestParam("maHD") String maHD, @RequestParam("thanhToan") Integer thanhToan) {
+        return ResponseEntity.ok(hoaDonService.updatePaid(thanhToan, Long.parseLong(maHD)));
+    }
+
+    @PostMapping("/user/order/them-san-pham-vao-hoa-don")
+    public ResponseEntity<?> themSanPhamVaoHoaDon(@RequestParam Long maSPCT,
+                                           @RequestParam int soLuong,
+                                           @RequestParam Long maHoaDon) {
         try {
-            if (sessionCart==null) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Bạn chưa chọn sản phẩm nào"));
-            }
-            return ResponseEntity.ok(hoaDonService.hoaDonSession(session, request));
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
         }
     }
-    //TODO: Update hóa đơn theo trạng thái là 0: User update đc
-    //TODO: Update hóa đơn theo trạng thái là 1: ADMIN update đc
-    //TODO: Update số lượng sản phẩm, địa chỉ,...
-    //TODO: Làm hủy hóa hóa chuyển thành trạng thái 5
+
+    @PostMapping("/staff/order-tai-quay")
+    public ResponseEntity<?> taoHoaDonTaiQuay(@RequestBody HoaDonRequest request) {
+        return ResponseEntity.ok(hoaDonService.taoHoaDonTaiQuay(request));
+    }
+
+    @GetMapping("/staff/get-all/tai-quay")
+    public ResponseEntity<?> hienHoaDonTaiQuay() {
+        return ResponseEntity.ok(hoaDonService.getAllHoaDonTaiQuay());
+    }
+
+    @GetMapping("/staff/order-tai-quay/get-hoadon")
+    public ResponseEntity<?> getSanPham(@RequestParam Long maHoaDon) {
+        return ResponseEntity.ok(hoaDonService.getOrdersDetai(maHoaDon));
+    }
+
+    @PostMapping("/staff/order-tai-quay/them-san-pham-vao-hoa-don")
+    public ResponseEntity<?> themSanPhamVaoHoaDonTaiQuay(@RequestParam Long maSPCT,
+                                                  @RequestParam int soLuong,
+                                                  @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @PostMapping("/staff/order-tai-quay/update-so-luong")
+    public ResponseEntity<?> updateSoLuongHoaDonTaiQuay(@RequestParam Integer soLuong,
+                                           @RequestParam Long maHoaDonCT,
+                                           @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDonTaiQuay(maHoaDonCT, soLuong, maHoaDon));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @DeleteMapping("/staff/order-tai-quay/delete")
+    public ResponseEntity<?> xoaHoaDonTaiQuay(
+            @RequestParam("maHoaDonCT") Long maHDCT) {
+        hoaDonService.xoaHDCT(maHDCT);
+        return ResponseEntity.ok(new MessageResponse("Xóa sản phẩm trong hóa đơn thành công"));
+    }
+
+    @PutMapping("/staff/order-tai-quay/update")
+    public ResponseEntity<?> updateHoaDonTaiQuay(@RequestBody HoaDonTaiQuayResquest request, @RequestParam Long maHoaDon) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maHoaDon).orElse(null);
+
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        try {
+            return ResponseEntity.ok(hoaDonService.orderTaiQuay(request, maHoaDon));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
 
 
+    @PutMapping("/staff/order/update/{maDonHang}")
+    public ResponseEntity<?> updateHoaDonByAdmin(@RequestBody UpdateHoaDonRequest request, @PathVariable Long maDonHang) {
+        HoaDon hoaDon1 = hoaDonRepository.findById(maDonHang).orElse(null);
+
+        if (hoaDon1 == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Mã hóa đơn không tồn tại"));
+        }
+        try {
+            return ResponseEntity.ok(hoaDonService.updateOrder(request, maDonHang));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+
+    @PostMapping("/staff/order/add-productHd")
+    public ResponseEntity<?> themSanPhamHDByAdmin(@RequestParam Long maSPCT,
+    @RequestParam int soLuong,
+    @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.themSanPhamVaoHoaDon(maSPCT, soLuong, maHoaDon));
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+    @DeleteMapping("/staff/order/delete")
+    public ResponseEntity<?> xoaSPByAdmin(
+            @RequestParam("maHoaDonCT") Long maHDCT) {
+        try {
+            return ResponseEntity.ok(hoaDonService.deleteHDCTByAdmin(maHDCT));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+    @PutMapping("/staff/order/update-so-luong")
+    public ResponseEntity<?> updateSoLuongByAdmin(@RequestParam Integer soLuong,
+                                           @RequestParam Long maHoaDonCT,
+                                           @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDon(maHoaDonCT, soLuong, maHoaDon));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
+
+
+    @PutMapping("/user/order/update-so-luong-user")
+    public ResponseEntity<?> updateSoLuongNguoiDung(@RequestParam Integer soLuong,
+                                                  @RequestParam Long maHoaDonCT,
+                                                  @RequestParam Long maHoaDon) {
+        try {
+            return ResponseEntity.ok(hoaDonService.suaSoLuongVaoHoaDonKhachHang(maHoaDonCT, soLuong, maHoaDon));
+
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(errorMessage));
+        }
+    }
 }

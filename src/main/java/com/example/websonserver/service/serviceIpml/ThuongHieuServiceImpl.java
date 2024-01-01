@@ -2,7 +2,9 @@ package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.LoaiResquest;
 import com.example.websonserver.dto.request.ThuongHieuRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.entity.Loai;
+import com.example.websonserver.entity.SanPham;
 import com.example.websonserver.entity.ThuongHieu;
 import com.example.websonserver.repository.LoaiRepository;
 import com.example.websonserver.repository.ThuongHieuRepository;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +30,10 @@ public class ThuongHieuServiceImpl implements ThuongHieuService {
         return thuongHieuRepository.save(thuongHieu1);
     }
 
+    public Boolean existsByTenSanPham(String username) {
+        return thuongHieuRepository.existsByTenThuongHieuAndXoaFalse(username);
+    }
+
     @Override
     public ThuongHieu update(ThuongHieuRequest thuongHieu,Long id) {
         Optional<ThuongHieu> optional = thuongHieuRepository.findById(id);
@@ -36,9 +43,13 @@ public class ThuongHieuServiceImpl implements ThuongHieuService {
         }).orElse(null);
     }
 
+    public ThuongHieu getById(Long ma){
+        return thuongHieuRepository.findById(ma).orElse(null);
+    }
+
     @Override
     public Page<ThuongHieu> getAll(Pageable pageable) {
-        return thuongHieuRepository.findAllByXoaFalse(pageable);
+        return thuongHieuRepository.findAllByXoaFalseOrderByNgayTaoDesc(pageable);
     }
 
     @Override
@@ -57,5 +68,19 @@ public class ThuongHieuServiceImpl implements ThuongHieuService {
     @Override
     public ThuongHieu findByTen(String ten) {
         return thuongHieuRepository.findByTen(ten);
+    }
+
+    @Override
+    public ThuongHieu updateStatus(UpdateTrangThai trangThai, Long id) {
+        Optional<ThuongHieu> optional = thuongHieuRepository.findById(id);
+        return optional.map(o->{
+            o.setTrangThai(trangThai.getTrangThai());
+            return thuongHieuRepository.save(o);
+        }).orElse(null);
+    }
+
+    @Override
+    public List<ThuongHieu> fillComboSpct() {
+        return thuongHieuRepository.fillComboSpct();
     }
 }

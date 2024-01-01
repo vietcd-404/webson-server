@@ -2,6 +2,8 @@ package com.example.websonserver.service;
 
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.SanPhamChiTietRequestDemo;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.SanPhamChiTiet;
@@ -13,24 +15,30 @@ import java.util.List;
 import java.util.function.IntConsumer;
 
 public interface SanPhamChiTietService {
-    public SanPhamChiTiet createOne(SanPhamChiTietRequest request);
+     SanPhamChiTiet createOne(SanPhamChiTietRequest request);
 
-    public List<SanPhamChiTiet> createList(List<SanPhamChiTietRequest> listRequest);
+    List<SanPhamChiTiet> createList(List<SanPhamChiTietRequest> listRequest);
 
-    public SanPhamChiTiet update(SanPhamChiTietRequest request, Long id);
+     SanPhamChiTiet update(SanPhamChiTietRequest request, Long id);
 
-    public Page<SanPhamChiTiet> getAll(Pageable pageable);
+     Page<SanPhamChiTiet> getAll(Pageable pageable);
 
     List<SanPhamChiTietResponse> getAllCT();
 
-    public void delete(Long id);
+     void delete(Long id);
 
-    public SanPhamChiTiet findById(String id);
+     SanPhamChiTiet findById(String id);
+    SanPhamChiTietResponse findByIdResponse(String id);
 
     Page<SanPhamChiTietRes> getAllSanPham(Long maSanPham, Long maLoai,
                                           Long maThuongHieu, Long maMau,
                                           int page, int size,
                                           BigDecimal giaThap, BigDecimal giaCao,
                                           String sortBy, String sortDirection);
+    SanPhamChiTiet updateStatus(UpdateTrangThai request, Long id);
 
+    List<SanPhamChiTietRes> Top5SanPhamMoiNhat();
+    List<SanPhamChiTietResponse> getAllLoc();
+    List<SanPhamChiTietResponse> findTop4BanChay();
+    SanPhamChiTiet findDuplicate(String tenSanPham,String tenLoai,String tenMau,String tenThuongHieu);
 }

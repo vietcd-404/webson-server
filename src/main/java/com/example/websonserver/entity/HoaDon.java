@@ -38,11 +38,26 @@ public class HoaDon extends BaseEntity{
     @Column(name = "tong_tien")
     private BigDecimal tongTien;
 
+    @Column(name = "phi_ship")
+    private BigDecimal phiShip;
+
+    @Column(name = "tinh")
+    private String tinh;
+
+    @Column(name = "huyen")
+    private String huyen;
+
+    @Column(name = "xa")
+    private String xa;
+
     @Column(name = "dia_chi")
     private String diaChi;
 
     @Column(name = "sdt")
     private String sdt;
+
+    @Column(name = "email")
+    private String email;
 
     @ManyToOne
     @JoinColumn(name = "ma_phuong_thuc_thanh_toan")
@@ -53,9 +68,12 @@ public class HoaDon extends BaseEntity{
     @JoinColumn(name = "ma_nguoi_dung")
     private NguoiDung nguoiDung;
 
+    @Column(name = "nhan_vien")
+    private Long nhanVien;
+
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<HoaDonChiTiet> invoiceDetails = new ArrayList<>();
+    private List<HoaDonChiTiet> hoaDonChiTietList = new ArrayList<>();
 
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

@@ -12,10 +12,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface LoaiRepository extends JpaRepository<Loai,Long> {
 
-    public Page<Loai> findAllByXoaFalse(Pageable pageable);
+    public Page<Loai> findAllByXoaFalseOrderByNgayTaoDesc(Pageable pageable);
+    Boolean existsByTenLoaiAndXoaFalse(String tenLoai);
+
+    @Query("SELECT sp FROM Loai sp WHERE sp.xoa = false and sp.trangThai =1  order by  sp.ngayTao desc ")
+    public List<Loai> fillComboSpct();
 
     @Transactional
     @Modifying
@@ -23,6 +29,6 @@ public interface LoaiRepository extends JpaRepository<Loai,Long> {
             "SET a.xoa = true WHERE a.maLoai = ?1")
     void delete(Long maLoai);
 
-    @Query("SELECT sp FROM Loai sp WHERE sp.tenLoai = ?1")
+    @Query("SELECT sp FROM Loai sp WHERE sp.tenLoai = ?1 and sp.xoa=false")
     Loai findByTen(String tenLoai);
 }

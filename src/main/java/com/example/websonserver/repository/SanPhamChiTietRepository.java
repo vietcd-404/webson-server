@@ -2,6 +2,8 @@ package com.example.websonserver.repository;
 
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
 import com.example.websonserver.entity.SanPhamChiTiet;
+import com.example.websonserver.entity.ThuongHieu;
+import com.example.websonserver.service.SanPhamChiTietService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,14 +19,28 @@ import java.util.List;
 @Repository
 public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, Long> , JpaSpecificationExecutor<SanPhamChiTiet> {
     public Page<SanPhamChiTiet> findAllByXoaFalse(Pageable pageable);
+    public List<SanPhamChiTiet> findByThuongHieu_MaThuongHieu(Long mathuongHieu);
+    public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThai(Integer trangThai);
+
+    public List<SanPhamChiTiet> findAllByXoaFalseAndTrangThaiAndMaSanPhamCT(Integer trangThai,Long maSanPhamCT);
 
     public List<SanPhamChiTiet> findAllByXoaFalse();
+    public List<SanPhamChiTiet> findAllByXoaFalseOrderByNgayTaoDesc();
+
+    @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.tenSanPham = ?1 AND s.loai.tenLoai = ?2" +
+            " AND s.mauSac.tenMau = ?3 " +
+            "AND s.thuongHieu.tenThuongHieu = ?4 and s.xoa=false ")
+    SanPhamChiTiet findByNamesAndXoaFalse(String tenSanPham, String tenLoai, String tenMau, String tenThuongHieu);
+
+    public List<SanPhamChiTiet> findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(String tenThuongHieu,Integer trangThai);
 
     @Query("SELECT s FROM SanPhamChiTiet s " +
             "JOIN s.anhSanPhamList a " +
             "WHERE s.maSanPhamCT = :maSanPhamCT")
     List<SanPhamChiTiet> findSanPhamChiTietWithImages(@Param("maSanPhamCT") Long maSanPhamCT);
 
+    @Query(value = "SELECT * FROM san_pham_chi_tiet spct WHERE spct.xoa = false and spct.trang_thai=1  ORDER BY spct.ngay_tao  desc limit 5",nativeQuery = true)
+    List<SanPhamChiTiet> Top5SanPhamMoiNhat();
 
     @Query(value = "select san_pham.ten_san_pham as tenSanPham,\n" +
             "loai.ten_loai as tenLoai,\n" +

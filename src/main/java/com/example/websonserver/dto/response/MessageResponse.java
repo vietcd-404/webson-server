@@ -21,6 +21,10 @@ public class MessageResponse {
     public static MessageResponse success(String mess) {
         return new MessageResponse(mess);
     }
+    public static MessageResponse url(String url) {
+        return new MessageResponse(url);
+    }
+
 
     public ThanhToanRequest withData(ThanhToanRequest request) {
         return request;

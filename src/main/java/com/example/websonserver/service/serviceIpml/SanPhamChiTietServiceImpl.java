@@ -1,11 +1,15 @@
 package com.example.websonserver.service.serviceIpml;
 
 import com.example.websonserver.dto.request.SanPhamChiTietRequest;
+import com.example.websonserver.dto.request.SanPhamChiTietRequestDemo;
 import com.example.websonserver.dto.request.ThuocTinhRequest;
+import com.example.websonserver.dto.request.UpdateTrangThai;
 import com.example.websonserver.dto.response.SanPhamChiTietRes;
 import com.example.websonserver.dto.response.SanPhamChiTietResponse;
+import com.example.websonserver.dto.response.SanPhamTheoThuongHieuResponse;
 import com.example.websonserver.entity.*;
 import com.example.websonserver.repository.AnhSanPhamRepository;
+import com.example.websonserver.repository.HoaDonChiTietRepository;
 import com.example.websonserver.repository.SanPhamChiTietRepository;
 import com.example.websonserver.repository.SanPhamRepository;
 import com.example.websonserver.service.*;
@@ -17,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
@@ -44,6 +49,8 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     @Autowired
     private MauSacService mauSacService;
 
+    @Autowired
+    private HoaDonChiTietRepository hoaDonChiTietRepository;
     @Override
     public SanPhamChiTiet createOne(SanPhamChiTietRequest request) {
         SanPham getSPByTenSP = sanPhamService.findByTen(request.getTenSanPham());
@@ -83,7 +90,8 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                         .loai(loaiService.findByTen(x.getTenLoai()))
                         .thuongHieu(thuongHieuService.findByTen(x.getTenThuongHieu()))
                         .mauSac(mauSacService.findByTen(x.getTenMau()))
-//                    .anhSanPhamList(request.getAnhSanPhamList())
+                        .moTa((x.getMoTa()))
+//                        .anhSanPhamList(request.getAnhSanPhamList())
                         .trangThai(x.getTrangThai())
                         .xoa(x.getXoa())
                         .build();
@@ -99,6 +107,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(id);
         return optional.map(o -> {
             o.setGiaBan(request.getGiaBan());
+            o.setMoTa(request.getMoTa());
             o.setPhanTramGiam(request.getPhanTramGiam());
             o.setSoLuongTon((request.getSoLuongTon()));
             o.setSanPham(sanPhamService.findByTen(request.getTenSanPham()));
@@ -116,7 +125,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     @Override
     public List<SanPhamChiTietResponse> getAllCT() {
-        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalse();
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseOrderByNgayTaoDesc();
         List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
         for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
             SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
@@ -148,6 +157,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             List<AnhSanPham> imageUrls = anhSanPhamService.getImage(sanPhamChiTiet.getMaSanPhamCT());
             dto.setDanhSachAnh(imageUrls);
             dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            if(sanPhamChiTiet.getMoTa()!=null) {
+                dto.setMoTa(sanPhamChiTiet.getMoTa());
+            }else{
+                dto.setMoTa("");
+            }
             sanPhamChiTietDtos.add(dto);
         }
 
@@ -167,8 +181,56 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     }
 
     @Override
+    public SanPhamChiTietResponse findByIdResponse(String id) {
+        Optional<SanPhamChiTiet> anhsp = sanPhamChiTietRepository.findById(Long.parseLong(id));
+        SanPhamChiTiet spct = anhsp.orElse(null);
+        List<AnhSanPham> imageUrls = anhSanPhamService.getImage(spct.getMaSanPhamCT());
+        SanPhamChiTietResponse res = SanPhamChiTietResponse.builder()
+                .maSanPhamCT(spct.getMaSanPhamCT())
+                .img(anhSanPhamService.getImagesBySanPhamChiTiet(spct.getMaSanPhamCT()))
+                .giaBan(spct.getGiaBan())
+                .danhSachAnh(imageUrls)
+                .moTa(spct.getMoTa())
+                .tenSanPham(spct.getSanPham().getTenSanPham())
+                .phanTramGiam(spct.getPhanTramGiam())
+                .soLuongTon(spct.getSoLuongTon())
+                .tenLoai(spct.getLoai().getTenLoai())
+                .tenMau(spct.getMauSac().getTenMau())
+                .tenThuongHieu(spct.getThuongHieu().getTenThuongHieu())
+                .build();
+        return res;
+    }
+
+    @Override
     public Page<SanPhamChiTietRes> getAllSanPham(Long maSanPham, Long maLoai, Long maThuongHieu, Long maMau, int page, int size, BigDecimal giaThap, BigDecimal giaCao, String sortBy, String sortDirection) {
         return null;
+    }
+
+    @Override
+    public SanPhamChiTiet updateStatus(UpdateTrangThai request, Long id) {
+        Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(id);
+        return optional.map(o -> {
+            o.setTrangThai(request.getTrangThai());
+            return sanPhamChiTietRepository.save(o);
+        }).orElse(null);
+    }
+
+    @Override
+    public List<SanPhamChiTietRes> Top5SanPhamMoiNhat() {
+        List<SanPhamChiTietRes> sanPhamChiTietPage = sanPhamChiTietRepository.Top5SanPhamMoiNhat().stream()
+                .map(sanPhamChiTiets -> new SanPhamChiTietRes(
+                        sanPhamChiTiets.getMaSanPhamCT(),
+                        sanPhamChiTiets.getGiaBan(),
+                        sanPhamChiTiets.getPhanTramGiam(),
+                        sanPhamChiTiets.getSoLuongTon(),
+                        sanPhamChiTiets.getSanPham().getTenSanPham(),
+                        sanPhamChiTiets.getLoai().getTenLoai(),
+                        sanPhamChiTiets.getThuongHieu().getTenThuongHieu(),
+                        sanPhamChiTiets.getMauSac().getTenMau(),
+                        sanPhamChiTiets.getTrangThai(),
+                        anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiets.getMaSanPhamCT())
+                )).collect(Collectors.toList());
+        return sanPhamChiTietPage;
     }
 
 
@@ -205,8 +267,9 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 predicate = cb.and(predicate, cb.equal(root.get("thuongHieu").get("maThuongHieu"), maThuongHieu));
             }
             if (giaThap != null && giaCao != null) {
-                predicate = cb.and(predicate, cb.between(root.get("giaBan"), giaThap, giaCao));
+                predicate = cb.and(predicate, cb.between(root.get("giaBan"), giaCao, giaThap));
             }
+            predicate = cb.and(predicate, cb.equal(root.get("trangThai"), 1));
             predicate = cb.and(predicate, cb.equal(root.get("xoa"), false));
             return predicate;
         };
@@ -236,6 +299,169 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                                 ));
 
         return sanPhamChiTietPage;
+    }
+    public List<SanPhamChiTietResponse> sanPhamDetail(Long maSanPhamCT) {
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThaiAndMaSanPhamCT(1,maSanPhamCT);
+        List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+
+            SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            dto.setMoTa(sanPhamChiTiet.getMoTa());
+            List<AnhSanPham> imageUrls = anhSanPhamService.getImage(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setDanhSachAnh(imageUrls);
+            dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            List<SanPhamTheoThuongHieuResponse> sanPhamChiTietThuongHieu = new ArrayList<>();
+            List<SanPhamChiTiet> sanPhamChiTietList1=sanPhamChiTietRepository.findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(sanPhamChiTiet.getThuongHieu().getTenThuongHieu(),1);
+            Set<Long> uniqueProductIdsSet = new HashSet<>();
+            for (SanPhamChiTiet sanPhamChiTiet1 : sanPhamChiTietList1){
+                SanPhamTheoThuongHieuResponse response = new SanPhamTheoThuongHieuResponse();
+                String uniqueKey = response.getTenSanPham() + "-" + response.getTenMau();
+                response.setMaSanPhamCT(sanPhamChiTiet1.getMaSanPhamCT());
+                response.setGiaBan(sanPhamChiTiet1.getGiaBan());
+                response.setPhanTramGiam(sanPhamChiTiet1.getPhanTramGiam());
+                response.setSoLuongTon(sanPhamChiTiet1.getSoLuongTon());
+                SanPham sanPham1 = sanPhamChiTiet1.getSanPham();
+                if (sanPham != null) {
+                    String tenSanPham = sanPham1.getTenSanPham();
+                    response.setTenSanPham(tenSanPham);
+                }
+                Loai loai1 = sanPhamChiTiet1.getLoai();
+                if (loai != null) {
+                    String tenLoai = loai1.getTenLoai();
+                    response.setTenLoai(tenLoai);
+                }
+
+                ThuongHieu thuongHieu1 = sanPhamChiTiet1.getThuongHieu();
+                if (thuongHieu != null) {
+                    String tenthuongHieu = thuongHieu1.getTenThuongHieu();
+                    response.setTenThuongHieu(tenthuongHieu);
+                }
+                MauSac mauSac1 = sanPhamChiTiet1.getMauSac();
+                if (mauSac != null) {
+                    String tenMau = mauSac1.getTenMau();
+                    response.setTenMau(tenMau);
+                }
+                List<AnhSanPham> imageUrlsa = anhSanPhamService.getImage(sanPhamChiTiet1.getMaSanPhamCT());
+                response.setDanhSachAnh(imageUrlsa);
+                response.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet1.getMaSanPhamCT()));
+                response.setTrangThai(sanPhamChiTiet1.getTrangThai());
+                if (maSanPhamCT.equals(sanPhamChiTiet1.getMaSanPhamCT())) {
+                    continue; // Nếu trùng mã sản phẩm, bỏ qua và không thêm vào danh sách thương hiệu
+                }
+                sanPhamChiTietThuongHieu.add(response);
+            }
+            dto.setThuongHieuList(sanPhamChiTietThuongHieu);
+
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
+    }
+
+    private boolean isDuplicateProduct(List<SanPhamChiTietResponse> sanPhamChiTietDtos, SanPhamTheoThuongHieuResponse response) {
+        for (SanPhamChiTietResponse dto : sanPhamChiTietDtos) {
+            if (dto.getTenSanPham().equals(response.getTenSanPham()) && dto.getTenMau().equals(response.getTenMau())) {
+                return false; // Sản phẩm trùng lặp, không thêm vào danh sách
+            }
+        }
+        return true; // Không có sản phẩm trùng lặp
+    }
+
+    @Override
+    public List<SanPhamChiTietResponse> getAllLoc() {
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThai(1);
+        List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
+    }
+
+    @Override
+    public List<SanPhamChiTietResponse> findTop4BanChay() {
+        List<Object[]> lst = hoaDonChiTietRepository.findTop4BanChay();
+        List<SanPhamChiTietResponse> dtoList = new ArrayList<>();
+        for (Object[] x : lst) {
+            Long maSanPhamChiTiet = Long.parseLong(x[0].toString());
+            SanPhamChiTiet spct = sanPhamChiTietRepository.findById(maSanPhamChiTiet).orElse(null);
+            if (spct != null) {
+                List<AnhSanPham> imageUrls = anhSanPhamService.getImage(spct.getMaSanPhamCT());
+                SanPhamChiTietResponse res = SanPhamChiTietResponse.builder()
+                        .maSanPhamCT(spct.getMaSanPhamCT())
+                        .img(anhSanPhamService.getImagesBySanPhamChiTiet(spct.getMaSanPhamCT()))
+                        .giaBan(spct.getGiaBan())
+                        .danhSachAnh(imageUrls)
+                        .tenSanPham(spct.getSanPham().getTenSanPham())
+                        .phanTramGiam(spct.getPhanTramGiam())
+                        .soLuongTon(spct.getSoLuongTon())
+                        .tenLoai(spct.getLoai().getTenLoai())
+                        .tenMau(spct.getMauSac().getTenMau())
+                        .tenThuongHieu(spct.getThuongHieu().getTenThuongHieu())
+                        .build();
+                dtoList.add(res);
+            }
+        }
+        return dtoList;
+    }
+
+    @Override
+    public SanPhamChiTiet findDuplicate(String tenSanPham, String tenLoai, String tenMau, String tenThuongHieu) {
+        return sanPhamChiTietRepository.findByNamesAndXoaFalse(tenSanPham,tenLoai,tenMau,tenThuongHieu);
     }
 
     public void addImagesToProductChiTiet(Long productId, List<Long> imageIds) {
@@ -272,5 +498,84 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     public SanPhamChiTiet layAnh(Long anhId) {
         return sanPhamChiTietRepository.findById(anhId).orElse(null);
+    }
+
+    public List<SanPhamChiTietResponse> getSanPhamByThuongHieu(String tenThuongHieu) {
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findByThuongHieu_TenThuongHieuAndXoaFalseAndTrangThai(tenThuongHieu, 1);
+        List<SanPhamChiTietResponse> sanPhamChiTietDtos = new ArrayList<>();
+        int maxResults = 5;
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            if (sanPhamChiTietDtos.size() >= maxResults) {
+                break;
+            }
+            SanPhamChiTietResponse dto = new SanPhamChiTietResponse();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setImg(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
+    }
+
+    public List<SanPhamChiTietRes> hienTatCaTaiQuay(){
+        List<SanPhamChiTiet> sanPhamChiTietList = sanPhamChiTietRepository.findAllByXoaFalseAndTrangThai(1);
+        List<SanPhamChiTietRes> sanPhamChiTietDtos = new ArrayList<>();
+        for (SanPhamChiTiet sanPhamChiTiet : sanPhamChiTietList) {
+            SanPhamChiTietRes dto = new SanPhamChiTietRes();
+            dto.setMaSanPhamCT(sanPhamChiTiet.getMaSanPhamCT());
+            dto.setGiaBan(sanPhamChiTiet.getGiaBan());
+            dto.setPhanTramGiam(sanPhamChiTiet.getPhanTramGiam());
+            dto.setSoLuongTon(sanPhamChiTiet.getSoLuongTon());
+            SanPham sanPham = sanPhamChiTiet.getSanPham();
+            if (sanPham != null) {
+                String tenSanPham = sanPham.getTenSanPham();
+                dto.setTenSanPham(tenSanPham);
+            }
+            Loai loai = sanPhamChiTiet.getLoai();
+            if (loai != null) {
+                String tenLoai = loai.getTenLoai();
+                dto.setTenLoai(tenLoai);
+            }
+
+            ThuongHieu thuongHieu = sanPhamChiTiet.getThuongHieu();
+            if (thuongHieu != null) {
+                String tenthuongHieu = thuongHieu.getTenThuongHieu();
+                dto.setTenThuongHieu(tenthuongHieu);
+            }
+            MauSac mauSac = sanPhamChiTiet.getMauSac();
+            if (mauSac != null) {
+                String tenMau = mauSac.getTenMau();
+                dto.setTenMau(tenMau);
+            }
+            dto.setDanhSachAnh(anhSanPhamService.getImagesBySanPhamChiTiet(sanPhamChiTiet.getMaSanPhamCT()));
+            dto.setTrangThai(sanPhamChiTiet.getTrangThai());
+            sanPhamChiTietDtos.add(dto);
+        }
+
+        return sanPhamChiTietDtos;
     }
 }
